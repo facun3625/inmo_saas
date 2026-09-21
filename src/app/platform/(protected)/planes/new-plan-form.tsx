@@ -22,6 +22,7 @@ export function NewPlanForm() {
   const [pending, startTransition] = useTransition();
   const [allowCustomDomain, setAllowCustomDomain] = useState(false);
   const [allowPushNotifications, setAllowPushNotifications] = useState(false);
+  const [allowAiAgent, setAllowAiAgent] = useState(false);
   const [features, setFeatures] = useState({ allowServices: true, allowLoyalty: true, allowStats: true, allowTelegram: true });
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -69,6 +70,10 @@ export function NewPlanForm() {
           <Label className="text-xs">Máx. pedidos/mes (opcional)</Label>
           <Input name="maxOrdersPerMonth" type="number" min="1" step="1" placeholder="Sin límite" />
         </div>
+        <div className="flex flex-col gap-1.5">
+          <Label className="text-xs">Máx. mensajes IA/mes (opcional)</Label>
+          <Input name="maxAiMessagesPerMonth" type="number" min="1" step="1" placeholder="Sin límite" />
+        </div>
       </div>
       <div className="flex flex-col gap-1.5">
         <Label className="text-xs">Qué incluye el plan (opcional)</Label>
@@ -84,6 +89,11 @@ export function NewPlanForm() {
         <Switch checked={allowPushNotifications} onCheckedChange={setAllowPushNotifications} />
         <input type="hidden" name="allowPushNotifications" value={String(allowPushNotifications)} />
         <span className="font-medium">Notificaciones push</span>
+      </label>
+      <label className="flex items-center gap-2.5 text-sm">
+        <Switch checked={allowAiAgent} onCheckedChange={setAllowAiAgent} />
+        <input type="hidden" name="allowAiAgent" value={String(allowAiAgent)} />
+        <span className="font-medium">Agente de ventas IA</span>
       </label>
       <div className="flex flex-col gap-2 border-t pt-3 sm:flex-row sm:flex-wrap sm:gap-x-6 sm:gap-y-2">
         {FEATURE_TOGGLES.map((toggle) => (

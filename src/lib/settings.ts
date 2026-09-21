@@ -207,3 +207,32 @@ export const getTelegramSettings = cache(
     };
   },
 );
+
+export type AiAgentSettings = {
+  enabled: boolean;
+  tone: string | null;
+  rules: string | null;
+  greeting: string | null;
+};
+
+const AI_AGENT_SETTINGS_KEYS = [
+  "ai_agent_enabled",
+  "ai_agent_tone",
+  "ai_agent_rules",
+  "ai_agent_greeting",
+] as const;
+
+export const getAiAgentSettings = cache(
+  async (tenantId: string): Promise<AiAgentSettings> => {
+    const rows = await prisma.settings.findMany({
+      where: { tenantId, key: { in: [...AI_AGENT_SETTINGS_KEYS] } },
+    });
+    const map = Object.fromEntries(rows.map((r) => [r.key, r.value]));
+    return {
+      enabled: map.ai_agent_enabled === "true",
+      tone: map.ai_agent_tone || null,
+      rules: map.ai_agent_rules || null,
+      greeting: map.ai_agent_greeting || null,
+    };
+  },
+);

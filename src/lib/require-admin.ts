@@ -20,6 +20,7 @@ export type PlanFeatures = {
   allowTelegram: boolean;
   allowCustomDomain: boolean;
   allowPushNotifications: boolean;
+  allowAiAgent: boolean;
 };
 
 export async function requireTenantAdminWithPlan() {
@@ -33,6 +34,7 @@ export async function requireTenantAdminWithPlan() {
       allowTelegram: true,
       allowCustomDomain: true,
       allowPushNotifications: true,
+      allowAiAgent: true,
     },
   });
   const features: PlanFeatures = {
@@ -42,8 +44,24 @@ export async function requireTenantAdminWithPlan() {
     allowTelegram: plan?.allowTelegram ?? false,
     allowCustomDomain: plan?.allowCustomDomain ?? false,
     allowPushNotifications: plan?.allowPushNotifications ?? false,
+    allowAiAgent: plan?.allowAiAgent ?? false,
   };
   return { session, tenant, features };
+}
+
+// A diferencia de requireTenantAdminWithPlan, no pide sesión de admin — la
+// usan tanto el layout público (para decidir si monta el widget) como la
+// ruta /api/estate-ai (para el gate + el tope mensual), donde quien pega es
+// un visitante anónimo del sitio del tenant.
+export async function getTenantAiAgentAccess(tenantId: string) {
+  const tenant = await prisma.tenant.findUnique({
+    where: { id: tenantId },
+    select: { plan: { select: { allowAiAgent: true, maxAiMessagesPerMonth: true } } },
+  });
+  return {
+    allowed: tenant?.plan?.allowAiAgent ?? false,
+    maxMessagesPerMonth: tenant?.plan?.maxAiMessagesPerMonth ?? null,
+  };
 }
 
 // Para código que corre en el dominio raíz (yaa.com.ar), no en el

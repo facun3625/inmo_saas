@@ -566,6 +566,21 @@ export function argentinaDayStart(now = new Date()) {
 // Mismo criterio de estado en todos lados donde se muestra un cargo: la
 // lista de Cobranzas y el resumen de cuenta corriente de la ficha de
 // cliente (ver estateCharge en clientes/[id]/page.tsx).
+// Clases del badge de estado en la lista de Consultas — "Nueva" resalta a
+// propósito (es la única que importa detectar de un vistazo, ya que abrir
+// la consulta la pasa sola a "Contactado"); el resto queda neutro.
+export function consultaStatusBadgeClass(status: string): string {
+  switch (status) {
+    case "NEW":
+      return "bg-primary/10 text-primary font-medium";
+    case "QUALIFIED":
+      return "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400";
+    case "CLOSED":
+      return "bg-muted text-muted-foreground";
+    default:
+      return "bg-muted text-muted-foreground";
+  }
+}
 export function chargeStatus(
   charge: { cancelled: boolean; dueAt: Date },
   balance: { isZero(): boolean; greaterThan(n: number): boolean },

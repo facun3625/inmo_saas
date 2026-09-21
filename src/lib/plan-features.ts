@@ -11,7 +11,12 @@ export function planFeatureLines(
 }
 
 /** Mantiene descripciones propias y omite beneficios del catálogo ecommerce anterior. */
-export function estatePlanFeatureLines(plan: { description?: string | null; maxPublishedProperties?: number | null; allowCustomDomain: boolean }): string[] {
+export function estatePlanFeatureLines(plan: {
+  description?: string | null;
+  maxPublishedProperties?: number | null;
+  allowCustomDomain: boolean;
+  allowAiAgent?: boolean;
+}): string[] {
   const legacy = /\b(productos?|pedidos?|stock|cupones?|delivery|carrito|checkout|puntos|envíos?|entregas?)\b/i;
   const written = plan.description?.split(/\r?\n/).map(line => line.trim()).filter(line => line && !legacy.test(line)) ?? [];
   return Array.from(new Set([
@@ -19,6 +24,7 @@ export function estatePlanFeatureLines(plan: { description?: string | null; maxP
     "Sitio con la marca de tu inmobiliaria",
     "Contactos, consultas y visitas",
     ...(plan.allowCustomDomain ? ["Dominio propio"] : []),
+    ...(plan.allowAiAgent ? ["Agente de ventas IA"] : []),
     ...written,
   ]));
 }

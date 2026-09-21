@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { prisma } from "@/lib/prisma";
-import { requireTenantAdmin } from "@/lib/require-admin";
+import { requireTenantAdmin, getTenantAiAgentAccess } from "@/lib/require-admin";
 import { saveUploadedFile } from "@/lib/storage";
 import { saveTextSetting, saveImageSetting } from "@/lib/settings-storage";
 import { getTelegramSettings } from "@/lib/settings";
@@ -125,6 +125,49 @@ async function runRemoveTelegramSettings() {
   const { tenant } = await requireTenantAdmin();
   await prisma.settings.deleteMany({ where: { tenantId: tenant.id, key: { in: ["telegram_bot_token", "telegram_chat_id"] } } });
   revalidatePath("/admin/configuracion");
+  return { ok: true as const };
+}
+
+// ---------- Agente de ventas IA (solo tiendas con el plan habilitado) ----------
+
+const aiAgentSchema = z.object({
+  enabled: z.string().optional(),
+  tone: z.string().max(500).optional(),
+  rules: z.string().max(4000).optional(),
+  greeting: z.string().max(500).optional(),
+});
+
+export async function updateAiAgentSettings(formData: FormData) {
+  try {
+    return await runUpdateAiAgentSettings(formData);
+  } catch (err) {
+    return toUserError(err, "No se pudo guardar la configuración");
+  }
+}
+
+async function runUpdateAiAgentSettings(formData: FormData) {
+  const { tenant } = await requireTenantAdmin();
+  // Defensa aunque la pestaña ya esté gateada en la UI — un tenant sin el
+  // plan no puede activar esto pisando el formulario a mano.
+  const access = await getTenantAiAgentAccess(tenant.id);
+  if (!access.allowed) throw new ActionError("Tu plan actual no incluye el agente de ventas IA");
+
+  const parsed = aiAgentSchema.parse({
+    enabled: formData.get("enabled") || undefined,
+    tone: formData.get("tone") || undefined,
+    rules: formData.get("rules") || undefined,
+    greeting: formData.get("greeting") || undefined,
+  });
+
+  await Promise.all([
+    saveTextSetting(tenant.id, parsed.enabled === "true" ? "true" : "false", "ai_agent_enabled"),
+    saveTextSetting(tenant.id, parsed.tone ?? "", "ai_agent_tone"),
+    saveTextSetting(tenant.id, parsed.rules ?? "", "ai_agent_rules"),
+    saveTextSetting(tenant.id, parsed.greeting ?? "", "ai_agent_greeting"),
+  ]);
+
+  revalidatePath("/admin/configuracion");
+  revalidatePath("/");
   return { ok: true as const };
 }
 

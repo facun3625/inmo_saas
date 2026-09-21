@@ -18,6 +18,7 @@ import {
   dateLabel,
   labels,
   chargeStatus,
+  consultaStatusBadgeClass,
 } from "@/lib/estate/modules";
 import {
   estateRows,
@@ -518,7 +519,13 @@ export default async function EstateModulePage({
                   </div>
                 )}
                 <div className="flex items-center gap-3">
-                  <span className="rounded-full bg-muted px-3 py-1 text-xs">
+                  <span
+                    className={`rounded-full px-3 py-1 text-xs ${
+                      module === "consultas"
+                        ? consultaStatusBadgeClass(String(row.values.status))
+                        : "bg-muted"
+                    }`}
+                  >
                     {row.status}
                   </span>
                   {module === "propiedades" && (

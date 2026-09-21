@@ -8,7 +8,7 @@ import { MarketingSessionProvider } from "@/components/marketing/marketing-sessi
 import { MarketingWhatsappWidget } from "@/components/marketing/marketing-whatsapp-widget";
 import { SalesChatProvider } from "@/components/marketing/sales-chat-widget";
 import { StoreSettingsProvider } from "@/lib/store-settings-context";
-import { getStoreSettings, getSeoSettings } from "@/lib/settings";
+import { getStoreSettings, getSeoSettings, getAiAgentSettings } from "@/lib/settings";
 import { contrastText } from "@/lib/contrast-color";
 import { getCurrentTenant } from "@/lib/tenant";
 import { getPlatformMarketingSettings } from "@/lib/platform-billing";
@@ -18,6 +18,8 @@ import { toInstagramLink } from "@/lib/social-links";
 import { StorePwaProvider } from "@/components/store/store-pwa-provider";
 import { StorePushBanner } from "@/components/store/store-push-banner";
 import { PublicAnalyticsTracker } from "@/components/estate/public-analytics-tracker";
+import { AiAgentWidget } from "@/components/estate/ai-agent-widget";
+import { isAiAgentAvailable } from "@/lib/ai-agent/availability";
 
 async function isPlatformRoute() {
   const pathname = (await headers()).get("x-pathname") ?? "";
@@ -177,6 +179,10 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   }
 
   const storeSettings = await getStoreSettings(tenant.id);
+  const showAiWidget = !pathname.startsWith("/admin");
+  const [aiAgentAvailable, aiAgentSettings] = showAiWidget
+    ? await Promise.all([isAiAgentAvailable(tenant.id), getAiAgentSettings(tenant.id)])
+    : [false, null];
   // Se pisa acá --primary/--primary-foreground (no en :root, que también
   // usa el panel admin con su propio theming) para que "Color de botones"
   // de Identidad alcance a cualquier bg-primary/text-primary del sitio
@@ -208,7 +214,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                 </StorePwaProvider>
               </div>
             )}
-            {/* Desactivado a propósito: acá va a ir el widget de la IA. */}
+            {aiAgentAvailable && <AiAgentWidget greeting={aiAgentSettings?.greeting} />}
           </Providers>
         </StoreSettingsProvider>
       </body>

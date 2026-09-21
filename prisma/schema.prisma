@@ -74,6 +74,12 @@ model Plan {
   allowLoyalty           Boolean  @default(true)
   allowStats             Boolean  @default(true)
   allowTelegram          Boolean  @default(true)
+  // Habilita el agente de ventas IA en el sitio público del tenant — upsell
+  // nuevo, arranca en false. maxAiMessagesPerMonth acota el gasto real de
+  // la API del modelo (null = sin tope), enforced con un COUNT en vivo
+  // igual que maxPublishedProperties, no un contador aparte.
+  allowAiAgent           Boolean  @default(false)
+  maxAiMessagesPerMonth  Int?
   description            String?
   active                 Boolean  @default(true)
   // Solo un plan a la vez lleva el badge "Más elegido" en la landing
@@ -364,6 +370,7 @@ model Tenant {
   emailLogs            EmailLog[]
   whatsappLogs         WhatsappLog[]
   domainRequests       DomainRequest[]
+  aiConversations      EstateAiConversation[]
 }
 
 enum DomainRequestStatus {
@@ -1222,6 +1229,42 @@ model WhatsappLog {
 
   @@index([tenantId, createdAt])
   @@index([userId, createdAt])
+}
+
+// Charla del agente de ventas IA del sitio público de un tenant — distinta
+// de SalesBotConversation (esa es del bot de la landing de UrbIA, global de
+// la plataforma, sin tenantId). Acá cada tenant tiene sus propias charlas,
+// con datos reales de sus propiedades vía tool-calling (ver
+// src/lib/ai-agent/).
+model EstateAiConversation {
+  id             String   @id @default(cuid())
+  tenantId       String
+  contactName    String?
+  contactPhone   String?
+  // leadCreated: alguna acción de contacto (consulta o visita) ya se hizo
+  // en esta charla — se usa para el panel/admin. inquiryCreated es más
+  // puntual: evita que crear_consulta duplique la consulta general si el
+  // modelo la llama más de una vez en la misma charla.
+  leadCreated    Boolean  @default(false)
+  inquiryCreated Boolean  @default(false)
+  createdAt      DateTime @default(now())
+
+  tenant   Tenant            @relation(fields: [tenantId], references: [id])
+  messages EstateAiMessage[]
+
+  @@index([tenantId, createdAt])
+}
+
+model EstateAiMessage {
+  id             String   @id @default(cuid())
+  conversationId String
+  role           String // "user" | "model"
+  text           String
+  createdAt      DateTime @default(now())
+
+  conversation EstateAiConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId])
 }
 
 // ---------- Sobre nosotros ----------

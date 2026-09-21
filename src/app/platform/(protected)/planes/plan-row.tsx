@@ -24,12 +24,14 @@ export type PlanRowData = {
   maxPublishedProperties: number | null;
   maxProducts: number | null;
   maxOrdersPerMonth: number | null;
+  maxAiMessagesPerMonth: number | null;
   allowCustomDomain: boolean;
   allowPushNotifications: boolean;
   allowServices: boolean;
   allowLoyalty: boolean;
   allowStats: boolean;
   allowTelegram: boolean;
+  allowAiAgent: boolean;
   featured: boolean;
   description: string | null;
   active: boolean;
@@ -52,6 +54,7 @@ export function PlanRow({ plan, isFirst, isLast }: { plan: PlanRowData; isFirst:
   const [movePending, startMoveTransition] = useTransition();
   const [allowCustomDomain, setAllowCustomDomain] = useState(plan.allowCustomDomain);
   const [allowPushNotifications, setAllowPushNotifications] = useState(plan.allowPushNotifications);
+  const [allowAiAgent, setAllowAiAgent] = useState(plan.allowAiAgent);
   const [features, setFeatures] = useState({
     allowServices: plan.allowServices,
     allowLoyalty: plan.allowLoyalty,
@@ -150,6 +153,10 @@ export function PlanRow({ plan, isFirst, isLast }: { plan: PlanRowData; isFirst:
             <Label className="text-xs">Máx. pedidos/mes (opcional)</Label>
             <Input name="maxOrdersPerMonth" type="number" min="1" step="1" defaultValue={plan.maxOrdersPerMonth ?? ""} placeholder="Sin límite" />
           </div>
+          <div className="flex flex-col gap-1.5">
+            <Label className="text-xs">Máx. mensajes IA/mes (opcional)</Label>
+            <Input name="maxAiMessagesPerMonth" type="number" min="1" step="1" defaultValue={plan.maxAiMessagesPerMonth ?? ""} placeholder="Sin límite" />
+          </div>
         </div>
         <div className="flex flex-col gap-1.5">
           <Label className="text-xs">Qué incluye el plan (opcional)</Label>
@@ -173,6 +180,16 @@ export function PlanRow({ plan, isFirst, isLast }: { plan: PlanRowData; isFirst:
             <span className="font-medium">Notificaciones push</span>
             <span className="text-xs text-muted-foreground">
               Habilita /admin/notificaciones para mandar campañas push a los clientes de este plan.
+            </span>
+          </div>
+        </label>
+        <label className="flex items-center gap-2.5 text-sm">
+          <Switch checked={allowAiAgent} onCheckedChange={setAllowAiAgent} />
+          <input type="hidden" name="allowAiAgent" value={String(allowAiAgent)} />
+          <div className="flex flex-col">
+            <span className="font-medium">Agente de ventas IA</span>
+            <span className="text-xs text-muted-foreground">
+              Habilita el agente de IA en el sitio público de las tiendas de este plan.
             </span>
           </div>
         </label>
@@ -211,6 +228,7 @@ export function PlanRow({ plan, isFirst, isLast }: { plan: PlanRowData; isFirst:
           {plan.featured && <Badge className="gap-1"><StarIcon className="size-3 fill-current" />Más elegido</Badge>}
           {plan.allowCustomDomain && <Badge variant="outline">Dominio propio</Badge>}
           {plan.allowPushNotifications && <Badge variant="outline">Push</Badge>}
+          {plan.allowAiAgent && <Badge variant="outline">Agente IA</Badge>}
           <Badge variant="outline">{plan.tenantCount} {plan.tenantCount === 1 ? "tienda" : "tiendas"}</Badge>
         </div>
         {plan.description && <p className="whitespace-pre-line text-sm text-muted-foreground">{plan.description}</p>}
