@@ -57,6 +57,7 @@ export default async function AdminPage() {
     prisma.estateCharge.findMany({
       where: {
         tenantId: tenant.id,
+        contractId: { not: null },
         cancelled: false,
         dueAt: { lt: argentinaDayStart(now) },
       },
@@ -200,25 +201,6 @@ export default async function AdminPage() {
           </Link>
         </section>
       </div>
-      <section className="rounded-2xl border bg-card p-6">
-        <h2 className="font-semibold">Administración</h2>
-        <div className="mt-4 flex flex-wrap gap-3">
-          {[
-            ["emprendimientos", "Emprendimientos"],
-            ["mantenimiento", "Mantenimiento"],
-            ["consorcios", "Consorcios"],
-            ["unidades", "Unidades"],
-          ].map(([href, label]) => (
-            <Link
-              key={href}
-              href={`/admin/gestion/${href}`}
-              className="rounded-xl border px-4 py-2 text-sm hover:bg-muted"
-            >
-              {label}
-            </Link>
-          ))}
-        </div>
-      </section>
     </div>
   );
 }

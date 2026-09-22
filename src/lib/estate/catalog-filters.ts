@@ -1,3 +1,4 @@
+import { ORIENTATIONS, PET_POLICIES } from "./property-features";
 import type { Prisma } from "@/generated/prisma/client";
 
 // Sin dependencia de prisma a propósito: este módulo lo importa
@@ -15,6 +16,9 @@ export const CATALOG_FILTER_KEYS = [
   "bedrooms",
   "bathrooms",
   "garages",
+  "orientation",
+  "petsPolicy",
+  "creditEligible",
 ] as const;
 
 export type CatalogFilterKey = (typeof CATALOG_FILTER_KEYS)[number];
@@ -28,6 +32,9 @@ export const CATALOG_FILTER_LABELS: Record<CatalogFilterKey, string> = {
   bedrooms: "Dormitorios",
   bathrooms: "Baños",
   garages: "Cocheras",
+  orientation: "Orientación",
+  petsPolicy: "Mascotas",
+  creditEligible: "Apto crédito",
 };
 
 export type ParsedCatalogFilters = {
@@ -41,6 +48,9 @@ export type ParsedCatalogFilters = {
   bedrooms?: number;
   bathrooms?: number;
   garages?: number;
+  orientation?: string;
+  petsPolicy?: string;
+  creditEligible?: boolean;
 };
 
 // enabledKeys es una lista ORDENADA — el orden define en qué posición
@@ -71,6 +81,9 @@ export function parseCatalogFilters(
     bedrooms: isEnabled("bedrooms") ? exactValue(search.bedrooms) : undefined,
     bathrooms: isEnabled("bathrooms") ? exactValue(search.bathrooms) : undefined,
     garages: isEnabled("garages") ? exactValue(search.garages) : undefined,
+    orientation: isEnabled("orientation") && ORIENTATIONS.some((v) => v === search.orientation) ? search.orientation : undefined,
+    petsPolicy: isEnabled("petsPolicy") && PET_POLICIES.some((v) => v === search.petsPolicy) ? search.petsPolicy : undefined,
+    creditEligible: isEnabled("creditEligible") && ["true", "false"].includes(search.creditEligible ?? "") ? search.creditEligible === "true" : undefined,
   };
 }
 
@@ -99,5 +112,8 @@ export function buildPublishedPropertyWhere(
     ...(filters.bedrooms !== undefined ? { bedrooms: filters.bedrooms } : {}),
     ...(filters.bathrooms !== undefined ? { bathrooms: filters.bathrooms } : {}),
     ...(filters.garages !== undefined ? { garages: filters.garages } : {}),
+    ...(filters.orientation ? { orientation: filters.orientation } : {}),
+    ...(filters.petsPolicy ? { petsPolicy: filters.petsPolicy } : {}),
+    ...(filters.creditEligible !== undefined ? { creditEligible: filters.creditEligible } : {}),
   };
 }

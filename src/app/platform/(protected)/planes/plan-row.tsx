@@ -25,6 +25,9 @@ export type PlanRowData = {
   maxProducts: number | null;
   maxOrdersPerMonth: number | null;
   maxAiMessagesPerMonth: number | null;
+  allowRealEstate: boolean;
+  allowConsortium: boolean;
+  allowPostSale: boolean;
   allowCustomDomain: boolean;
   allowPushNotifications: boolean;
   allowServices: boolean;
@@ -45,6 +48,12 @@ const FEATURE_TOGGLES = [
   { name: "allowTelegram", label: "Tab Telegram" },
 ] as const;
 
+const MODULE_TOGGLES = [
+  { name: "allowRealEstate", label: "Inmobiliaria" },
+  { name: "allowConsortium", label: "Consorcios" },
+  { name: "allowPostSale", label: "Postventa" },
+] as const;
+
 export function PlanRow({ plan, isFirst, isLast }: { plan: PlanRowData; isFirst: boolean; isLast: boolean }) {
   const [editing, setEditing] = useState(false);
   const [pending, startTransition] = useTransition();
@@ -55,6 +64,11 @@ export function PlanRow({ plan, isFirst, isLast }: { plan: PlanRowData; isFirst:
   const [allowCustomDomain, setAllowCustomDomain] = useState(plan.allowCustomDomain);
   const [allowPushNotifications, setAllowPushNotifications] = useState(plan.allowPushNotifications);
   const [allowAiAgent, setAllowAiAgent] = useState(plan.allowAiAgent);
+  const [modules, setModules] = useState({
+    allowRealEstate: plan.allowRealEstate,
+    allowConsortium: plan.allowConsortium,
+    allowPostSale: plan.allowPostSale,
+  });
   const [features, setFeatures] = useState({
     allowServices: plan.allowServices,
     allowLoyalty: plan.allowLoyalty,
@@ -163,6 +177,21 @@ export function PlanRow({ plan, isFirst, isLast }: { plan: PlanRowData; isFirst:
           <Textarea name="description" defaultValue={plan.description ?? ""} rows={5} placeholder="Una prestación por línea" />
           <p className="text-xs text-muted-foreground">Cada renglón se publica como un beneficio en la landing.</p>
         </div>
+        <fieldset className="flex flex-col gap-2 rounded-lg border bg-muted/20 p-3">
+          <legend className="px-1 text-xs font-semibold">Módulos incluidos</legend>
+          <div className="flex flex-wrap gap-x-6 gap-y-2">
+            {MODULE_TOGGLES.map((toggle) => (
+              <label key={toggle.name} className="flex items-center gap-2.5 text-sm">
+                <Switch
+                  checked={modules[toggle.name]}
+                  onCheckedChange={(checked) => setModules((current) => ({ ...current, [toggle.name]: checked }))}
+                />
+                <input type="hidden" name={toggle.name} value={String(modules[toggle.name])} />
+                <span className="font-medium">{toggle.label}</span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
         <label className="flex items-center gap-2.5 text-sm">
           <Switch checked={allowCustomDomain} onCheckedChange={setAllowCustomDomain} />
           <input type="hidden" name="allowCustomDomain" value={String(allowCustomDomain)} />
@@ -229,6 +258,9 @@ export function PlanRow({ plan, isFirst, isLast }: { plan: PlanRowData; isFirst:
           {plan.allowCustomDomain && <Badge variant="outline">Dominio propio</Badge>}
           {plan.allowPushNotifications && <Badge variant="outline">Push</Badge>}
           {plan.allowAiAgent && <Badge variant="outline">Agente IA</Badge>}
+          {plan.allowRealEstate && <Badge variant="outline">Inmobiliaria</Badge>}
+          {plan.allowConsortium && <Badge variant="outline">Consorcios</Badge>}
+          {plan.allowPostSale && <Badge variant="outline">Postventa</Badge>}
           <Badge variant="outline">{plan.tenantCount} {plan.tenantCount === 1 ? "tienda" : "tiendas"}</Badge>
         </div>
         {plan.description && <p className="whitespace-pre-line text-sm text-muted-foreground">{plan.description}</p>}

@@ -73,6 +73,9 @@ export default async function PropiedadesPage({
       bedrooms: search.bedrooms ?? "",
       bathrooms: search.bathrooms ?? "",
       garages: search.garages ?? "",
+      orientation: search.orientation ?? "",
+      petsPolicy: search.petsPolicy ?? "",
+      creditEligible: search.creditEligible ?? "",
       page: String(n),
     })}`;
   }
@@ -98,6 +101,9 @@ export default async function PropiedadesPage({
               bedrooms: search.bedrooms ?? "",
               bathrooms: search.bathrooms ?? "",
               garages: search.garages ?? "",
+              orientation: search.orientation ?? "",
+              petsPolicy: search.petsPolicy ?? "",
+              creditEligible: search.creditEligible ?? "",
             }}
             propertyTypes={filterOptions.propertyTypes}
             cities={filterOptions.cities}

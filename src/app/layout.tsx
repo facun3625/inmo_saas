@@ -179,7 +179,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   }
 
   const storeSettings = await getStoreSettings(tenant.id);
-  const showAiWidget = !pathname.startsWith("/admin");
+  const showAiWidget = !pathname.startsWith("/admin") && !pathname.startsWith("/agente");
   const [aiAgentAvailable, aiAgentSettings] = showAiWidget
     ? await Promise.all([isAiAgentAvailable(tenant.id), getAiAgentSettings(tenant.id)])
     : [false, null];

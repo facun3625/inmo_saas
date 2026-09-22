@@ -3,6 +3,7 @@ import { getCurrentTenant } from "@/lib/tenant";
 import { getStoreSettings } from "@/lib/settings";
 import { StoreHero } from "@/components/catalog/store-hero";
 import { StoreFooter } from "@/components/catalog/store-footer";
+import { getSearchOptions } from "@/lib/estate/search-options";
 import { AlertForm } from "./alert-form";
 
 export const metadata = { title: "Recibí alertas de propiedades" };
@@ -10,7 +11,7 @@ export const metadata = { title: "Recibí alertas de propiedades" };
 export default async function AlertasPage() {
   const tenant = await getCurrentTenant();
   if (!tenant) notFound();
-  const { storeName } = await getStoreSettings(tenant.id);
+  const [{ storeName }, options] = await Promise.all([getStoreSettings(tenant.id), getSearchOptions(tenant.id)]);
 
   return (
     <div className="flex flex-1 flex-col">
@@ -26,13 +27,13 @@ export default async function AlertasPage() {
             </h1>
             <span className="mx-auto h-1 w-12 rounded-full bg-primary" />
             <p className="text-sm leading-6 text-muted-foreground">
-              Contanos qué estás buscando y {storeName} te avisa apenas publique
-              una propiedad que coincida.
+              Guardá lo que estás buscando para que {storeName} pueda cruzarlo
+              con las propiedades disponibles y contactarte cuando encuentre una coincidencia.
             </p>
           </div>
 
           <div className="mx-auto w-full max-w-2xl lg:max-w-5xl">
-            <AlertForm />
+            <AlertForm options={options} />
           </div>
         </div>
       </main>

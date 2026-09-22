@@ -91,9 +91,6 @@ async function main() {
       "contratos",
       "cobranzas",
       "emprendimientos",
-      "mantenimiento",
-      "consorcios",
-      "unidades",
     ].map((m) => `/admin/gestion/${m}`),
   ]) {
     const response = await request(path);
@@ -102,6 +99,15 @@ async function main() {
     assert(!html.includes('"digest":'), `${path}: server render error`);
     assert(!html.includes("NEXT_HTTP_ERROR_FALLBACK;500"), path);
     console.log(`OK ${path}`);
+  }
+  for (const path of [
+    "/admin/gestion/mantenimiento",
+    "/admin/gestion/consorcios",
+    "/admin/gestion/unidades",
+  ]) {
+    const response = await request(path);
+    assert.equal(response.status, 404, path);
+    console.log(`OK ${path} removed`);
   }
   const property = await db.estateProperty.findFirstOrThrow({
     where: { tenantId: tenant.id, published: true },

@@ -70,6 +70,9 @@ export async function EstateCatalog({ tenantId }: { tenantId: string }) {
               bedrooms: "",
               bathrooms: "",
               garages: "",
+              orientation: "",
+              petsPolicy: "",
+              creditEligible: "",
             }}
             propertyTypes={filterOptions.propertyTypes}
             cities={filterOptions.cities}

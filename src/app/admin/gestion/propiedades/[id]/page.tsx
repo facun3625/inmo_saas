@@ -10,7 +10,7 @@ const NAV_ITEMS = [
   { id: "section-publicacion", label: "Publicación", icon: <TextIcon className="size-4" /> },
   { id: "section-precio", label: "Precio y características", icon: <BadgeDollarSignIcon className="size-4" /> },
   { id: "section-ubicacion", label: "Ubicación", icon: <MapPinIcon className="size-4" /> },
-  { id: "section-media", label: "Fotos y video", icon: <ImageIcon className="size-4" /> },
+  { id: "section-media", label: "Fotos, video y plano", icon: <ImageIcon className="size-4" /> },
 ];
 
 export default async function EditarPropiedadPage({

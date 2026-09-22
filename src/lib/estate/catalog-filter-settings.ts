@@ -1,10 +1,9 @@
 import { prisma } from "@/lib/prisma";
 import { CATALOG_FILTER_KEYS, CATALOG_FILTER_LABELS, type CatalogFilterKey } from "./catalog-filters";
 
-// El buscador público (home + /mapa) siempre tuvo estos 4 fijos, en este
-// orden — queda como default para no cambiarle la búsqueda a nadie que
-// todavía no entró a elegir/ordenar filtros desde /admin/pagina.
-const DEFAULT_ENABLED: readonly CatalogFilterKey[] = ["q", "operation", "propertyType", "bedrooms"];
+// Filtros iniciales para sitios sin configuración. Las selecciones guardadas
+// por cada inmobiliaria conservan su orden y sus filtros habilitados.
+const DEFAULT_ENABLED: readonly CatalogFilterKey[] = ["q", "operation", "propertyType", "bedrooms", "orientation", "petsPolicy", "creditEligible"];
 
 // Lista ORDENADA de los filtros habilitados — el orden guardado (ver
 // updateCatalogFilters) es el orden en el que se muestran en el buscador.

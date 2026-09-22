@@ -86,6 +86,7 @@ export function AccountMenu({
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="min-w-44 p-1.5">
+        {session.user.role === "AGENT" && <DropdownMenuItem render={<Link href="/agente" />}>Mis consultas</DropdownMenuItem>}
         {session.user.role === "ADMIN" && (
           <DropdownMenuItem
             render={<Link href="/admin" />}

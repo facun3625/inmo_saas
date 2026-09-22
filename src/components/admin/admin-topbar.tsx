@@ -18,9 +18,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { AdminSidebar } from "@/components/admin/admin-sidebar";
+import { ModuleSwitcher } from "@/components/admin/module-switcher";
 import { useAdminTheme } from "@/components/admin/admin-theme-root";
 import type { StockAlert } from "@/lib/stock-alerts";
 import type { PlanFeatures } from "@/lib/require-admin";
+import type { PlatformModuleOption } from "@/lib/platform-modules";
 import { cn } from "@/lib/utils";
 
 function PlanPill({ billingStatus, trialDaysLeft }: { billingStatus: string; trialDaysLeft: number | null }) {
@@ -58,7 +60,7 @@ function initials(name?: string | null) {
 
 export type AdminNotification = { id: string; type: "ORDER" | "INQUIRY" | "SERVICE_INQUIRY" | "DEVELOPMENT_INQUIRY"; title: string; detail: string; href: string; createdAt: string };
 
-export function AdminTopbar({ stockAlerts, newInquiryCount = 0, newServiceInquiryCount = 0, newDevelopmentInquiryCount = 0, newOrderCount = 0, notificationCount = 0, notifications = [], billingStatus, trialDaysLeft, features, planInfo, salesModeConfigured = true, impersonating = false, platformUrl }: { storeOpen: boolean; stockAlerts: StockAlert[]; newInquiryCount?: number; newServiceInquiryCount?: number; newDevelopmentInquiryCount?: number; newOrderCount?: number; notificationCount?: number; notifications?: AdminNotification[]; billingStatus: string; trialDaysLeft: number | null; features?: PlanFeatures; planInfo?: { name: string; canUpgrade: boolean } | null; salesModeConfigured?: boolean; impersonating?: boolean; platformUrl?: string }) {
+export function AdminTopbar({ stockAlerts, newInquiryCount = 0, newServiceInquiryCount = 0, newDevelopmentInquiryCount = 0, newOrderCount = 0, notificationCount = 0, notifications = [], billingStatus, trialDaysLeft, features, planInfo, modules, salesModeConfigured = true, impersonating = false, platformUrl }: { storeOpen: boolean; stockAlerts: StockAlert[]; newInquiryCount?: number; newServiceInquiryCount?: number; newDevelopmentInquiryCount?: number; newOrderCount?: number; notificationCount?: number; notifications?: AdminNotification[]; billingStatus: string; trialDaysLeft: number | null; features?: PlanFeatures; planInfo?: { name: string; canUpgrade: boolean } | null; modules: PlatformModuleOption[]; salesModeConfigured?: boolean; impersonating?: boolean; platformUrl?: string }) {
   const { data: session } = useSession();
   const [mobileOpen, setMobileOpen] = useState(false);
   const { containerRef, theme, toggleTheme } = useAdminTheme();
@@ -100,17 +102,18 @@ export function AdminTopbar({ stockAlerts, newInquiryCount = 0, newServiceInquir
           <AdminSidebar onNavigate={() => setMobileOpen(false)} newInquiryCount={newInquiryCount} newServiceInquiryCount={newServiceInquiryCount} newDevelopmentInquiryCount={newDevelopmentInquiryCount} newOrderCount={newOrderCount} features={features} planInfo={planInfo} />
         </SheetContent>
       </Sheet>
-      <Button
-        variant="outline"
-        size="icon"
-        aria-label="Abrir menú"
-        className="lg:hidden"
-        onClick={() => setMobileOpen(true)}
-      >
-        <MenuIcon />
-      </Button>
-
-      <div className="hidden lg:block" />
+      <div className="flex min-w-0 items-center gap-2">
+        <Button
+          variant="outline"
+          size="icon"
+          aria-label="Abrir menú"
+          className="shrink-0 lg:hidden"
+          onClick={() => setMobileOpen(true)}
+        >
+          <MenuIcon />
+        </Button>
+        <ModuleSwitcher modules={modules} container={containerRef} />
+      </div>
 
       <div className="flex items-center gap-2">
         <PlanPill billingStatus={billingStatus} trialDaysLeft={trialDaysLeft} />

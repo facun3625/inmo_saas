@@ -35,6 +35,9 @@ import { BillingSuggestionsPanel, type BillingSuggestion } from "@/components/es
 import { PaymentForm, CancelCharge } from "@/components/estate/payment-form";
 import { FeatureToggleButton } from "@/components/estate/feature-toggle-button";
 import { FeaturedPropertiesOrder } from "@/components/estate/featured-properties-order";
+import { inquiryChannels, inquiryChannelWhere, parseInquiryChannel } from "@/lib/estate/inquiry-channels";
+import { AgentAccessForm } from "@/components/estate/agent-access-form";
+import { InquiryMatches } from "@/components/estate/inquiry-matches";
 import { ClickableRow } from "@/components/estate/clickable-row";
 
 const MIN_OPTIONS = [1, 2, 3, 4].map((n) => ({ value: String(n), label: `${n}+` }));
@@ -88,6 +91,8 @@ export default async function EstateModulePage({
     bathroomsMin?: string;
     garagesMin?: string;
     role?: string;
+    channel?: string;
+    assignedAgentId?: string;
   }>;
 }) {
   const { tenant } = await requireTenantAdmin();
@@ -116,7 +121,7 @@ export default async function EstateModulePage({
       }
     : isClientes
       ? { role: search.role && roleOptions.includes(search.role) ? search.role : undefined }
-      : {};
+      : module === "consultas" ? { channel: parseInquiryChannel(search.channel), assignedAgentId: search.assignedAgentId || undefined } : {};
   const [options, propertyFilterOptions, featuredProperties] = await Promise.all([
     estateOptions(tenant.id),
     isPropiedades ? estatePropertyFilterOptions(tenant.id) : Promise.resolve(null),
@@ -128,6 +133,9 @@ export default async function EstateModulePage({
         })
       : Promise.resolve([]),
   ]);
+  const inquiryCounts = module === "consultas" ? Object.fromEntries(await Promise.all(
+    Object.keys(inquiryChannels).map(async (channel) => [channel, await prisma.estateInquiry.count({ where: { tenantId: tenant.id, ...inquiryChannelWhere(parseInquiryChannel(channel)) } })]),
+  )) : {};
   const records = await estateRows(
     module,
     tenant.id,
@@ -154,11 +162,11 @@ export default async function EstateModulePage({
       ? await prisma.estateCharge.findMany({
           where: {
             tenantId: tenant.id,
+            contractId: { not: null },
             ...(q ? { concept: { contains: q, mode: "insensitive" } } : {}),
           },
           include: {
             contract: { include: { contact: true } },
-            unit: { include: { building: true } },
             receipts: { orderBy: { createdAt: "desc" } },
           },
           orderBy: { dueAt: "desc" },
@@ -237,14 +245,6 @@ export default async function EstateModulePage({
           }))}
         />
       )}
-      {module === "consorcios" && (
-        <Link
-          href="/admin/gestion/unidades"
-          className="inline-flex items-center gap-2 text-sm text-primary"
-        >
-          Administrar unidades <ArrowUpRight className="size-4" />
-        </Link>
-      )}
       {!isPropiedades && !isContratos && !isClientes && (search.new || edit) && (
         <section className="rounded-2xl border bg-card p-5 sm:p-7">
           {module === "consultas" && edit && (
@@ -264,6 +264,8 @@ export default async function EstateModulePage({
               Cerrar
             </Link>
           </div>
+          {module === "agentes" && edit && <AgentAccessForm agentId={edit.id} />}
+          {module === "consultas" && edit && <InquiryMatches tenantId={tenant.id} inquiryId={edit.id} />}
           <RecordForm
             key={edit?.id ?? "new"}
             module={module}
@@ -273,7 +275,9 @@ export default async function EstateModulePage({
           />
         </section>
       )}
+      {module === "consultas" && <nav aria-label="Tipos de consulta" className="flex flex-wrap gap-2">{Object.entries(inquiryChannels).map(([channel, label]) => <Link key={channel} href={`${base}?channel=${channel}`} aria-current={filters.channel === channel ? "page" : undefined} className={`rounded-xl border px-4 py-2 text-sm ${filters.channel === channel ? "bg-primary text-primary-foreground" : "bg-card"}`}>{label} ({inquiryCounts[channel] ?? 0})</Link>)}</nav>}
       <form className="flex flex-col gap-3">
+        {module === "consultas" && <><input type="hidden" name="channel" value={filters.channel} /><FilterSelect name="assignedAgentId" label="Todos los responsables" value={filters.assignedAgentId} options={[{ value: "unassigned", label: "Sin asignar" }, ...options.inquiryAgents.map((agent) => ({ value: agent.id, label: agent.label }))]} /></>}
         <div className="flex max-w-md gap-2">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-3 size-4 text-muted-foreground" />
@@ -403,7 +407,7 @@ export default async function EstateModulePage({
                     <p className="mt-1 text-sm text-muted-foreground">
                       {charge.contract
                         ? `${charge.contract.reference} · ${charge.contract.contact.name}`
-                        : `${charge.unit?.building.name} · ${charge.unit?.label}`}{" "}
+                        : "Contrato no disponible"}{" "}
                       · Vence {dateLabel(charge.dueAt)}
                     </p>
                   </div>

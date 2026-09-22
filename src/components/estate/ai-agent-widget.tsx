@@ -1,11 +1,37 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { MessageCircleIcon, SendIcon, XIcon } from "lucide-react";
 
 type ChatMessage = { role: "user" | "model"; text: string };
 
 const DEFAULT_GREETING = "¡Hola! ¿En qué te puedo ayudar? Preguntame por una propiedad, un barrio o un precio.";
+
+// El agente incluye links a propiedades en su texto (ver system-prompt.ts)
+// — a veces como link markdown [texto](/propiedades/xxx), a veces como la
+// ruta sola. Se soportan las dos formas y se muestran como link clickeable,
+// nunca como texto/corchetes sueltos.
+const LINK_RE = /\[([^\]]+)\]\((\/propiedades\/[a-zA-Z0-9]+)\)|(\/propiedades\/[a-zA-Z0-9]+)/g;
+
+function renderMessageText(text: string, linkClassName: string) {
+  const nodes: ReactNode[] = [];
+  let lastIndex = 0;
+  let key = 0;
+  for (const match of text.matchAll(LINK_RE)) {
+    const start = match.index ?? 0;
+    if (start > lastIndex) nodes.push(<span key={key++}>{text.slice(lastIndex, start)}</span>);
+    const [full, mdLabel, mdUrl, bareUrl] = match;
+    const url = mdUrl ?? bareUrl;
+    nodes.push(
+      <a key={key++} href={url} target="_blank" rel="noopener noreferrer" className={linkClassName}>
+        {mdLabel ?? "Ver propiedad →"}
+      </a>,
+    );
+    lastIndex = start + full.length;
+  }
+  if (lastIndex < text.length) nodes.push(<span key={key++}>{text.slice(lastIndex)}</span>);
+  return nodes;
+}
 
 // Widget del agente de ventas IA del sitio público de un tenant — a
 // diferencia de SalesChatProvider (bot de la landing de UrbIA, sin datos
@@ -83,11 +109,13 @@ export function AiAgentWidget({ greeting }: { greeting?: string | null }) {
                 key={i}
                 className={
                   m.role === "user"
-                    ? "ml-auto max-w-[85%] rounded-2xl rounded-br-sm bg-primary px-3.5 py-2 text-sm text-primary-foreground"
-                    : "mr-auto max-w-[85%] rounded-2xl rounded-bl-sm bg-muted px-3.5 py-2 text-sm"
+                    ? "ml-auto max-w-[85%] rounded-2xl rounded-br-sm bg-primary px-3.5 py-2 text-sm text-primary-foreground whitespace-pre-line"
+                    : "mr-auto max-w-[85%] rounded-2xl rounded-bl-sm bg-muted px-3.5 py-2 text-sm whitespace-pre-line"
                 }
               >
-                {m.text}
+                {m.role === "model"
+                  ? renderMessageText(m.text, "font-medium text-primary underline underline-offset-2")
+                  : m.text}
               </div>
             ))}
             {pending && (

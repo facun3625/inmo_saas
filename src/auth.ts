@@ -185,6 +185,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth(async (req) => {
                     where: { email, tenantId: null, role: "CUSTOMER" },
                   })
                 : null;
+          if (user?.role === "AGENT" && !(await prisma.estateAgent.findFirst({ where: { userId: user.id, tenantId: user.tenantId ?? "", accessEnabled: true } }))) return null;
           if (!user?.passwordHash) {
             await Promise.all([recordFailure(accountKey), recordFailure(ipKey)]);
             return null;

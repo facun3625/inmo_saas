@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { ORIENTATIONS, PET_POLICIES, CREDIT_OPTIONS } from "./property-features";
 
 export const requiredText = z
   .string()
@@ -128,6 +129,9 @@ export const propertySchema = z
     totalArea: optionalAmount,
     description: notes,
     videoUrl: optionalUrl,
+    orientation: z.union([z.literal(""), z.enum(ORIENTATIONS)]).default("").transform((v) => v || null),
+    petsPolicy: z.union([z.literal(""), z.enum(PET_POLICIES)]).default("").transform((v) => v || null),
+    creditEligible: z.union([z.literal(""), z.enum(CREDIT_OPTIONS)]).default("").transform((v) => v === "" ? null : v === "Sí"),
     published: z.boolean(),
     featured: z.boolean(),
     offerType: z.enum(["SALE", "RENT", "RENT_TEMP", "BOTH"]),
@@ -253,17 +257,11 @@ export const visitSchema = z
     notes,
   })
   .refine((v) => v.endsAt > v.startsAt, "El fin debe ser posterior al inicio");
-export const chargeSchema = z
-  .object({
-    contractId: optionalId,
-    unitId: optionalId,
-    concept: requiredText,
-    period: z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/, "Período inválido"),
-    dueAt: day,
-    amount,
-    currency,
-  })
-  .refine(
-    (v) => Boolean(v.contractId) !== Boolean(v.unitId),
-    "Seleccioná un contrato o una unidad",
-  );
+export const chargeSchema = z.object({
+  contractId: requiredText,
+  concept: requiredText,
+  period: z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/, "Período inválido"),
+  dueAt: day,
+  amount,
+  currency,
+});

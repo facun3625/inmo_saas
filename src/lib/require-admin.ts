@@ -1,19 +1,35 @@
 import { auth } from "@/auth";
+import { headers } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { getCurrentTenant } from "@/lib/tenant";
+import { agentSectionForPath, parseAgentPermissions } from "@/lib/agent-permissions";
 
 export async function requireTenantAdmin() {
   const tenant = await getCurrentTenant();
   if (!tenant) throw new Error("Tienda no encontrada");
 
   const session = await auth();
-  if (session?.user.role !== "ADMIN" || session.user.tenantId !== tenant.id) {
+  if (session?.user.role === "ADMIN" && session.user.tenantId === tenant.id) {
+    return { session, tenant };
+  }
+  if (session?.user.role !== "AGENT" || session.user.tenantId !== tenant.id) {
     throw new Error("No autorizado");
   }
-  return { session, tenant };
+  const pathname = (await headers()).get("x-pathname") ?? "";
+  const section = agentSectionForPath(pathname);
+  const agent = await prisma.estateAgent.findFirst({
+    where: { tenantId: tenant.id, userId: session.user.id, accessEnabled: true },
+    select: { permissions: true },
+  });
+  const permissions = parseAgentPermissions(agent?.permissions);
+  if (!section || permissions[section] === "NONE") throw new Error("No autorizado");
+  return { session, tenant, permissions };
 }
 
 export type PlanFeatures = {
+  allowRealEstate: boolean;
+  allowConsortium: boolean;
+  allowPostSale: boolean;
   allowServices: boolean;
   allowLoyalty: boolean;
   allowStats: boolean;
@@ -24,10 +40,14 @@ export type PlanFeatures = {
 };
 
 export async function requireTenantAdminWithPlan() {
-  const { session, tenant } = await requireTenantAdmin();
+  const access = await requireTenantAdmin();
+  const { session, tenant } = access;
   const plan = await prisma.plan.findUnique({
     where: { id: tenant.planId ?? "" },
     select: {
+      allowRealEstate: true,
+      allowConsortium: true,
+      allowPostSale: true,
       allowServices: true,
       allowLoyalty: true,
       allowStats: true,
@@ -38,6 +58,10 @@ export async function requireTenantAdminWithPlan() {
     },
   });
   const features: PlanFeatures = {
+    // Los tenants sin plan son cuentas heredadas: conservan Inmobiliaria.
+    allowRealEstate: plan?.allowRealEstate ?? true,
+    allowConsortium: plan?.allowConsortium ?? false,
+    allowPostSale: plan?.allowPostSale ?? false,
     allowServices: plan?.allowServices ?? false,
     allowLoyalty: plan?.allowLoyalty ?? false,
     allowStats: plan?.allowStats ?? false,
@@ -46,7 +70,12 @@ export async function requireTenantAdminWithPlan() {
     allowPushNotifications: plan?.allowPushNotifications ?? false,
     allowAiAgent: plan?.allowAiAgent ?? false,
   };
-  return { session, tenant, features };
+  return {
+    session,
+    tenant,
+    features,
+    permissions: "permissions" in access ? access.permissions : undefined,
+  };
 }
 
 // A diferencia de requireTenantAdminWithPlan, no pide sesión de admin — la

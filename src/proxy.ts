@@ -82,7 +82,7 @@ export default auth((req) => {
       response = NextResponse.redirect(loginUrl);
     } else if (isPlatformRoute && user.role !== "SUPER_ADMIN") {
       response = NextResponse.redirect(new URL("/", req.nextUrl.origin));
-    } else if (isAdminRoute && user.role !== "ADMIN") {
+    } else if (isAdminRoute && user.role !== "ADMIN" && user.role !== "AGENT") {
       response = NextResponse.redirect(new URL("/", req.nextUrl.origin));
     } else {
       response = NextResponse.next({ request: { headers: requestHeaders } });

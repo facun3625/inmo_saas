@@ -1,3 +1,5 @@
+import { ORIENTATIONS, PET_POLICIES, CREDIT_OPTIONS } from "./property-features";
+
 export type Field = {
   name: string;
   label: string;
@@ -79,7 +81,7 @@ export const modules: Record<string, Module> = {
     description: "Propietarios, interesados e inquilinos en una misma agenda.",
     fields: [
       { name: "name", label: "Nombre o razón social", required: true },
-      { name: "email", label: "Email", type: "email" },
+      { name: "email", label: "Email de contacto", type: "email" },
       { name: "phone", label: "Teléfono" },
       { name: "taxId", label: "DNI / CUIT" },
       { name: "address", label: "Dirección" },
@@ -151,6 +153,9 @@ export const modules: Record<string, Module> = {
         type: "decimal",
       },
       { name: "totalArea", label: "Superficie total (m²)", type: "decimal" },
+      { name: "orientation", label: "Orientación", options: ORIENTATIONS },
+      { name: "petsPolicy", label: "Mascotas", options: PET_POLICIES },
+      { name: "creditEligible", label: "Apto crédito", options: CREDIT_OPTIONS },
       { name: "description", label: "Descripción pública", type: "textarea" },
 
       { name: "section-ubicacion", type: "section", label: "Ubicación" },
@@ -171,12 +176,18 @@ export const modules: Record<string, Module> = {
       },
       { name: "longitude", label: "Longitud", type: "coordinate" },
 
-      { name: "section-media", type: "section", label: "Fotos y video" },
+      { name: "section-media", type: "section", label: "Fotos, video y plano" },
       {
         name: "images",
         label: "Fotografías",
         type: "file",
         hint: "JPG, PNG o WEBP. Hasta 10 imágenes nuevas de 8 MB cada una; 18 MB por envío. La primera foto es la portada — reordená o borrá las existentes con los controles de cada miniatura.",
+      },
+      {
+        name: "floorPlanUrl",
+        label: "Plano opcional",
+        type: "floor-plan",
+        hint: "Imagen JPG, PNG o WEBP, o PDF. Hasta 8 MB. Fotos y plano: máximo 18 MB por envío.",
       },
       {
         name: "videoUrl",
@@ -196,6 +207,7 @@ export const modules: Record<string, Module> = {
         relation: "contacts",
         required: true,
       },
+      { name: "assignedAgentId", label: "Agente responsable", relation: "inquiryAgents" },
       { name: "propertyId", label: "Propiedad", relation: "properties" },
       { name: "message", label: "Consulta", type: "textarea", required: true },
       {
@@ -360,19 +372,13 @@ export const modules: Record<string, Module> = {
   cobranzas: {
     title: "Cobranzas",
     singular: "obligación",
-    description:
-      "Cuotas de alquiler y expensas, con saldo y registro de cobros parciales.",
+    description: "Cuotas de alquiler, saldos y registro de cobros parciales.",
     fields: [
       {
         name: "contractId",
-        label: "Contrato (alquiler)",
+        label: "Contrato de alquiler",
         relation: "contracts",
-      },
-      {
-        name: "unitId",
-        label: "Unidad (expensas)",
-        relation: "units",
-        hint: "Seleccioná un contrato o una unidad, nunca ambos.",
+        required: true,
       },
       { name: "concept", label: "Concepto", required: true },
       { name: "period", label: "Período", type: "month", required: true },
@@ -384,7 +390,7 @@ export const modules: Record<string, Module> = {
   emprendimientos: {
     title: "Emprendimientos",
     singular: "emprendimiento",
-    description: "Agrupá propiedades y unidades de un mismo proyecto.",
+    description: "Agrupá propiedades de un mismo proyecto.",
     fields: [
       { name: "name", label: "Nombre", required: true },
       { name: "address", label: "Dirección", required: true },
@@ -395,71 +401,6 @@ export const modules: Record<string, Module> = {
         options: ["PROJECT", "CONSTRUCTION", "FINISHED"],
       },
       { name: "description", label: "Descripción", type: "textarea" },
-    ],
-  },
-  mantenimiento: {
-    title: "Mantenimiento",
-    singular: "reclamo",
-    description:
-      "Incidencias y trabajos pendientes en los inmuebles administrados.",
-    fields: [
-      {
-        name: "propertyId",
-        label: "Propiedad",
-        relation: "properties",
-        required: true,
-      },
-      { name: "title", label: "Asunto", required: true },
-      {
-        name: "description",
-        label: "Detalle",
-        type: "textarea",
-        required: true,
-      },
-      {
-        name: "priority",
-        label: "Prioridad",
-        options: ["NORMAL", "HIGH", "URGENT"],
-      },
-      {
-        name: "status",
-        label: "Estado",
-        options: ["OPEN", "APPROVED", "IN_PROGRESS", "RESOLVED", "CANCELLED"],
-      },
-      { name: "supplier", label: "Proveedor / responsable" },
-    ],
-  },
-  consorcios: {
-    title: "Consorcios",
-    singular: "consorcio",
-    description:
-      "Edificios y unidades administradas. Las obligaciones se registran desde Cobranzas.",
-    fields: [
-      { name: "name", label: "Nombre", required: true },
-      { name: "address", label: "Dirección", required: true },
-      { name: "notes", label: "Notas", type: "textarea" },
-    ],
-  },
-  unidades: {
-    title: "Unidades de consorcios",
-    singular: "unidad",
-    description:
-      "Identificá cada unidad y su coeficiente porcentual de participación.",
-    fields: [
-      {
-        name: "buildingId",
-        label: "Consorcio",
-        relation: "buildings",
-        required: true,
-      },
-      { name: "label", label: "Unidad / piso", required: true },
-      { name: "responsibleName", label: "Responsable", required: true },
-      {
-        name: "coefficient",
-        label: "Coeficiente (%)",
-        type: "decimal",
-        required: true,
-      },
     ],
   },
 };
@@ -566,17 +507,21 @@ export function argentinaDayStart(now = new Date()) {
 // Mismo criterio de estado en todos lados donde se muestra un cargo: la
 // lista de Cobranzas y el resumen de cuenta corriente de la ficha de
 // cliente (ver estateCharge en clientes/[id]/page.tsx).
-// Clases del badge de estado en la lista de Consultas — "Nueva" resalta a
-// propósito (es la única que importa detectar de un vistazo, ya que abrir
-// la consulta la pasa sola a "Contactado"); el resto queda neutro.
+// Clases del badge de estado en la lista de Consultas — un color suave
+// (nunca saturado, para no ensuciar la lista) por cada estado, así se
+// distinguen entre sí de un vistazo. "Nueva" queda la más marcada de las
+// cuatro a propósito, porque es la única que hace falta detectar rápido
+// (abrir la consulta la pasa sola a "Contactado").
 export function consultaStatusBadgeClass(status: string): string {
   switch (status) {
     case "NEW":
-      return "bg-primary/10 text-primary font-medium";
+      return "bg-blue-500/15 text-blue-700 dark:text-blue-300 font-semibold";
+    case "CONTACTED":
+      return "bg-amber-500/10 text-amber-700 dark:text-amber-400";
     case "QUALIFIED":
       return "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400";
     case "CLOSED":
-      return "bg-muted text-muted-foreground";
+      return "bg-slate-500/10 text-slate-600 dark:text-slate-400";
     default:
       return "bg-muted text-muted-foreground";
   }

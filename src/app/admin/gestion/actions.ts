@@ -1,5 +1,6 @@
 "use server";
 
+import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
@@ -7,9 +8,11 @@ import { Prisma } from "@/generated/prisma/client";
 import { requireTenantAdmin } from "@/lib/require-admin";
 import { ActionError, toUserError } from "@/lib/action-error";
 import { saveUploadedFile } from "@/lib/storage";
+import { FLOOR_PLAN_TYPES, MAX_FLOOR_PLAN_SIZE } from "@/lib/estate/property-features";
 import { receiveEstatePayment } from "@/lib/estate/ledger";
 import { periodDueDate } from "@/lib/estate/billing-automation";
 import { runEstateBillingCycle } from "@/lib/estate/billing-cron";
+import { agentPermissionsFromForm } from "@/lib/agent-permissions";
 import { modules } from "@/lib/estate/modules";
 import {
   agentSchema,
@@ -36,8 +39,6 @@ async function verifyRelations(
     ownerId?: string | null;
     developmentId?: string | null;
     contractId?: string | null;
-    unitId?: string | null;
-    buildingId?: string | null;
   },
 ) {
   if (
@@ -69,20 +70,6 @@ async function verifyRelations(
     }))
   )
     throw new ActionError("Contrato no encontrado");
-  if (
-    data.unitId &&
-    !(await tx.estateUnit.findUnique({
-      where: { id_tenantId: { id: data.unitId, tenantId } },
-    }))
-  )
-    throw new ActionError("Unidad no encontrada");
-  if (
-    data.buildingId &&
-    !(await tx.estateBuilding.findUnique({
-      where: { id_tenantId: { id: data.buildingId, tenantId } },
-    }))
-  )
-    throw new ActionError("Consorcio no encontrado");
 }
 function refreshEstate() {
   revalidatePath("/admin", "layout");
@@ -126,6 +113,8 @@ export async function saveEstateRecord(
   try {
     if (!Object.hasOwn(modules, module))
       throw new ActionError("Sección inválida");
+    if (module === "agentes" && session.user.role !== "ADMIN")
+      throw new ActionError("Sólo un administrador puede gestionar agentes");
     const raw = Object.fromEntries(form.entries());
     const files = form
       .getAll("images")
@@ -143,6 +132,8 @@ export async function saveEstateRecord(
         "Subí hasta 10 imágenes JPG, PNG o WEBP, de hasta 8 MB cada una y 18 MB en total.",
       );
     const uploads: string[] = [];
+    let floorPlanUrl: string | null | undefined;
+    const floorPlan = form.get("floorPlan");
     // Validate the property and ownership before writing files to disk.
     if (module === "propiedades") {
       propertySchema.parse({
@@ -159,6 +150,15 @@ export async function saveEstateRecord(
         }))
       )
         throw new ActionError("Propiedad no encontrada");
+      if (floorPlan instanceof File && floorPlan.size > 0) {
+        if (floorPlan.size > MAX_FLOOR_PLAN_SIZE || !FLOOR_PLAN_TYPES.some((type) => type === floorPlan.type))
+          throw new ActionError("El plano debe ser JPG, PNG, WEBP o PDF de hasta 8 MB.");
+        if (files.reduce((total, file) => total + file.size, floorPlan.size) > 18 * 1024 * 1024)
+          throw new ActionError("Las fotos y el plano no pueden superar 18 MB por envío.");
+        floorPlanUrl = await saveUploadedFile(floorPlan, `${tenant.id}/properties/plans`);
+      } else if (form.has("removeFloorPlan")) {
+        floorPlanUrl = null;
+      }
       for (const file of files)
         uploads.push(await saveUploadedFile(file, `${tenant.id}/properties`));
     }
@@ -290,9 +290,40 @@ export async function saveEstateRecord(
           }
           case "agentes": {
             const data = agentSchema.parse(raw);
-            record = id
-              ? await tx.estateAgent.update({ where, data })
-              : await tx.estateAgent.create({ data: { ...data, tenantId } });
+            if (id) {
+              record = await tx.estateAgent.update({ where, data });
+              break;
+            }
+
+            const accessEnabled = form.has("accessEnabled");
+          const permissions = agentPermissionsFromForm(form);
+            if (!accessEnabled) {
+              record = await tx.estateAgent.create({ data: { ...data, tenantId, permissions } });
+              break;
+            }
+
+            const loginEmail = z.email("Ingresá un usuario válido (email)").max(254).parse(
+              String(form.get("loginEmail") ?? "").trim().toLowerCase(),
+            );
+            const password = z.string().min(12, "La contraseña debe tener al menos 12 caracteres").max(72, "La contraseña puede tener hasta 72 caracteres").parse(
+              String(form.get("loginPassword") ?? ""),
+            );
+            const existing = await tx.user.findUnique({
+              where: { tenantId_email: { tenantId, email: loginEmail } },
+            });
+            if (existing) throw new ActionError("Ese usuario ya pertenece a otra cuenta de esta inmobiliaria");
+            const user = await tx.user.create({
+              data: {
+                tenantId,
+                name: data.name,
+                email: loginEmail,
+                passwordHash: await bcrypt.hash(password, 12),
+                role: "AGENT",
+              },
+            });
+            record = await tx.estateAgent.create({
+              data: { ...data, tenantId, userId: user.id, accessEnabled: true, permissions },
+            });
             break;
           }
           case "propiedades": {
@@ -339,8 +370,8 @@ export async function saveEstateRecord(
                 );
             }
             record = id
-              ? await tx.estateProperty.update({ where, data })
-              : await tx.estateProperty.create({ data: { ...data, tenantId } });
+              ? await tx.estateProperty.update({ where, data: { ...data, floorPlanUrl } })
+              : await tx.estateProperty.create({ data: { ...data, floorPlanUrl, tenantId } });
             for (const [operation, enabled, price, currency, isTemporary, whatsapp, showPrice] of [
               ["SALE", saleEnabled, salePrice, saleCurrency, false, saleWhatsapp, saleShowPrice],
               ["RENT", rentEnabled, rentPrice, rentCurrency, temporary, rentWhatsapp, rentShowPrice],
@@ -398,6 +429,7 @@ export async function saveEstateRecord(
           case "consultas": {
             const data = z
               .object({
+                assignedAgentId: optionalId,
                 contactId: requiredText,
                 propertyId: optionalId,
                 message: notes.refine(Boolean, "Ingresá la consulta"),
@@ -406,6 +438,8 @@ export async function saveEstateRecord(
               })
               .parse(raw);
             await verifyRelations(tx, tenantId, data);
+            if (data.assignedAgentId && !(await tx.estateAgent.findFirst({ where: { id: data.assignedAgentId, tenantId } })))
+              throw new ActionError("Agente no encontrado en esta inmobiliaria");
             record = id
               ? await tx.estateInquiry.update({ where, data })
               : await tx.estateInquiry.create({ data: { ...data, tenantId } });
@@ -490,17 +524,15 @@ export async function saveEstateRecord(
               );
             const data = chargeSchema.parse(raw);
             await verifyRelations(tx, tenantId, data);
-            if (data.contractId) {
-              const contract = await tx.estateContract.findFirstOrThrow({
-                where: { id: data.contractId, tenantId },
-              });
-              if (contract.status !== "ACTIVE")
-                throw new ActionError("El contrato debe estar activo");
-              if (contract.currency !== data.currency)
-                throw new ActionError(
-                  "La moneda debe coincidir con la del contrato",
-                );
-            }
+            const contract = await tx.estateContract.findFirstOrThrow({
+              where: { id: data.contractId, tenantId },
+            });
+            if (contract.status !== "ACTIVE")
+              throw new ActionError("El contrato debe estar activo");
+            if (contract.currency !== data.currency)
+              throw new ActionError(
+                "La moneda debe coincidir con la del contrato",
+              );
             record = await tx.estateCharge.create({
               data: { ...data, tenantId },
             });
@@ -521,72 +553,6 @@ export async function saveEstateRecord(
               : await tx.estateDevelopment.create({
                   data: { ...data, tenantId },
                 });
-            break;
-          }
-          case "mantenimiento": {
-            const data = z
-              .object({
-                propertyId: requiredText,
-                title: requiredText,
-                description: notes.refine(Boolean, "Ingresá el detalle"),
-                priority: z.enum(["NORMAL", "HIGH", "URGENT"]),
-                status: z.enum([
-                  "OPEN",
-                  "APPROVED",
-                  "IN_PROGRESS",
-                  "RESOLVED",
-                  "CANCELLED",
-                ]),
-                supplier: z.string().max(300),
-              })
-              .parse(raw);
-            await verifyRelations(tx, tenantId, data);
-            record = id
-              ? await tx.estateMaintenance.update({ where, data })
-              : await tx.estateMaintenance.create({
-                  data: { ...data, tenantId },
-                });
-            break;
-          }
-          case "consorcios": {
-            const data = z
-              .object({ name: requiredText, address: requiredText, notes })
-              .parse(raw);
-            record = id
-              ? await tx.estateBuilding.update({ where, data })
-              : await tx.estateBuilding.create({ data: { ...data, tenantId } });
-            break;
-          }
-          case "unidades": {
-            const data = z
-              .object({
-                buildingId: requiredText,
-                label: requiredText,
-                responsibleName: requiredText,
-                coefficient: amount.refine(
-                  (v) => Number(v) <= 100,
-                  "El coeficiente no puede superar 100%",
-                ),
-              })
-              .parse(raw);
-            await verifyRelations(tx, tenantId, data);
-            const total = await tx.estateUnit.aggregate({
-              where: {
-                tenantId,
-                buildingId: data.buildingId,
-                id: { not: id ?? "" },
-              },
-              _sum: { coefficient: true },
-            });
-            if (
-              new Prisma.Decimal(total._sum.coefficient ?? 0)
-                .plus(data.coefficient)
-                .greaterThan(100)
-            )
-              throw new ActionError("La suma de coeficientes supera el 100%");
-            record = id
-              ? await tx.estateUnit.update({ where, data })
-              : await tx.estateUnit.create({ data: { ...data, tenantId } });
             break;
           }
           default:
@@ -718,6 +684,11 @@ export async function recordEstateReceipt(form: FormData) {
       .parse(Object.fromEntries(form));
     await prisma.$transaction(
       async (tx) => {
+        const charge = await tx.estateCharge.findFirst({
+          where: { id: data.chargeId, tenantId: tenant.id, contractId: { not: null } },
+          select: { id: true },
+        });
+        if (!charge) throw new ActionError("Obligación no disponible");
         await receiveEstatePayment(tx, tenant.id, session.user.id, data);
       },
       { isolationLevel: "Serializable" },
@@ -736,7 +707,7 @@ export async function cancelEstateCharge(form: FormData) {
     await prisma.$transaction(
       async (tx) => {
         const charge = await tx.estateCharge.findFirst({
-          where: { id, tenantId: tenant.id },
+          where: { id, tenantId: tenant.id, contractId: { not: null } },
           include: { _count: { select: { receipts: true } } },
         });
         if (!charge || charge._count.receipts)

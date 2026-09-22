@@ -18,6 +18,7 @@ import {
   type OfferType,
 } from "@/components/estate/property-offer-fields";
 import { ContractLateFeeFields, ContractDepositFields } from "@/components/estate/contract-payment-fields";
+import { AgentInitialAccessFields } from "@/components/estate/agent-initial-access-fields";
 
 export { inputClass };
 
@@ -94,6 +95,8 @@ export function RecordForm({
                 router.replace(`/admin/gestion/contratos/${result.id}`, { scroll: false });
               } else if (module === "clientes") {
                 router.replace(`/admin/gestion/clientes/${result.id}`, { scroll: false });
+              } else if (module === "agentes") {
+                router.replace(`/admin/gestion/agentes?edit=${result.id}`, { scroll: false });
               } else {
                 ref.current?.reset();
               }
@@ -175,6 +178,7 @@ export function RecordForm({
                 type === "textarea" ||
                 type === "roles" ||
                 type === "file" ||
+                type === "floor-plan" ||
                 isLocationField ||
                 isOfferPriceField ||
                 isVideoField ||
@@ -320,6 +324,16 @@ export function RecordForm({
                       initialLng={values.longitude ? String(values.longitude) : undefined}
                       onDirty={markDirty}
                     />
+                  ) : type === "floor-plan" ? (
+                    <div className="space-y-3">
+                      {value && (
+                        <div className="flex flex-wrap items-center gap-4 text-sm">
+                          <a href={String(value)} target="_blank" rel="noreferrer" className="text-primary underline">Ver plano actual</a>
+                          <label className="flex items-center gap-2"><input type="checkbox" name="removeFloorPlan" /> Quitar plano</label>
+                        </div>
+                      )}
+                      <input id={field.name} name="floorPlan" type="file" accept="image/jpeg,image/png,image/webp,application/pdf" className={inputClass} />
+                    </div>
                   ) : isVideoField ? (
                     <PropertyVideoField
                       defaultValue={value ? String(value) : ""}
@@ -400,7 +414,7 @@ export function RecordForm({
                       required={field.required}
                       defaultValue={String(value ?? "")}
                     >
-                      <option value="">Seleccione una opción</option>
+                      <option value="">{module === "propiedades" && ["orientation", "petsPolicy", "creditEligible"].includes(field.name) ? "Sin especificar" : "Seleccione una opción"}</option>
                       {field.options.map((o) => (
                         <option key={o} value={o}>
                           {labels[o] ?? o}
@@ -468,6 +482,7 @@ export function RecordForm({
             </div>
           );
         })}
+        {module === "agentes" && !id && <AgentInitialAccessFields />}
       </fieldset>
       {error && (
         <p

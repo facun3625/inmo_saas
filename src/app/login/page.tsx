@@ -10,12 +10,12 @@ import { LoginForm } from "./login-form";
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ onboarded?: string }>;
+  searchParams: Promise<{ onboarded?: string; agentDisabled?: string }>;
 }) {
   const tenant = await getCurrentTenant();
   if (!tenant) notFound();
 
-  const { onboarded } = await searchParams;
+  const { onboarded, agentDisabled } = await searchParams;
   const { storeName, logoUrl } = await getStoreSettings(tenant.id);
 
   return (
@@ -39,6 +39,7 @@ export default async function LoginPage({
         <div className="h-px bg-border" />
 
         <div className="px-6 py-6">
+          {agentDisabled === "1" && <p role="alert" className="mb-4 text-sm text-destructive">Tu acceso de agente está deshabilitado. Contactá al administrador de la inmobiliaria.</p>}
           <Suspense>
             <LoginForm tenantId={tenant.id} isDemo={isDemoSubdomain(tenant.subdomain)} />
           </Suspense>

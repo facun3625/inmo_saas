@@ -16,6 +16,9 @@ const planSchema = z.object({
   maxProducts: z.coerce.number().int().positive().optional(),
   maxOrdersPerMonth: z.coerce.number().int().positive().optional(),
   maxAiMessagesPerMonth: z.coerce.number().int().positive().optional(),
+  allowRealEstate: z.boolean(),
+  allowConsortium: z.boolean(),
+  allowPostSale: z.boolean(),
   allowCustomDomain: z.boolean(),
   allowPushNotifications: z.boolean(),
   allowServices: z.boolean(),
@@ -24,7 +27,10 @@ const planSchema = z.object({
   allowTelegram: z.boolean(),
   allowAiAgent: z.boolean(),
   description: z.string().optional(),
-});
+}).refine(
+  (plan) => plan.allowRealEstate || plan.allowConsortium || plan.allowPostSale,
+  { message: "El plan debe incluir al menos un módulo" },
+);
 
 function parsePlanForm(formData: FormData) {
   return planSchema.parse({
@@ -36,6 +42,9 @@ function parsePlanForm(formData: FormData) {
     maxProducts: formData.get("maxProducts") || undefined,
     maxOrdersPerMonth: formData.get("maxOrdersPerMonth") || undefined,
     maxAiMessagesPerMonth: formData.get("maxAiMessagesPerMonth") || undefined,
+    allowRealEstate: formData.get("allowRealEstate") === "true",
+    allowConsortium: formData.get("allowConsortium") === "true",
+    allowPostSale: formData.get("allowPostSale") === "true",
     allowCustomDomain: formData.get("allowCustomDomain") === "true",
     allowPushNotifications: formData.get("allowPushNotifications") === "true",
     allowServices: formData.get("allowServices") === "true",
@@ -71,6 +80,9 @@ async function runCreatePlan(formData: FormData) {
       maxProducts: parsed.maxProducts ?? null,
       maxOrdersPerMonth: parsed.maxOrdersPerMonth ?? null,
       maxAiMessagesPerMonth: parsed.maxAiMessagesPerMonth ?? null,
+      allowRealEstate: parsed.allowRealEstate,
+      allowConsortium: parsed.allowConsortium,
+      allowPostSale: parsed.allowPostSale,
       allowCustomDomain: parsed.allowCustomDomain,
       allowPushNotifications: parsed.allowPushNotifications,
       allowServices: parsed.allowServices,
@@ -110,6 +122,9 @@ async function runUpdatePlan(id: string, formData: FormData) {
       maxProducts: formData.has("maxProducts") ? parsed.maxProducts ?? null : undefined,
       maxOrdersPerMonth: formData.has("maxOrdersPerMonth") ? parsed.maxOrdersPerMonth ?? null : undefined,
       maxAiMessagesPerMonth: formData.has("maxAiMessagesPerMonth") ? parsed.maxAiMessagesPerMonth ?? null : undefined,
+      allowRealEstate: parsed.allowRealEstate,
+      allowConsortium: parsed.allowConsortium,
+      allowPostSale: parsed.allowPostSale,
       allowCustomDomain: parsed.allowCustomDomain,
       allowPushNotifications: parsed.allowPushNotifications,
       allowServices: parsed.allowServices,

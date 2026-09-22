@@ -18,11 +18,22 @@ const FEATURE_TOGGLES = [
   { name: "allowTelegram", label: "Tab Telegram" },
 ] as const;
 
+const MODULE_TOGGLES = [
+  { name: "allowRealEstate", label: "Inmobiliaria" },
+  { name: "allowConsortium", label: "Consorcios" },
+  { name: "allowPostSale", label: "Postventa" },
+] as const;
+
 export function NewPlanForm() {
   const [pending, startTransition] = useTransition();
   const [allowCustomDomain, setAllowCustomDomain] = useState(false);
   const [allowPushNotifications, setAllowPushNotifications] = useState(false);
   const [allowAiAgent, setAllowAiAgent] = useState(false);
+  const [modules, setModules] = useState({
+    allowRealEstate: true,
+    allowConsortium: false,
+    allowPostSale: false,
+  });
   const [features, setFeatures] = useState({ allowServices: true, allowLoyalty: true, allowStats: true, allowTelegram: true });
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -80,6 +91,21 @@ export function NewPlanForm() {
         <Textarea name="description" rows={5} placeholder={"Una prestación por línea. Ej:\nPedidos sin límite\nStock y estadísticas\nHasta 3 administradores"} />
         <p className="text-xs text-muted-foreground">Cada renglón se publica como un beneficio en la landing.</p>
       </div>
+      <fieldset className="flex flex-col gap-2 rounded-lg border bg-muted/20 p-3">
+        <legend className="px-1 text-xs font-semibold">Módulos incluidos</legend>
+        <div className="flex flex-wrap gap-x-6 gap-y-2">
+          {MODULE_TOGGLES.map((toggle) => (
+            <label key={toggle.name} className="flex items-center gap-2.5 text-sm">
+              <Switch
+                checked={modules[toggle.name]}
+                onCheckedChange={(checked) => setModules((current) => ({ ...current, [toggle.name]: checked }))}
+              />
+              <input type="hidden" name={toggle.name} value={String(modules[toggle.name])} />
+              <span className="font-medium">{toggle.label}</span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
       <label className="flex items-center gap-2.5 text-sm">
         <Switch checked={allowCustomDomain} onCheckedChange={setAllowCustomDomain} />
         <input type="hidden" name="allowCustomDomain" value={String(allowCustomDomain)} />

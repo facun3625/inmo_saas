@@ -3,6 +3,7 @@ import type { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { buildPublishedPropertyWhere, type ParsedCatalogFilters } from "@/lib/estate/catalog-filters";
 import { parseDate } from "@/lib/estate/validation";
+import { ORIENTATIONS, PET_POLICIES } from "@/lib/estate/property-features";
 import { money } from "@/lib/estate/modules";
 import type { RuntimeTool } from "./run-agent";
 
@@ -54,6 +55,9 @@ export function buildAgentTools(tenantId: string, conversationId: string): Runti
           city: { type: "string" },
           neighborhood: { type: "string" },
           bedrooms: { type: "integer", description: "Cantidad exacta de dormitorios" },
+          orientation: { type: "string", enum: ORIENTATIONS },
+          petsPolicy: { type: "string", enum: PET_POLICIES },
+          creditEligible: { type: "boolean", description: "Si es apto crédito" },
           minPrice: { type: "number" },
           maxPrice: { type: "number" },
           texto: { type: "string", description: "Búsqueda libre por título, ciudad o barrio" },
@@ -68,6 +72,9 @@ export function buildAgentTools(tenantId: string, conversationId: string): Runti
           city: typeof args.city === "string" ? args.city : undefined,
           neighborhood: typeof args.neighborhood === "string" ? args.neighborhood : undefined,
           bedrooms: typeof args.bedrooms === "number" ? args.bedrooms : undefined,
+          orientation: ORIENTATIONS.some((v) => v === args.orientation) ? String(args.orientation) : undefined,
+          petsPolicy: PET_POLICIES.some((v) => v === args.petsPolicy) ? String(args.petsPolicy) : undefined,
+          creditEligible: typeof args.creditEligible === "boolean" ? args.creditEligible : undefined,
           q: typeof args.texto === "string" ? args.texto : undefined,
         };
         const where = buildPublishedPropertyWhere(tenantId, filters);
@@ -103,6 +110,9 @@ export function buildAgentTools(tenantId: string, conversationId: string): Runti
               propertyType: p.propertyType,
               city: p.city,
               neighborhood: p.neighborhood,
+              orientation: p.orientation,
+              petsPolicy: p.petsPolicy,
+              creditEligible: p.creditEligible,
               bedrooms: p.bedrooms,
               bathrooms: p.bathrooms,
               price: priceLabel(listing),
@@ -135,6 +145,10 @@ export function buildAgentTools(tenantId: string, conversationId: string): Runti
           address: property.address,
           city: property.city,
           neighborhood: property.neighborhood,
+          orientation: property.orientation,
+          petsPolicy: property.petsPolicy,
+          creditEligible: property.creditEligible,
+          floorPlanUrl: property.floorPlanUrl,
           bedrooms: property.bedrooms,
           bathrooms: property.bathrooms,
           garages: property.garages,

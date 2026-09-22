@@ -182,6 +182,9 @@ export default async function PropertyPage({
                   ["Dormitorios", p.bedrooms],
                   ["Baños", p.bathrooms],
                   ["Cocheras", p.garages],
+                  ...(p.orientation ? [["Orientación", p.orientation]] : []),
+                  ...(p.petsPolicy ? [["Mascotas", p.petsPolicy]] : []),
+                  ...(p.creditEligible != null ? [["Apto crédito", p.creditEligible ? "Sí" : "No"]] : []),
                   [
                     "Superficie total",
                     p.totalArea ? `${p.totalArea} m²` : "Consultar",
@@ -203,6 +206,16 @@ export default async function PropertyPage({
                 {p.description ||
                   "Contactanos para conocer todos los detalles."}
               </p>
+              {p.floorPlanUrl && (
+                <section className="mt-6 space-y-3">
+                  <h2 className="text-xl font-semibold">Plano de la propiedad</h2>
+                  <a href={p.floorPlanUrl} target="_blank" rel="noreferrer" className="block text-sm font-medium text-primary underline underline-offset-4">
+                    {p.floorPlanUrl.endsWith(".pdf") ? "Ver plano en PDF" : (
+                      <Image src={p.floorPlanUrl} alt={`Plano de ${p.title}`} width={1200} height={900} className="max-h-[600px] w-full rounded-xl border object-contain" />
+                    )}
+                  </a>
+                </section>
+              )}
               {p.videoUrl && (
                 <div className="mt-6">
                   <VideoPlayer url={p.videoUrl} />

@@ -54,6 +54,12 @@ model Plan {
   priceMonthly           Decimal
   priceAnnual            Decimal?
   trialDays              Int      @default(10)
+  // Módulos contratados. Inmobiliaria queda activa por defecto para
+  // conservar el comportamiento de todos los planes creados antes de que
+  // la plataforma incorporara Consorcios y Postventa.
+  allowRealEstate        Boolean  @default(true)
+  allowConsortium        Boolean  @default(false)
+  allowPostSale          Boolean  @default(false)
   // Límites opcionales — null significa "sin límite" en esa dimensión.
   maxPublishedProperties Int?
   maxProducts            Int?
@@ -475,6 +481,7 @@ model SalesBotMessage {
 // ---------- Auth ----------
 
 enum Role {
+  AGENT
   CUSTOMER
   ADMIN
   SUPER_ADMIN
@@ -486,6 +493,7 @@ enum Role {
 }
 
 model User {
+  estateAgent EstateAgent?
   id            String    @id @default(cuid())
   tenantId      String?
   name          String?
@@ -1326,6 +1334,13 @@ model EstateContact {
 // Entidad separada de EstateContact a propósito: mezclarlos confundiría el
 // listado de clientes con la nómina de personal.
 model EstateAgent {
+  userId String? @unique
+  accessEnabled Boolean @default(false)
+  // Alcances del panel del agente. Se guarda como JSON para poder agregar
+  // nuevas secciones sin alterar las cuentas existentes.
+  permissions Json @default("{}")
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+  assignedInquiries EstateInquiry[]
   id        String   @id @default(cuid())
   tenantId  String
   name      String
@@ -1334,6 +1349,7 @@ model EstateAgent {
   createdAt DateTime @default(now())
   tenant    Tenant   @relation(fields: [tenantId], references: [id])
 
+  @@unique([id, tenantId])
   @@index([tenantId, name])
 }
 
@@ -1435,6 +1451,10 @@ model EstateProperty {
   // interpreta y embebe en /propiedades/[id], no se sube el video al
   // servidor. Ver src/lib/estate/video-embed.ts.
   videoUrl      String?
+  orientation   String?
+  petsPolicy    String?
+  creditEligible Boolean?
+  floorPlanUrl  String?
   propertyType  String
   address       String
   city          String
@@ -1612,6 +1632,10 @@ model EstateMedia {
 }
 
 model EstateInquiry {
+  @@index([tenantId, assignedAgentId])
+  assignedAgentId String?
+  assignedAgent EstateAgent? @relation(fields: [assignedAgentId, tenantId], references: [id, tenantId])
+  searchCriteria Json?
   id         String          @id @default(cuid())
   tenantId   String
   contactId  String

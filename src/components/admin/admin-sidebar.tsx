@@ -30,6 +30,8 @@ import { useStoreSettings } from "@/lib/store-settings-context";
 import { useAdminPwa } from "@/components/admin/pwa-provider";
 import { cn } from "@/lib/utils";
 import type { PlanFeatures } from "@/lib/require-admin";
+import { AGENT_MENU_SECTIONS, type AgentPermissions } from "@/lib/agent-permission-types";
+import { platformModuleForPath } from "@/lib/platform-modules";
 
 type Section = {
   href: string;
@@ -41,7 +43,12 @@ type Section = {
 };
 
 const baseSections: Section[] = [
-  { href: "/admin", label: "Resumen", icon: LayoutDashboardIcon },
+  {
+    href: "/admin",
+    label: "Resumen",
+    icon: LayoutDashboardIcon,
+    group: "Inmobiliaria",
+  },
 
   // Gestión Inmobiliaria — todo lo comercial: propiedades, agenda, contratos
   // y las dos bandejas de consultas (inmobiliarias y de servicios) viven
@@ -68,6 +75,12 @@ const baseSections: Section[] = [
     href: "/admin/gestion/consultas",
     label: "Consultas inmobiliarias",
     icon: MessageSquareTextIcon,
+    group: "Gestión Inmobiliaria",
+  },
+  {
+    href: "/admin/gestion/busquedas",
+    label: "Búsquedas guardadas",
+    icon: SearchIcon,
     group: "Gestión Inmobiliaria",
   },
   {
@@ -127,27 +140,6 @@ const baseSections: Section[] = [
     group: "Gestión Inmobiliaria",
   },
 
-  // Consorcio — administración de edificios, separada de la gestión
-  // comercial de arriba.
-  {
-    href: "/admin/gestion/mantenimiento",
-    label: "Mantenimiento",
-    icon: SettingsIcon,
-    group: "Consorcio",
-  },
-  {
-    href: "/admin/gestion/consorcios",
-    label: "Consorcios",
-    icon: BuildingIcon,
-    group: "Consorcio",
-  },
-  {
-    href: "/admin/gestion/unidades",
-    label: "Unidades",
-    icon: BuildingIcon,
-    group: "Consorcio",
-  },
-
   // Cuenta
   {
     href: "/admin/pagina",
@@ -183,6 +175,24 @@ const baseSections: Section[] = [
   },
 ];
 
+const consortiumSections: Section[] = [
+  {
+    href: "/admin/consorcios",
+    label: "Resumen",
+    icon: BuildingIcon,
+    group: "Consorcios",
+  },
+];
+
+const postSaleSections: Section[] = [
+  {
+    href: "/admin/postventa",
+    label: "Resumen",
+    icon: SettingsIcon,
+    group: "Postventa",
+  },
+];
+
 export function AdminSidebar({
   onNavigate,
   newInquiryCount = 0,
@@ -191,6 +201,7 @@ export function AdminSidebar({
   newOrderCount = 0,
   features,
   planInfo,
+  agentPermissions,
 }: {
   onNavigate?: () => void;
   newInquiryCount?: number;
@@ -199,6 +210,7 @@ export function AdminSidebar({
   newOrderCount?: number;
   features?: PlanFeatures;
   planInfo?: { name: string; canUpgrade: boolean } | null;
+  agentPermissions?: AgentPermissions;
 }) {
   const { storeName, logoUrl } = useStoreSettings();
   const { canInstall, promptInstall } = useAdminPwa();
@@ -206,9 +218,18 @@ export function AdminSidebar({
   const searchParams = useSearchParams();
   const panel = searchParams.get("panel");
   const [query, setQuery] = useState("");
-  const sections = baseSections.filter(
-    (s) => !s.feature || !features || features[s.feature],
-  );
+  const activeModule = platformModuleForPath(pathname);
+  const moduleSections = activeModule === "consortium"
+    ? consortiumSections
+    : activeModule === "post_sale"
+      ? postSaleSections
+      : baseSections;
+  const sections = moduleSections.filter((s) => {
+    if (s.feature && features && !features[s.feature]) return false;
+    if (!agentPermissions) return true;
+    const section = AGENT_MENU_SECTIONS.find((item) => item.href === s.href);
+    return Boolean(section && agentPermissions[section.key] !== "NONE");
+  });
   const filtered = query.trim()
     ? sections.filter((s) =>
         s.label.toLowerCase().includes(query.trim().toLowerCase()),
@@ -299,6 +320,14 @@ export function AdminSidebar({
               </p>
             )}
             {group.items.map((s) => {
+              const agentSection = agentPermissions
+                ? AGENT_MENU_SECTIONS.find((item) => item.href === s.href)
+                : undefined;
+              const href = agentSection?.key === "inquiries"
+                ? "/agente?channel=property"
+                : agentSection?.key === "searches"
+                  ? "/agente?channel=searches"
+                  : s.href;
               const active =
                 s.href === "/admin"
                   ? pathname === "/admin"
@@ -308,7 +337,7 @@ export function AdminSidebar({
               return (
                 <div key={s.href} className="flex flex-col">
                   <Link
-                    href={s.href}
+                    href={href}
                     onClick={() => {
                       onNavigate?.();
                       if (s.subitems)

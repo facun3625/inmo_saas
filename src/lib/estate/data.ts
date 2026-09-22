@@ -1,3 +1,4 @@
+import { inquiryChannelWhere, type InquiryChannel } from "./inquiry-channels";
 import { prisma } from "@/lib/prisma";
 import { labels, money, dateLabel } from "./modules";
 
@@ -34,6 +35,8 @@ function values(record: object): Record<string, string | boolean | string[]> {
   );
 }
 export type EstateFilters = {
+  channel?: InquiryChannel;
+  assignedAgentId?: string;
   operation?: string;
   propertyType?: string;
   city?: string;
@@ -145,8 +148,8 @@ export async function estateRows(
         id: r.id,
         title: r.name,
         subtitle: [r.email, r.phone].filter(Boolean).join(" · "),
-        status: "",
-        detail: "",
+        status: r.accessEnabled && r.userId ? "Acceso habilitado" : "Sin acceso",
+        detail: "Abrir para configurar el acceso personal",
         values: values(r),
       }));
     case "propiedades":
@@ -206,6 +209,7 @@ export async function estateRows(
                 : "SALE";
           return {
             ...values(r),
+            creditEligible: r.creditEligible == null ? "" : r.creditEligible ? "Sí" : "No",
             offerType,
             salePrice: sale?.price?.toString() ?? "",
             saleCurrency: sale?.currency ?? "USD",
@@ -223,20 +227,22 @@ export async function estateRows(
         await prisma.estateInquiry.findMany({
           where: {
             ...scope,
+            ...(!id && filters.channel ? inquiryChannelWhere(filters.channel) : {}),
+            ...(!id && filters.assignedAgentId ? { assignedAgentId: filters.assignedAgentId === "unassigned" ? null : filters.assignedAgentId } : {}),
             ...(contains
               ? { OR: [{ message: contains }, { contact: { name: contains } }] }
               : {}),
           },
-          include: { contact: true, property: true },
+          include: { contact: true, property: true, assignedAgent: true },
           orderBy: { createdAt: "desc" },
           ...paging,
         })
       ).map((r) => ({
         id: r.id,
         title: r.contact.name,
-        subtitle: r.property?.title ?? "Consulta general",
+        subtitle: r.searchCriteria ? "Búsqueda guardada · Ver coincidencias" : r.property?.title ?? "Consulta general",
         status: labels[r.status],
-        detail: r.message,
+        detail: `${r.assignedAgent ? `Responsable: ${r.assignedAgent.name}` : "Sin asignar"} · ${r.message}`,
         values: values(r),
       }));
     case "visitas":
@@ -311,54 +317,6 @@ export async function estateRows(
         detail: r.description,
         values: values(r),
       }));
-    case "mantenimiento":
-      return (
-        await prisma.estateMaintenance.findMany({
-          where: { ...scope, title: contains },
-          include: { property: true },
-          orderBy: { createdAt: "desc" },
-          ...paging,
-        })
-      ).map((r) => ({
-        id: r.id,
-        title: r.title,
-        subtitle: r.property.title,
-        status: labels[r.status],
-        detail: `${labels[r.priority]} · ${r.supplier || "Sin proveedor"}`,
-        values: values(r),
-      }));
-    case "consorcios":
-      return (
-        await prisma.estateBuilding.findMany({
-          where: { ...scope, name: contains },
-          include: { _count: { select: { units: true } } },
-          orderBy: { name: "asc" },
-          ...paging,
-        })
-      ).map((r) => ({
-        id: r.id,
-        title: r.name,
-        subtitle: r.address,
-        status: `${r._count.units} unidades`,
-        detail: r.notes,
-        values: values(r),
-      }));
-    case "unidades":
-      return (
-        await prisma.estateUnit.findMany({
-          where: { ...scope, label: contains },
-          include: { building: true },
-          orderBy: { label: "asc" },
-          ...paging,
-        })
-      ).map((r) => ({
-        id: r.id,
-        title: r.label,
-        subtitle: r.building.name,
-        status: `${r.coefficient}%`,
-        detail: r.responsibleName,
-        values: values(r),
-      }));
     default:
       return [];
   }
@@ -371,8 +329,6 @@ export async function estateOptions(tenantId: string) {
     properties,
     developments,
     contracts,
-    buildings,
-    units,
     propertyTypes,
     cities,
     neighborhoods,
@@ -391,7 +347,7 @@ export async function estateOptions(tenantId: string) {
       }),
       prisma.estateAgent.findMany({
         where: { tenantId },
-        select: { name: true, phone: true },
+        select: { id: true, name: true, phone: true },
         orderBy: { name: "asc" },
       }),
       prisma.estateProperty.findMany({
@@ -408,16 +364,6 @@ export async function estateOptions(tenantId: string) {
         where: { tenantId },
         select: { id: true, reference: true },
         orderBy: { reference: "asc" },
-      }),
-      prisma.estateBuilding.findMany({
-        where: { tenantId },
-        select: { id: true, name: true },
-        orderBy: { name: "asc" },
-      }),
-      prisma.estateUnit.findMany({
-        where: { tenantId },
-        select: { id: true, label: true, building: { select: { name: true } } },
-        orderBy: { label: "asc" },
       }),
       prisma.estatePropertyType.findMany({
         where: { tenantId },
@@ -447,6 +393,7 @@ export async function estateOptions(tenantId: string) {
     // guarda el número como snapshot (mismo criterio que los catálogos de
     // ciudad/barrio), así que elegir el agente carga directamente su
     // teléfono y borrarlo después no rompe propiedades ya guardadas.
+    inquiryAgents: agents.map((r) => ({ id: r.id, label: r.name })),
     agents: agents.map((r) => ({ id: r.phone, label: `${r.name} · ${r.phone}` })),
     properties: properties.map((r) => ({
       id: r.id,
@@ -454,16 +401,11 @@ export async function estateOptions(tenantId: string) {
     })),
     developments: developments.map((r) => ({ id: r.id, label: r.name })),
     contracts: contracts.map((r) => ({ id: r.id, label: r.reference })),
-    buildings: buildings.map((r) => ({ id: r.id, label: r.name })),
     propertyTypes: propertyTypes.map((r) => r.name),
     cities: cities.map((r) => r.name),
     neighborhoods: neighborhoods.map((r) => r.name),
     contractTypes: contractTypes.map((r) => r.name),
     propertyDestinations: propertyDestinations.map((r) => r.name),
-    units: units.map((r) => ({
-      id: r.id,
-      label: `${r.building.name} · ${r.label}`,
-    })),
   };
 }
 

@@ -90,6 +90,9 @@ export default async function MapaPage({
               bedrooms: search.bedrooms ?? "",
               bathrooms: search.bathrooms ?? "",
               garages: search.garages ?? "",
+              orientation: search.orientation ?? "",
+              petsPolicy: search.petsPolicy ?? "",
+              creditEligible: search.creditEligible ?? "",
             }}
             propertyTypes={filterOptions.propertyTypes}
             cities={filterOptions.cities}

@@ -1,3 +1,4 @@
+import { inquiryChannelFor } from "@/lib/estate/inquiry-channels";
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import { redirect } from "next/navigation";
@@ -12,6 +13,7 @@ import { PushPermissionBanner } from "@/components/admin/push-permission-banner"
 import { prisma } from "@/lib/prisma";
 import { requireTenantAdminWithPlan } from "@/lib/require-admin";
 import { isDemoSubdomain, DEMO_LAST_ACTIVE_KEY } from "@/lib/demo";
+import { enabledPlatformModules } from "@/lib/platform-modules";
 
 export const metadata: Metadata = {
   manifest: "/admin/manifest.webmanifest",
@@ -35,7 +37,7 @@ const ROOT_DOMAIN = process.env.ROOT_DOMAIN ?? "localhost:3010";
 const DEMO_INACTIVITY_LIMIT_MS = 30 * 60 * 1000;
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const { session, tenant, features } = await requireTenantAdminWithPlan();
+  const { session, tenant, features, permissions } = await requireTenantAdminWithPlan();
   const trialDaysLeft = tenant.billingStatus === "TRIAL" && tenant.trialEndsAt
     ? Math.max(0, Math.ceil((tenant.trialEndsAt.getTime() - new Date().getTime()) / (24 * 60 * 60 * 1000)))
     : null;
@@ -73,8 +75,11 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   }
 
   const planInfo = currentPlan ? { name: currentPlan.name, canUpgrade: Boolean(topPlan && currentPlan.order < topPlan.order) } : null;
+  const modules = session.user.role === "AGENT"
+    ? enabledPlatformModules({ ...features, allowConsortium: false, allowPostSale: false })
+    : enabledPlatformModules(features);
   const notifications: AdminNotification[] = [
-    ...recentInquiries.map(item=>({id:item.id,type:"INQUIRY" as const,title:"Nueva consulta inmobiliaria",detail:item.contact.name,href:"/admin/gestion/consultas",createdAt:item.createdAt.toISOString()})),
+    ...recentInquiries.map(item=>({id:item.id,type:"INQUIRY" as const,title:"Nueva consulta inmobiliaria",detail:item.contact.name,href:`/admin/gestion/consultas?channel=${inquiryChannelFor(item)}&edit=${item.id}`,createdAt:item.createdAt.toISOString()})),
     ...recentServiceInquiries.map(item=>{
       const answers = item.answers as unknown as { label: string; value: string }[];
       const detail = Array.isArray(answers) ? answers.slice(0,2).map(a=>a.value).join(" · ") : item.serviceTitle;
@@ -100,6 +105,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                 newOrderCount={0}
                 features={features}
                 planInfo={planInfo}
+                agentPermissions={session.user.role === "AGENT" ? permissions : undefined}
               />
             </aside>
             <div className="flex min-w-0 min-h-0 flex-1 flex-col h-full overflow-hidden">
@@ -116,6 +122,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                 trialDaysLeft={trialDaysLeft}
                 features={features}
                 planInfo={planInfo}
+                modules={modules}
                 salesModeConfigured={true}
                 impersonating={Boolean(session.user.impersonatedBy)}
                 platformUrl={`${ROOT_DOMAIN.startsWith("localhost") ? "http" : "https"}://${ROOT_DOMAIN}/platform`}

@@ -1,3 +1,4 @@
+import { ORIENTATIONS, PET_POLICIES } from "@/lib/estate/property-features";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { Popover } from "@base-ui/react/popover";
 
@@ -73,6 +74,9 @@ export function PropertySearchForm({
     bedrooms: string;
     bathrooms: string;
     garages: string;
+    orientation: string;
+    petsPolicy: string;
+    creditEligible: string;
   };
   propertyTypes: readonly string[];
   cities: readonly string[];
@@ -167,6 +171,9 @@ export function PropertySearchForm({
         }))}
       />
     ),
+    orientation: <SelectField name="orientation" formId={SEARCH_FORM_ID} label={labels.orientation} ariaLabel={labels.orientation} value={values.orientation} options={ORIENTATIONS.map((value) => ({ value, label: value }))} />,
+    petsPolicy: <SelectField name="petsPolicy" formId={SEARCH_FORM_ID} label={labels.petsPolicy} ariaLabel={labels.petsPolicy} value={values.petsPolicy} options={PET_POLICIES.map((value) => ({ value, label: value }))} />,
+    creditEligible: <SelectField name="creditEligible" formId={SEARCH_FORM_ID} label={labels.creditEligible} ariaLabel={labels.creditEligible} value={values.creditEligible} options={[{ value: "true", label: "Apto crédito" }, { value: "false", label: "No apto crédito" }]} />,
     garages: (
       <SelectField
         name="garages"
@@ -206,7 +213,7 @@ export function PropertySearchForm({
                 Más filtros{overflowActiveCount > 0 ? ` (${overflowActiveCount})` : ""}
               </span>
             </Popover.Trigger>
-            <Popover.Portal>
+            <Popover.Portal keepMounted>
               <Popover.Positioner sideOffset={8} align="start" className="z-50">
                 <Popover.Popup className="w-[min(92vw,22rem)] rounded-xl border bg-popover p-3 text-popover-foreground shadow-lg ring-1 ring-foreground/10 outline-none duration-150 data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0">
                   <div className="grid gap-2 sm:grid-cols-2">
