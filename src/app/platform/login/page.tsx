@@ -17,11 +17,11 @@ export default function PlatformLoginPage() {
         <div className="flex w-full max-w-sm flex-col gap-0 overflow-hidden rounded-2xl bg-background shadow-2xl ring-1 ring-border">
           <div className="flex flex-col items-center gap-4 bg-muted/40 px-6 py-8 text-center">
             <Image
-              src="/brand/logo.svg"
-              alt="UrbIA"
-              width={1479}
-              height={554}
-              className="h-12 w-auto rounded-lg bg-white p-2 object-contain"
+              src="/logo_blanco.svg"
+              alt="Urbi"
+              width={595}
+              height={180}
+              className="h-12 w-auto object-contain"
               priority
             />
             <span className="rounded-full border border-primary/25 bg-primary/15 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-[0.16em] text-primary">

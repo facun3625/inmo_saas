@@ -29,7 +29,7 @@ export default async function DevelopmentsPage() {
   });
   if (!developments.length) notFound();
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="public-inner-page public-collection-page flex flex-1 flex-col">
       <StoreHero />
       <main className="mx-auto w-full max-w-[1440px] flex-1 px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
         <header className="public-enter mx-auto max-w-3xl text-center">
@@ -55,9 +55,9 @@ export default async function DevelopmentsPage() {
               <Link
                 key={development.id}
                 href={`/emprendimientos/${development.id}`}
-                className="public-scroll-reveal group flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border bg-card shadow-sm transition-[box-shadow,border-color] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-primary/25 hover:shadow-[0_14px_34px_-22px_rgba(15,23,42,0.38)]"
+                className="estate-development-card public-scroll-reveal group flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border bg-card shadow-sm transition-[box-shadow,border-color,transform] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-primary/25 hover:shadow-[0_14px_34px_-22px_rgba(15,23,42,0.38)]"
               >
-                <div className="relative aspect-[4/3] overflow-hidden bg-muted">
+                <div className="estate-development-card-media relative aspect-[4/3] overflow-hidden bg-muted">
                   {development.images[0] ? (
                     <Image
                       src={development.images[0].url}
@@ -75,7 +75,7 @@ export default async function DevelopmentsPage() {
                     {STAGES[development.stage] ?? development.stage}
                   </span>
                 </div>
-                <div className="flex flex-1 flex-col p-4 sm:p-5">
+                <div className="estate-development-card-body flex flex-1 flex-col p-4 sm:p-5">
                   <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
                     {development.developer || "Emprendimiento"}
                   </p>

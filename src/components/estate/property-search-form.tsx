@@ -197,7 +197,7 @@ export function PropertySearchForm({
     <form
       id={SEARCH_FORM_ID}
       action={action}
-      className="grid w-full min-w-0 gap-2 rounded-2xl border bg-card p-2 shadow-sm lg:flex lg:items-stretch lg:rounded-full"
+      className="estate-search-form grid w-full min-w-0 gap-2 rounded-2xl border bg-card p-2 shadow-sm lg:flex lg:items-stretch lg:rounded-full"
     >
       <div className="grid min-w-0 flex-1 gap-1 sm:grid-cols-2 lg:flex lg:items-stretch lg:gap-0 lg:divide-x lg:divide-border">
         {inlineKeys.map((key) => (

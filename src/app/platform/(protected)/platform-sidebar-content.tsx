@@ -29,7 +29,7 @@ export function PlatformSidebarContent({ onNavigate }: { onNavigate?: () => void
   return (
     <div className="flex h-full w-full flex-col text-sidebar-foreground">
       <div className="flex items-center gap-3 px-4 py-4">
-        <Image src="/brand/logo.svg" alt="UrbIA" width={1479} height={554} className="bg-white rounded-lg p-1.5 h-7 w-auto object-contain" />
+        <Image src="/brand/logo.svg" alt="Urbi" width={595} height={180} className="bg-white rounded-lg p-1.5 h-7 w-auto object-contain" />
         <span className="rounded-full border border-primary/25 bg-primary/15 px-2 py-1 text-[9px] font-extrabold uppercase tracking-[0.16em] text-primary">Platform</span>
       </div>
 

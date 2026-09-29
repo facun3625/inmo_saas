@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: ["/", "/registro", "/demo", "/revendedores", "/preguntas-frecuentes", "/terminos", "/privacidad"],
       disallow: ["/admin/", "/platform/", "/registro/", "/socios", "/api/"],
     },
-    sitemap: "https://yaa.com.ar/sitemap.xml",
+    sitemap: "https://urbi.com.ar/sitemap.xml",
   };
 }

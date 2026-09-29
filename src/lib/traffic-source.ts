@@ -9,7 +9,7 @@ const KNOWN_SOURCES: { pattern: RegExp; label: string }[] = [
   { pattern: /(twitter\.com|t\.co|x\.com)/i, label: "Twitter/X" },
   { pattern: /linkedin\.com/i, label: "LinkedIn" },
   { pattern: /tiktok\.com/i, label: "TikTok" },
-  { pattern: /yaa\.com\.ar/i, label: "YAA (interno)" },
+  { pattern: /urbi\.com\.ar/i, label: "Urbi (interno)" },
 ];
 
 export function parseTrafficSource(referrer: string | null): string {

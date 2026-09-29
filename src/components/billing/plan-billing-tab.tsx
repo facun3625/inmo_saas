@@ -100,7 +100,7 @@ export function PlanBillingTab({ tenant, availablePlans, billingEnabled }: { ten
                 )}
               </div>
             ) : (
-              <p className="mt-3 text-xs font-medium text-amber-600">El cobro online todavía no fue habilitado por UrbIA.</p>
+              <p className="mt-3 text-xs font-medium text-amber-600">El cobro online todavía no fue habilitado por Urbi.</p>
             )}
             {tenant.providerSubscriptionStatus && <p className="mt-2 text-xs text-muted-foreground">Estado en Mercado Pago: {tenant.providerSubscriptionStatus}</p>}
           </div>

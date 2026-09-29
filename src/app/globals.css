@@ -123,7 +123,7 @@
 /* Identidad de los tres espacios privados. Comparten componentes y
    comportamiento, pero el contexto se reconoce de inmediato por fondo,
    sidebar y acento. */
-.admin-shell-yaa {
+.admin-shell-urbi {
   --background: #f4f8fb;
   --foreground: #133453;
   --card: #ffffff;
@@ -148,7 +148,7 @@
   --sidebar-border: #d5e3ed;
 }
 
-.admin-shell-yaa.dark {
+.admin-shell-urbi.dark {
   --background: #0b1e2e;
   --foreground: #edf6fc;
   --card: #10293d;
@@ -383,10 +383,48 @@
       animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
     }
   }
+
+  /* Mockup del hero (iMac/tablet/celu): entra con una caída/rebote marcada
+     y al terminar encadena directo al vaivén infinito (mismo valor final
+     de transform en ambas puntas, para que no se note el empalme). El tilt
+     al mover el mouse es JS aparte (hero-tilt.tsx). */
+  @keyframes hero-preview-enter {
+    0% {
+      opacity: 0;
+      transform: translate3d(70px, 80px, 0) scale(0.62) rotate(8deg);
+    }
+    55% {
+      opacity: 1;
+      transform: translate3d(-16px, -12px, 0) scale(1.1) rotate(-3deg);
+    }
+    75% {
+      transform: translate3d(6px, 4px, 0) scale(0.97) rotate(1.5deg);
+    }
+    100% {
+      opacity: 1;
+      transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+    }
+  }
+
+  @keyframes hero-preview-float {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+    50% {
+      transform: translate3d(0, -26px, 0) scale(1.05);
+    }
+  }
+
+  .hero-preview-float {
+    animation:
+      hero-preview-enter 1.3s cubic-bezier(0.17, 0.89, 0.32, 1.45) 0.1s both,
+      hero-preview-float 5.5s ease-in-out 1.4s infinite;
+  }
 }
 
 @layer components {
-  .yaa-card {
+  .urbi-card {
     background: rgba(17, 24, 39, 0.7);
     backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.08);
@@ -395,11 +433,11 @@
     transition: border-color 0.2s ease;
   }
 
-  .yaa-card:hover {
+  .urbi-card:hover {
     border-color: rgba(32, 138, 177, 0.3);
   }
 
-  .yaa-btn {
+  .urbi-btn {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
@@ -411,33 +449,385 @@
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  .yaa-btn-primary {
+  .urbi-btn-primary {
     background-color: #1e658c;
     color: white;
     box-shadow: 0 0 15px rgba(32, 138, 177, 0.28);
   }
 
-  .yaa-btn-primary:hover {
+  .urbi-btn-primary:hover {
     background-color: #1e658c;
     transform: translateY(-1px);
     box-shadow: 0 0 25px rgba(32, 138, 177, 0.32);
   }
 
-  .yaa-btn-secondary {
+  .urbi-btn-secondary {
     background-color: rgba(255, 255, 255, 0.08);
     border-color: rgba(255, 255, 255, 0.08);
     color: #f3f4f6;
   }
 
-  .yaa-btn-secondary:hover {
+  .urbi-btn-secondary:hover {
     background-color: rgba(255, 255, 255, 0.12);
     border-color: #9ca3af;
   }
 }
 
-/* UrbIA public identity. Components keep their legacy CSS names to preserve consumers. */
-.urbia-eyebrow { font-size: .6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: .17em; color: #1e658c; }
-.urbia-marketing { --primary: #1e658c; --ring: #208ab1; }
-.urbia-marketing .yaa-btn-primary { background-color: #1e658c; box-shadow: none; }
-.urbia-marketing .yaa-btn-primary:hover { background-color: #133453; }
-.urbia-marketing :focus-visible { outline: 3px solid #208ab1; outline-offset: 4px; }
+/* Urbi public identity. Components keep their legacy CSS names to preserve consumers. */
+.urbi-eyebrow { font-size: .6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: .17em; color: #1e658c; }
+.urbi-marketing { --primary: #1e658c; --ring: #208ab1; }
+.urbi-marketing .urbi-btn-primary { background-color: #1e658c; box-shadow: none; }
+.urbi-marketing .urbi-btn-primary:hover { background-color: #133453; }
+.urbi-marketing :focus-visible { outline: 3px solid #208ab1; outline-offset: 4px; }
+
+/* Las plantillas públicas comparten datos y comportamiento, pero cada una
+   define su propio ritmo, tratamiento de tarjetas y buscador. */
+.store-template-moderno .estate-search-form {
+  border: 0;
+  border-radius: 1.15rem;
+  box-shadow: none;
+}
+
+.store-template-moderno .estate-search-form > button {
+  border-radius: .9rem;
+  padding-inline: 2rem;
+}
+
+.store-template-moderno .estate-property-card {
+  border: 0;
+  border-radius: 1.5rem;
+  box-shadow: 0 18px 50px -36px rgba(15, 23, 42, .55);
+}
+
+.store-template-moderno .estate-property-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 28px 60px -35px rgba(15, 23, 42, .5);
+}
+
+.store-template-moderno .estate-property-card-media {
+  aspect-ratio: 5 / 4;
+}
+
+.store-template-moderno .estate-property-card-body {
+  padding: 1.35rem;
+}
+
+.store-template-minimal .estate-search-form {
+  gap: 0;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
+}
+
+.store-template-minimal .estate-search-form > div > div {
+  background: transparent;
+}
+
+.store-template-minimal .estate-search-form > button {
+  border-radius: 0;
+  background: #171717;
+  color: #fff;
+  font-weight: 500;
+}
+
+.store-template-minimal .estate-property-card {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.store-template-minimal .estate-property-card:hover {
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.store-template-minimal .estate-property-card-media {
+  aspect-ratio: 4 / 3;
+  border-radius: 0;
+}
+
+.store-template-minimal .estate-property-card-body {
+  padding: 1.15rem 0 0;
+}
+
+.store-template-minimal .estate-property-card-body h3 {
+  font-size: 1.125rem;
+  font-weight: 500;
+}
+
+.store-template-minimal .estate-property-card-price {
+  border-color: #e5e5e5;
+}
+
+.store-template-minimal nav a {
+  min-height: 5.25rem;
+  border-bottom-width: 1px;
+  font-weight: 400;
+  letter-spacing: .015em;
+}
+
+@media (max-width: 1023px) {
+  .store-template-minimal .estate-search-form,
+  .store-template-moderno .estate-search-form {
+    gap: .5rem;
+  }
+
+  .store-template-minimal .estate-search-form > div > div {
+    border-bottom: 1px solid #e5e5e5;
+  }
+}
+
+/* Páginas internas: las variantes también cambian catálogo, detalles,
+   servicios, formularios, mapa, favoritos y áreas de clientes. */
+.store-template-moderno .public-inner-page {
+  background: #f3f1ec;
+}
+
+.store-template-moderno .public-inner-page > main {
+  background: transparent;
+}
+
+.store-template-moderno .public-page-heading {
+  max-width: 56rem;
+  margin-inline: 0;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.store-template-moderno .public-inner-page main form,
+.store-template-moderno .public-inner-page main aside.rounded-2xl,
+.store-template-moderno .public-inner-page main section.rounded-2xl {
+  border: 0;
+  border-radius: 2rem;
+  box-shadow: 0 26px 70px -52px rgba(15, 23, 42, .75);
+}
+
+.store-template-moderno .public-account-page main .rounded-2xl.border,
+.store-template-moderno .public-account-page main .rounded-xl.border {
+  border: 0;
+  border-radius: 1.5rem;
+  box-shadow: 0 22px 60px -48px rgba(15, 23, 42, .75);
+}
+
+.store-template-moderno .public-account-page main {
+  padding-top: 2.5rem;
+  padding-bottom: 4rem;
+}
+
+.store-template-moderno .public-inner-page main input,
+.store-template-moderno .public-inner-page main textarea,
+.store-template-moderno .public-inner-page main [role="combobox"] {
+  border-radius: .9rem;
+}
+
+.store-template-moderno .public-inner-page main button[type="submit"] {
+  border-radius: 999px;
+  padding-inline: 2rem;
+}
+
+.store-template-moderno .estate-development-card {
+  border: 0;
+  border-radius: 1.5rem;
+  box-shadow: 0 18px 50px -36px rgba(15, 23, 42, .55);
+}
+
+.store-template-moderno .estate-development-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 28px 60px -35px rgba(15, 23, 42, .5);
+}
+
+.store-template-moderno .estate-development-card-media {
+  aspect-ratio: 5 / 4;
+}
+
+.store-template-moderno .estate-development-card-body {
+  padding: 1.35rem;
+}
+
+.store-template-moderno .public-detail-page main > div {
+  padding-top: 3.5rem;
+  padding-bottom: 5rem;
+}
+
+.store-template-moderno .public-detail-page main .aspect-\[4\/3\],
+.store-template-moderno .public-detail-page main .aspect-\[16\/10\] {
+  border-radius: 2rem;
+}
+
+.store-template-moderno .public-map-page main > div:last-child > div {
+  border: 0;
+  border-radius: 2rem;
+  box-shadow: 0 30px 80px -55px rgba(15, 23, 42, .8);
+}
+
+.store-template-moderno .public-service-page main > div > aside a {
+  border-radius: 999px;
+  padding-inline: 1.25rem;
+}
+
+.store-template-moderno .public-content-page > section:first-of-type {
+  width: min(100% - 2rem, 1440px);
+  height: clamp(24rem, 48vw, 38rem);
+  margin: 2rem auto 0;
+  border-radius: 2rem;
+}
+
+.store-template-moderno .public-content-page > section:nth-of-type(2) {
+  width: min(100% - 4rem, 1200px);
+  margin: -1.5rem auto 0;
+  position: relative;
+  z-index: 1;
+  border-radius: 1.25rem;
+  box-shadow: 0 22px 55px -38px rgba(15, 23, 42, .7);
+}
+
+.store-template-minimal .public-inner-page {
+  background: #fff;
+  color: #171717;
+}
+
+.store-template-minimal .public-inner-page > main {
+  background: #fff;
+}
+
+.store-template-minimal .public-page-intro {
+  border-color: #e5e5e5;
+  background: #fff;
+  padding-top: 3.5rem;
+  padding-bottom: 2rem;
+}
+
+.store-template-minimal .public-page-heading {
+  max-width: 58rem;
+  margin-inline: 0;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.store-template-minimal .public-page-heading > span:last-of-type {
+  width: 100%;
+  height: 1px;
+  border-radius: 0;
+  background: #d4d4d4;
+}
+
+.store-template-minimal .public-inner-page main .rounded-2xl,
+.store-template-minimal .public-inner-page main .rounded-xl.border {
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.store-template-minimal .public-inner-page main .bg-muted\/30,
+.store-template-minimal .public-inner-page main .bg-muted\/35,
+.store-template-minimal .public-inner-page main .bg-muted\/40,
+.store-template-minimal .public-inner-page main .bg-muted\/50,
+.store-template-minimal .public-inner-page main .bg-muted\/60 {
+  background: transparent;
+}
+
+.store-template-minimal .public-inner-page main form {
+  border-width: 1px;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.store-template-minimal .public-account-page main {
+  padding-top: 3rem;
+  padding-bottom: 5rem;
+}
+
+.store-template-minimal .public-inner-page main input,
+.store-template-minimal .public-inner-page main textarea,
+.store-template-minimal .public-inner-page main [role="combobox"] {
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.store-template-minimal .public-inner-page main button[type="submit"] {
+  border-radius: 0;
+  background: #171717;
+  color: #fff;
+  font-weight: 500;
+}
+
+.store-template-minimal .estate-development-card {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.store-template-minimal .estate-development-card-media {
+  border-radius: 0;
+}
+
+.store-template-minimal .estate-development-card-body {
+  padding: 1.15rem 0 0;
+}
+
+.store-template-minimal .public-detail-page main > div {
+  padding-top: 4rem;
+  padding-bottom: 6rem;
+}
+
+.store-template-minimal .public-detail-page main .aspect-\[4\/3\],
+.store-template-minimal .public-detail-page main .aspect-\[16\/10\] {
+  border-radius: 0;
+}
+
+.store-template-minimal .public-map-page main > div:last-child > div {
+  border-radius: 0;
+}
+
+.store-template-minimal .public-service-page main > div {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 3rem;
+}
+
+.store-template-minimal .public-service-page main > div > aside {
+  position: static;
+  flex-direction: row;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.store-template-minimal .public-service-page main > div > aside a {
+  border-radius: 0;
+  background: transparent;
+  color: #737373;
+  padding-inline: 0;
+  margin-right: 1.5rem;
+}
+
+.store-template-minimal .public-service-page main > div > aside a[aria-current="page"] {
+  color: #171717;
+}
+
+.store-template-minimal .public-content-page > section:first-of-type {
+  height: clamp(22rem, 42vw, 32rem);
+  background: #171717;
+}
+
+.store-template-minimal .public-content-page > section:first-of-type img {
+  filter: grayscale(1);
+  opacity: .78;
+}
+
+.store-template-minimal .public-content-page > section:nth-of-type(2) {
+  border-bottom: 1px solid #e5e5e5;
+  background: #fff;
+}
+
+.store-template-minimal .public-content-page > section:nth-of-type(2) span {
+  color: #171717;
+}
+
+.store-template-minimal .public-content-page > section:nth-of-type(2) span:last-child {
+  color: #737373;
+}
+
+.store-template-minimal .public-content-page > section:nth-of-type(2) div > div {
+  border-color: #e5e5e5;
+}

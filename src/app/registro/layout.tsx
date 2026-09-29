@@ -7,7 +7,7 @@ import { Toaster } from "@/components/ui/sonner";
 const ROOT_DOMAIN = process.env.ROOT_DOMAIN ?? "localhost:3010";
 
 export default async function RegistroLayout({ children }: { children: React.ReactNode }) {
-  // /registro solo tiene sentido en el dominio raíz (yaa.com.ar) — si
+  // /registro solo tiene sentido en el dominio raíz (urbi.com.ar) — si
   // alguien lo abre desde el subdominio de una inmobiliaria (por ej. quedó
   // navegando ahí después de crear una y probó entrar nuevo a /registro),
   // esta misma página igual renderiza, pero el login con Google que arranca

@@ -135,7 +135,7 @@ export function orderConfirmationEmail({
   storeEmail?: string | null;
   whatsappUrl?: string | null;
   instagramUrl?: string | null;
-  // Base absoluta (https://tudominio.com) para poder cargar el logo de Yaa
+  // Base absoluta (https://tudominio.com) para poder cargar el logo de Urbi
   // en el mail — un cliente de correo no tiene "página actual" desde la
   // cual resolver una ruta relativa. Sin esto cae a una ruta relativa, que
   // igual funciona en la vista previa dentro del navegador.
@@ -144,7 +144,7 @@ export function orderConfirmationEmail({
   // logoUrl sale de saveUploadedFile como ruta relativa (/uploads/...) —
   // en el navegador se resuelve solo contra la página actual, pero un
   // cliente de mail no tiene "página actual" y la muestra rota. Mismo
-  // problema que ya resolvíamos para el logo de Yaa del pie, acá aplicado
+  // problema que ya resolvíamos para el logo de Urbi del pie, acá aplicado
   // al logo de la tienda.
   const absoluteLogoUrl = logoUrl && appUrl && !/^https?:\/\//.test(logoUrl) ? `${appUrl}${logoUrl}` : logoUrl;
 
@@ -247,9 +247,9 @@ export function orderConfirmationEmail({
 
     <table role="presentation" width="100%" style="max-width:560px;margin:14px auto 0;">
       <tr><td style="text-align:center;">
-        <a href="https://yaa.com.ar" target="_blank" style="text-decoration:none;color:${MUTED};font-size:11px;line-height:1.6;">
+        <a href="https://urbi.com.ar" target="_blank" style="text-decoration:none;color:${MUTED};font-size:11px;line-height:1.6;">
           ¿Tenés un negocio? Armá tu propia tienda online como esta con
-          <img src="${appUrl ?? ""}/brand/logo.svg" alt="UrbIA" height="13" style="height:13px;width:auto;vertical-align:middle;margin-left:4px;">
+          <img src="${appUrl ?? ""}/brand/logo.svg" alt="Urbi" height="13" style="height:13px;width:auto;vertical-align:middle;margin-left:4px;">
         </a>
       </td></tr>
     </table>

@@ -28,7 +28,7 @@ export function AdminThemeRoot({
 }: {
   children: React.ReactNode;
   fontFamily: string;
-  variant?: "yaa" | "store" | "platform";
+  variant?: "urbi" | "store" | "platform";
   defaultTheme?: Theme;
 }) {
   const [theme, setTheme] = useState<Theme>(defaultTheme);

@@ -114,7 +114,7 @@ export function LoginForm({ tenantId, isDemo }: { tenantId: string; isDemo?: boo
 
   // Viene de /registro/datos justo después de crear la tienda: un link de
   // un solo uso que loguea sin pedir la contraseña que recién escribió (el
-  // cookie de sesión de yaa.com.ar no puede viajar solo al subdominio
+  // cookie de sesión de urbi.com.ar no puede viajar solo al subdominio
   // nuevo). Si falla o ya se usó, cae de vuelta al formulario normal.
   //
   // El ref evita que React (StrictMode en dev, monta-desmonta-remonta el

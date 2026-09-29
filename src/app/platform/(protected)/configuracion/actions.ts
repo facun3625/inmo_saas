@@ -102,7 +102,7 @@ async function runSaveMarketingInstagram(formData: FormData) {
   return { ok: true as const };
 }
 
-// ---------- Telegram (aviso al equipo de YAA por tienda nueva) ----------
+// ---------- Telegram (aviso al equipo de Urbi por tienda nueva) ----------
 
 const platformTelegramSchema = z.object({
   botToken: z.string().optional(),

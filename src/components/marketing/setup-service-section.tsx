@@ -16,12 +16,12 @@ export function SetupServiceSection({ price, steps }: { price: number; steps: st
   }
 
   return (
-    <section className="bg-[#133453] py-24 text-white">
+    <section id="armamos-por-vos" className="scroll-mt-24 bg-[#133453] py-24 text-white">
       <div className="mx-auto max-w-4xl px-6 text-center">
-        <span className="mx-auto mb-5 flex size-14 items-center justify-center rounded-2xl bg-white/10">
-          <HammerIcon className="size-6 text-[#58c7e1]" />
+        <span className="mx-auto mb-5 flex size-14 items-center justify-center rounded-2xl bg-[#208ab1]">
+          <HammerIcon className="size-6 text-white" />
         </span>
-        <p className="mb-2 text-xs font-bold uppercase tracking-[.18em] text-[#58c7e1]">¿No sabés armar tu inmobiliaria?</p>
+        <p className="mb-2 text-xs font-bold uppercase tracking-[.18em] text-[#51c2ec]">¿No sabés armar tu inmobiliaria?</p>
         <h2 className="text-3xl font-extrabold tracking-tight">Contactanos y la armamos por vos</h2>
         <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-white/60">
           Te ayudamos a configurar la identidad del sitio y cargar tus primeras propiedades. Coordinamos el alcance y los tiempos con vos. Es un pago único, independiente de tu suscripción.
@@ -42,8 +42,8 @@ export function SetupServiceSection({ price, steps }: { price: number; steps: st
 
         <div className="mt-10 flex flex-col items-center gap-4">
           <p className="text-3xl font-extrabold">{formatPrice(price)}</p>
-          <button type="button" onClick={handleClick} className="yaa-btn yaa-btn-primary h-12 px-6 text-base">
-            Contactanos <ArrowRight className="size-[18px]" />
+          <button type="button" onClick={handleClick} className="inline-flex h-12 items-center gap-2 rounded-xl bg-[#208ab1] px-6 text-base font-bold text-white shadow-[0_10px_30px_-6px_rgba(32,138,177,.5)] transition hover:bg-[#1e658c] hover:-translate-y-0.5">
+            Sí, armámela <ArrowRight className="size-[18px]" />
           </button>
         </div>
       </div>

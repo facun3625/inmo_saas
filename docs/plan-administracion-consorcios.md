@@ -2,7 +2,7 @@
 
 ## Alcance
 
-Este documento propone la evolución del módulo de administración de consorcios de UrbIA.
+Este documento propone la evolución del módulo de administración de consorcios de Urbi.
 
 Es un plan técnico y funcional. No implica que las funcionalidades descriptas estén implementadas actualmente.
 
@@ -10,7 +10,7 @@ La propuesta conserva la arquitectura del SaaS, el aislamiento multi-tenant, la 
 
 ## Diagnóstico actual
 
-UrbIA ya dispone de una base inicial:
+Urbi ya dispone de una base inicial:
 
 - Consorcios representados por `EstateBuilding`.
 - Unidades con coeficiente y responsable.
@@ -33,7 +33,7 @@ Todavía no existe una administración integral de consorcios. Faltan principalm
 - Portal para propietarios e inquilinos.
 - Pagos online de expensas.
 
-El proyecto `reference-real-estate` ofrece como referencia datos bancarios y una presentación pública del servicio, pero su modelo de consorcios es demasiado reducido para utilizarlo como base del backend de UrbIA. No se debe importar su arquitectura ni su código.
+El proyecto `reference-real-estate` ofrece como referencia datos bancarios y una presentación pública del servicio, pero su modelo de consorcios es demasiado reducido para utilizarlo como base del backend de Urbi. No se debe importar su arquitectura ni su código.
 
 ## Criterio central
 
@@ -123,7 +123,7 @@ Esto permite distribuir determinados gastos solamente entre las unidades alcanza
 - Vencimientos.
 - Estado del pago.
 
-Los comprobantes deben utilizar el sistema de almacenamiento existente de UrbIA.
+Los comprobantes deben utilizar el sistema de almacenamiento existente de Urbi.
 
 ### 5. Gastos
 
@@ -256,7 +256,7 @@ Alcance propuesto:
 
 Los fondos y operaciones de expensas deben quedar separados de:
 
-- La suscripción mensual de UrbIA.
+- La suscripción mensual de Urbi.
 - Los pagos heredados del ecommerce.
 - Los fondos de otros consorcios.
 - Las cuentas propias de la inmobiliaria.

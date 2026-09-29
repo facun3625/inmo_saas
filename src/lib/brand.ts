@@ -1,9 +1,9 @@
 /** Identidad pública. Los dominios y credenciales siguen en la configuración del servidor. */
 export const BRAND = {
-  name: "UrbIA",
+  name: "Urbi",
   logo: "/brand/logo.svg",
-  icon: "/brand/favicon.svg",
-  description: "Tu página web inmobiliaria por un plan mensual. Diseño moderno, tu marca, tus propiedades y un panel para mantenerla al día.",
+  icon: "/favicon2.png",
+  description: "CRM inmobiliario con sitio web y agente de IA. Gestioná propiedades, contactos, visitas, contratos y cobranzas desde un solo lugar.",
   navy: "#133453",
   blue: "#208ab1",
   cyan: "#12a7cd",

@@ -2,8 +2,8 @@
 
 import { createContext, useContext } from "react";
 
-// Instagram de UrbIA (no de una tienda) — se usa desde YaaPublicNav y
-// YaaPublicFooter, que se renderizan sueltos en cada página de marketing
+// Instagram de Urbi (no de una tienda) — se usa desde UrbiPublicNav y
+// UrbiPublicFooter, que se renderizan sueltos en cada página de marketing
 // (no hay un layout compartido entre ellas), por eso un contexto en vez
 // de pasarlo por props a cada una.
 type MarketingSocial = { instagramUrl: string | null };

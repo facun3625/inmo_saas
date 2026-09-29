@@ -40,7 +40,7 @@ const geistMono = Geist_Mono({
 export async function generateMetadata(): Promise<Metadata> {
   if (await isPlatformRoute()) {
     return {
-      title: "UrbIA · Plataforma",
+      title: "Urbi · Plataforma",
       icons: { icon: BRAND.icon },
     };
   }
@@ -48,7 +48,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const tenant = await getCurrentTenant();
   if (!tenant) {
     return {
-      title: "UrbIA · Tu página inmobiliaria por un plan mensual",
+      title: "Urbi · CRM inmobiliario con sitio web e IA",
       description: BRAND.description,
       icons: { icon: BRAND.icon },
       metadataBase: new URL(
@@ -56,10 +56,10 @@ export async function generateMetadata(): Promise<Metadata> {
       ),
       alternates: { canonical: "/" },
       openGraph: {
-        title: "UrbIA · Tu página inmobiliaria por un plan mensual",
+        title: "Urbi · CRM inmobiliario con sitio web e IA",
         description: BRAND.description,
         url: "/",
-        siteName: "UrbIA",
+        siteName: "Urbi",
         locale: "es_AR",
         type: "website",
         images: [
@@ -67,13 +67,13 @@ export async function generateMetadata(): Promise<Metadata> {
             url: "/brand/social-card.png",
             width: 1200,
             height: 630,
-            alt: "UrbIA, gestión inmobiliaria",
+            alt: "Urbi, gestión inmobiliaria",
           },
         ],
       },
       twitter: {
         card: "summary_large_image",
-        title: "UrbIA · Tu página inmobiliaria por un plan mensual",
+        title: "Urbi · CRM inmobiliario con sitio web e IA",
         description: BRAND.description,
         images: ["/brand/social-card.png"],
       },
@@ -206,7 +206,10 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             {pathname.startsWith("/admin") ? (
               children
             ) : (
-              <div className="contents" style={buttonThemeStyle}>
+              <div
+                className={`contents store-template-${storeSettings.template}`}
+                style={buttonThemeStyle}
+              >
                 <StorePwaProvider>
                   <PublicAnalyticsTracker />
                   <StorePushBanner />

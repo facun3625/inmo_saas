@@ -33,11 +33,11 @@ export default async function FavoritosPage() {
     : [];
 
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="public-inner-page public-collection-page flex flex-1 flex-col">
       <StoreHero />
       <main className="mx-auto w-full max-w-[1440px] flex-1 bg-background">
         <div className="flex flex-col gap-8 px-4 py-10 sm:px-6 lg:gap-10 lg:px-8 lg:py-14">
-          <div>
+          <div className="public-page-heading">
             <p className="text-xs font-semibold uppercase tracking-widest text-primary">
               Tu selección
             </p>

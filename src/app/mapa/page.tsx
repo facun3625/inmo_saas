@@ -65,10 +65,10 @@ export default async function MapaPage({
   const withoutCoords = properties.length - withCoords.length;
 
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="public-inner-page public-map-page flex flex-1 flex-col">
       <StoreHero />
       <main className="mx-auto flex w-full max-w-[1440px] flex-1 flex-col bg-background">
-        <div className="mx-auto flex w-full max-w-5xl flex-col items-center gap-5 px-4 py-7 text-center sm:px-6 lg:px-8">
+        <div className="public-page-intro mx-auto flex w-full max-w-5xl flex-col items-center gap-5 px-4 py-7 text-center sm:px-6 lg:px-8">
           <div>
             <p className="text-xs font-semibold uppercase tracking-widest text-primary">
               Zona de cobertura

@@ -17,7 +17,7 @@ import { DEMO_SUBDOMAINS, DEMO_ADMIN_EMAIL, DEMO_ADMIN_PASSWORD } from "@/lib/de
 
 const ADMIN_EMAIL = DEMO_ADMIN_EMAIL;
 const ADMIN_PASSWORD = DEMO_ADMIN_PASSWORD;
-const CUSTOMER_EMAIL = "cliente@demo.yaa.com.ar";
+const CUSTOMER_EMAIL = "cliente@demo.urbi.com.ar";
 
 // Fotos propias del dueño, en public/demo-photos/ (versionadas en git —
 // viajan solas al deploy, a diferencia de /public/uploads que es gitignored).

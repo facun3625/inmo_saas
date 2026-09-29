@@ -6,9 +6,9 @@ import { signIn } from "next-auth/react";
 import { toast } from "sonner";
 import { Loader2Icon } from "lucide-react";
 
-// Consume el pase efímero armado por admin/cuenta-yaa/page.tsx (mismo
+// Consume el pase efímero armado por admin/cuenta-urbi/page.tsx (mismo
 // mecanismo que login-form.tsx usa para entrar a la inmobiliaria recién creada,
-// acá en la dirección contraria: entra al panel de UrbIA en el dominio raíz).
+// acá en la dirección contraria: entra al panel de Urbi en el dominio raíz).
 export function EntrarContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -45,8 +45,8 @@ export function EntrarContent() {
 
   return (
     <div className="flex flex-col items-center gap-3 text-center">
-      <Loader2Icon className="size-6 animate-spin text-[#58c7e1]" />
-      <p className="text-sm text-white/60">Entrando a tu cuenta UrbIA...</p>
+      <Loader2Icon className="size-6 animate-spin text-[#51c2ec]" />
+      <p className="text-sm text-white/60">Entrando a tu cuenta Urbi...</p>
     </div>
   );
 }

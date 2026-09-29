@@ -115,7 +115,7 @@ export function buildNewTenantMessage(tenant: NewTenantNotification): string {
   return lines.join("\n");
 }
 
-// Compartido por todos los avisos "al equipo de UrbIA" (no a una tienda) —
+// Compartido por todos los avisos "al equipo de Urbi" (no a una tienda) —
 // mismo chat/bot para tienda nueva, revendedor nuevo y lead del bot de
 // ventas. Si el chat de un tipo de aviso necesita separarse del resto
 // algún día, ahí sí vale la pena una config por tipo; hasta entonces, uno
@@ -128,7 +128,7 @@ async function sendPlatformNotification(text: string, logLabel: string): Promise
   if (!result.ok) console.error(`${logLabel}: Telegram falló —`, result.error);
 }
 
-// Fire-and-forget, igual que notifyNewOrder — al equipo de UrbIA (super
+// Fire-and-forget, igual que notifyNewOrder — al equipo de Urbi (super
 // admin), no a la tienda. Se llama apenas se completa /registro/datos.
 export async function notifyPlatformNewTenant(tenant: NewTenantNotification): Promise<void> {
   await sendPlatformNotification(buildNewTenantMessage(tenant), "notifyPlatformNewTenant");

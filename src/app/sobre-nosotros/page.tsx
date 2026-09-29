@@ -83,7 +83,7 @@ export default async function SobreNosotrosPage() {
   const hasContactCta = Boolean(phone || whatsapp);
 
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="public-inner-page public-content-page flex flex-1 flex-col">
       <StoreHero />
 
       <section className="relative h-[clamp(15rem,32vw,20rem)] overflow-hidden bg-foreground">

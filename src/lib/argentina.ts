@@ -41,6 +41,6 @@ export const REFERRAL_SOURCES = [
   "Google",
   "Un revendedor",
   "Me lo recomendó alguien",
-  "Ya tenía otra inmobiliaria con UrbIA",
+  "Ya tenía otra inmobiliaria con Urbi",
   "Otro",
 ] as const;

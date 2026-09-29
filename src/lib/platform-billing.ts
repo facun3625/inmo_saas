@@ -92,8 +92,8 @@ export function getMercadoPagoBackUrl(preferredUrl: string) {
 
   // Mercado Pago exige un back_url público y rechaza localhost. En pruebas
   // locales puede configurarse un túnel HTTPS; si no existe, vuelve al sitio
-  // público de YAA y el estado se sincroniza manualmente desde el panel local.
-  return configured || "https://yaa.com.ar";
+  // público de Urbi y el estado se sincroniza manualmente desde el panel local.
+  return configured || "https://urbi.com.ar";
 }
 
 export function addBillingPeriod(start: Date, cycle: "MONTHLY" | "ANNUAL") {

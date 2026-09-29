@@ -39,7 +39,7 @@ export function PromotionCodeForm() {
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <div className="flex flex-col gap-1.5">
           <Label htmlFor="promo-code" className="text-xs">Código</Label>
-          <Input id="promo-code" name="code" minLength={4} maxLength={30} placeholder="UrbIA2026" required className="uppercase" />
+          <Input id="promo-code" name="code" minLength={4} maxLength={30} placeholder="Urbi2026" required className="uppercase" />
         </div>
         <div className="flex flex-col gap-1.5">
           <Label htmlFor="promo-duration" className="text-xs">Meses bonificados</Label>

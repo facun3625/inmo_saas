@@ -205,7 +205,7 @@ async function runCreateTenantFromOnboarding(formData: FormData) {
     });
     await seedEstateCatalogDefaults(tx, tenant.id);
 
-    // El usuario que se registró en yaa.com.ar pasa a ser el admin de esta
+    // El usuario que se registró en urbi.com.ar pasa a ser el admin de esta
     // tienda — mismo User, ya no "pendiente" (tenantId null). Sus cuentas de
     // Google (si entró por ahí) se re-scopean a este tenant para que el
     // login funcione igual en el subdominio nuevo.
@@ -248,7 +248,7 @@ async function runCreateTenantFromOnboarding(formData: FormData) {
     return tenant;
   }, { isolationLevel: "Serializable" });
 
-  // Fire-and-forget: aviso al equipo de YAA de que hay una tienda nueva —
+  // Fire-and-forget: aviso al equipo de Urbi de que hay una tienda nueva —
   // no debe demorar ni romper el alta si Telegram falla o no está configurado.
   notifyPlatformNewTenant({
     storeName: parsed.storeName,
@@ -260,7 +260,7 @@ async function runCreateTenantFromOnboarding(formData: FormData) {
 
   // Token de un solo uso para entrar directo al panel de la tienda nueva
   // sin pedirle de nuevo el email/contraseña que recién escribió — el
-  // cookie de sesión de yaa.com.ar no puede viajar solo al subdominio
+  // cookie de sesión de urbi.com.ar no puede viajar solo al subdominio
   // nuevo (dominios distintos para el navegador), así que esto reemplaza
   // ese re-login manual por un solo click. Vive 5 minutos, se usa una vez
   // (ver auth.ts, scope "magic-token").

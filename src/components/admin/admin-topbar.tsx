@@ -37,7 +37,7 @@ function PlanPill({ billingStatus, trialDaysLeft }: { billingStatus: string; tri
   }
   return (
     <a
-      href="/admin/cuenta-yaa"
+      href="/admin/cuenta-urbi"
       target="_blank"
       rel="noopener noreferrer"
       className={cn("flex h-9 items-center gap-1.5 rounded-full border px-3 text-xs font-semibold transition-colors", tone)}

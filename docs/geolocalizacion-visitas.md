@@ -1,6 +1,6 @@
 # Geolocalización de visitas (país/ciudad)
 
-`/platform/trafico` muestra país y ciudad de quien visita yaa.com.ar,
+`/platform/trafico` muestra país y ciudad de quien visita urbi.com.ar,
 resuelto contra una base de datos local (**GeoLite2-City**, de MaxMind) —
 ninguna IP de un visitante viaja a un tercero.
 
@@ -35,7 +35,7 @@ bash scripts/update-geolite2.sh
 Este script lee `MAXMIND_ACCOUNT_ID` y `MAXMIND_LICENSE_KEY` de `.env`,
 descarga la última versión y la deja en `data/GeoLite2-City.mmdb`.
 
-Correrlo tanto en local como en el VPS (`/root/yaa/yaa`) — el archivo no
+Correrlo tanto en local como en el VPS (`/root/urbi/urbi`) — el archivo no
 viaja por git (pesa ~70MB, está en `.gitignore`), así que hay que bajarlo
 en cada lugar donde corre la app.
 
@@ -51,7 +51,7 @@ MAXMIND_LICENSE_KEY=<la license key>
 ## Privacidad
 
 - La IP es el único dato de `SiteVisit` que identifica de verdad a
-  alguien (a diferencia de la cookie anónima `yaa_vid` o el user-agent).
+  alguien (a diferencia de la cookie anónima `urbi_vid` o el user-agent).
 - En el panel solo se muestra **agregado** ("Argentina: 12 visitas"),
   nunca la IP cruda de una visita puntual.
 - El lookup es 100% local (archivo en el propio servidor) — no se manda

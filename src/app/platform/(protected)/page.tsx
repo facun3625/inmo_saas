@@ -38,7 +38,7 @@ export default async function PlatformDashboard() {
       <div className="flex items-center justify-between gap-2">
         <div>
           <h1 className="text-xl font-semibold">Resumen</h1>
-          <p className="text-sm text-muted-foreground">Lo que le pasa al negocio de UrbIA, no a las tiendas.</p>
+          <p className="text-sm text-muted-foreground">Lo que le pasa al negocio de Urbi, no a las tiendas.</p>
         </div>
         <Button render={<Link href="/platform/tiendas" />} variant="outline" size="sm">
           Ver tiendas

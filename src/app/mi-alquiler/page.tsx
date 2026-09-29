@@ -41,7 +41,7 @@ export default async function MiAlquilerPage() {
 
   if (!session) {
     return (
-      <div className="flex flex-1 flex-col">
+      <div className="public-inner-page public-account-page flex flex-1 flex-col">
         <StoreHero />
         <div className="mx-auto flex w-full max-w-[1440px] flex-1 flex-col bg-background">
           <EmptyState
@@ -58,7 +58,7 @@ export default async function MiAlquilerPage() {
 
   if (!contact) {
     return (
-      <div className="flex flex-1 flex-col">
+      <div className="public-inner-page public-account-page flex flex-1 flex-col">
         <StoreHero />
         <div className="mx-auto flex w-full max-w-[1440px] flex-1 flex-col bg-background">
           <EmptyState
@@ -99,7 +99,7 @@ export default async function MiAlquilerPage() {
   ]);
 
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="public-inner-page public-account-page flex flex-1 flex-col">
       <StoreHero />
       <main className="mx-auto w-full max-w-[1440px] flex-1 bg-background">
         <div className="mx-auto w-full max-w-4xl px-4 py-8 sm:px-6 lg:px-8">

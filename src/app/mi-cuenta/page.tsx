@@ -57,7 +57,7 @@ export default async function MyAccountPage() {
     <div className="flex flex-col gap-6">
       <div>
         <h1 className="text-xl font-semibold">Hola, {user.name?.split(" ")[0] ?? "¿cómo estás?"}</h1>
-        <p className="text-sm text-muted-foreground">Todo lo relacionado con tu cuenta UrbIA, en un solo lugar.</p>
+        <p className="text-sm text-muted-foreground">Todo lo relacionado con tu cuenta Urbi, en un solo lugar.</p>
       </div>
 
       {user.tenant && (() => {
@@ -73,7 +73,7 @@ export default async function MyAccountPage() {
                 </span>
                 <div className="min-w-0">
                   <CardTitle className="truncate">{storeName}</CardTitle>
-                  <p className="truncate text-xs text-muted-foreground">{tenant.subdomain}.yaa.com.ar</p>
+                  <p className="truncate text-xs text-muted-foreground">{tenant.subdomain}.urbi.com.ar</p>
                 </div>
               </div>
               <div className="flex shrink-0 items-center gap-2">
@@ -114,7 +114,7 @@ export default async function MyAccountPage() {
               </span>
               <div>
                 <CardTitle>Socios comerciales</CardTitle>
-                <p className="text-xs text-muted-foreground">Tu actividad como revendedor de UrbIA</p>
+                <p className="text-xs text-muted-foreground">Tu actividad como revendedor de Urbi</p>
               </div>
             </div>
             <Button render={<Link href="/socios" />} variant="outline" size="sm">
@@ -149,7 +149,7 @@ export default async function MyAccountPage() {
                 <HandshakeIcon className="size-5" />
               </span>
               <div>
-                <h2 className="font-semibold">¿También querés recomendar UrbIA?</h2>
+                <h2 className="font-semibold">¿También querés recomendar Urbi?</h2>
                 <p className="mt-1 max-w-xl text-sm leading-relaxed text-muted-foreground">
                   Activá gratis tu perfil de socio comercial. Vas a recibir tu enlace, código y panel de comisiones sin perder el acceso a tu inmobiliaria.
                 </p>
@@ -165,7 +165,7 @@ export default async function MyAccountPage() {
       {!isReseller && user.resellerDeactivatedAt && (
         <Card className="border-amber-500/25 bg-amber-500/5">
           <CardContent className="p-5 text-sm text-muted-foreground">
-            Tu perfil de socio comercial está pausado. Contactá a UrbIA para solicitar su reactivación.
+            Tu perfil de socio comercial está pausado. Contactá a Urbi para solicitar su reactivación.
           </CardContent>
         </Card>
       )}

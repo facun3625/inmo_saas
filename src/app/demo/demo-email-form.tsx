@@ -20,11 +20,11 @@ export function DemoEmailForm() {
           required
           autoFocus
           placeholder="vos@tuemail.com"
-          className="h-12 rounded-xl border border-white/10 bg-white/5 px-4 text-white placeholder:text-white/30 outline-none focus:border-[#58c7e1]"
+          className="h-12 rounded-xl border border-white/10 bg-white/5 px-4 text-white placeholder:text-white/30 outline-none focus:border-[#51c2ec]"
         />
       </div>
       {state.error && <p className="text-sm text-red-400">{state.error}</p>}
-      <button type="submit" disabled={pending} className="yaa-btn yaa-btn-primary h-12 justify-center text-base disabled:opacity-60">
+      <button type="submit" disabled={pending} className="urbi-btn urbi-btn-primary h-12 justify-center text-base disabled:opacity-60">
         {pending ? "Entrando…" : "Entrar a la demo"}
       </button>
     </form>

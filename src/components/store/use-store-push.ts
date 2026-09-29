@@ -7,7 +7,7 @@ import { subscribeToCustomerPush, unsubscribeFromCustomerPush } from "@/app/acti
 // Distinta de cualquier flag de "banner cerrado": solo se marca cuando la
 // suscripción de verdad se guardó en la base, para que banner y toggle de
 // /perfil compartan el mismo estado de verdad (a nivel de este dispositivo).
-const SUBSCRIBED_KEY = "yaa-store-push-subscribed";
+const SUBSCRIBED_KEY = "urbi-store-push-subscribed";
 
 function urlBase64ToUint8Array(base64: string) {
   const padding = "=".repeat((4 - (base64.length % 4)) % 4);

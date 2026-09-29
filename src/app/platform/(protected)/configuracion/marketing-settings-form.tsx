@@ -45,9 +45,9 @@ export function MarketingSettingsForm({
           <MessageCircleIcon className="size-5" />
         </span>
         <div>
-          <h2 className="font-semibold">WhatsApp comercial de UrbIA</h2>
+          <h2 className="font-semibold">WhatsApp comercial de Urbi</h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            Se muestra flotando en la landing y en las páginas públicas de UrbIA. No modifica el WhatsApp propio de las tiendas.
+            Se muestra flotando en la landing y en las páginas públicas de Urbi. No modifica el WhatsApp propio de las tiendas.
           </p>
         </div>
       </div>
@@ -82,8 +82,8 @@ export function MarketingSettingsForm({
           name="message"
           rows={4}
           maxLength={500}
-          defaultValue={message ?? "Hola, quiero conocer más sobre UrbIA."}
-          placeholder="Hola, quiero conocer más sobre UrbIA."
+          defaultValue={message ?? "Hola, quiero conocer más sobre Urbi."}
+          placeholder="Hola, quiero conocer más sobre Urbi."
         />
         <p className="text-xs text-muted-foreground">Se completa automáticamente cuando la persona abre WhatsApp.</p>
       </div>

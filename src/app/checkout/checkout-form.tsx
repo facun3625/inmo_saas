@@ -29,7 +29,7 @@ type PickupSlot = { id: string; label: string };
 // Clave estable por intento de compra: sobrevive a que el comprador recargue
 // el checkout, así el servidor reconoce el reintento y devuelve el pedido que
 // ya creó en vez de duplicarlo. Se descarta recién cuando el pedido entró.
-const IDEMPOTENCY_KEY_STORAGE = "yaa:checkout-idempotency-key";
+const IDEMPOTENCY_KEY_STORAGE = "urbi:checkout-idempotency-key";
 
 function randomKey() {
   try {

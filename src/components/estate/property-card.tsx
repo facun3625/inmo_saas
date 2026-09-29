@@ -44,9 +44,9 @@ export function PropertyCard({
   return (
     <Link
       href={`/propiedades/${p.id}`}
-      className="public-scroll-reveal group flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border bg-card shadow-sm transition-[box-shadow,border-color] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-primary/25 hover:shadow-[0_14px_34px_-22px_rgba(15,23,42,0.38)]"
+      className="estate-property-card public-scroll-reveal group flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border bg-card shadow-sm transition-[box-shadow,border-color,transform] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-primary/25 hover:shadow-[0_14px_34px_-22px_rgba(15,23,42,0.38)]"
     >
-      <div className="relative aspect-[4/3] overflow-hidden bg-muted">
+      <div className="estate-property-card-media relative aspect-[4/3] overflow-hidden bg-muted">
         {p.media[0] ? (
           <Image
             src={p.media[0].url}
@@ -77,7 +77,7 @@ export function PropertyCard({
           className="absolute right-3 top-3"
         />
       </div>
-      <div className="flex flex-1 flex-col p-4 sm:p-5">
+      <div className="estate-property-card-body flex flex-1 flex-col p-4 sm:p-5">
         <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
           {p.propertyType}
         </p>
@@ -104,7 +104,7 @@ export function PropertyCard({
             </span>
           )}
         </div>
-        <div className="mt-auto border-t pt-3 text-sm">
+        <div className="estate-property-card-price mt-auto border-t pt-3 text-sm">
           <p className="font-semibold">
             {p.listings.map((l) => (
               <span key={l.id} className="block">

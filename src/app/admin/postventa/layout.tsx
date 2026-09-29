@@ -1,9 +1,6 @@
-import { notFound } from "next/navigation";
-
-import { requireTenantAdminWithPlan } from "@/lib/require-admin";
+import { requirePostSaleStaff } from "@/lib/require-post-sale-admin";
 
 export default async function PostSaleLayout({ children }: { children: React.ReactNode }) {
-  const { features } = await requireTenantAdminWithPlan();
-  if (!features.allowPostSale) notFound();
+  await requirePostSaleStaff();
   return children;
 }

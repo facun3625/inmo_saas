@@ -19,7 +19,7 @@ export default async function PlatformBillingPage() {
   return (
     <div className="flex flex-col gap-5">
       <div>
-        <h1 className="text-xl font-semibold">Facturación de UrbIA</h1>
+        <h1 className="text-xl font-semibold">Facturación de Urbi</h1>
         <p className="text-sm text-muted-foreground">Suscripciones, renovaciones y estados de cobro de las tiendas.</p>
       </div>
 

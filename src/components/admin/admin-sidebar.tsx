@@ -24,6 +24,7 @@ import {
   BuildingIcon,
   UserCheckIcon,
   ChartNoAxesCombinedIcon,
+  ListTreeIcon,
 } from "lucide-react";
 
 import { useStoreSettings } from "@/lib/store-settings-context";
@@ -184,11 +185,43 @@ const consortiumSections: Section[] = [
   },
 ];
 
+const MODULE_ROOT_HREFS = new Set(["/admin", "/admin/consorcios", "/admin/postventa"]);
+
 const postSaleSections: Section[] = [
   {
     href: "/admin/postventa",
     label: "Resumen",
     icon: SettingsIcon,
+    group: "Postventa",
+  },
+  {
+    href: "/admin/postventa/desarrollos",
+    label: "Desarrollos",
+    icon: BuildingIcon,
+    group: "Postventa",
+  },
+  {
+    href: "/admin/postventa/reclamos",
+    label: "Reclamos",
+    icon: ClipboardListIcon,
+    group: "Postventa",
+  },
+  {
+    href: "/admin/postventa/catalogo",
+    label: "Catálogo por defecto",
+    icon: ListTreeIcon,
+    group: "Postventa",
+  },
+  {
+    href: "/admin/postventa/administradores",
+    label: "Administradores",
+    icon: UserCheckIcon,
+    group: "Postventa",
+  },
+  {
+    href: "/admin/postventa/proveedores",
+    label: "Proveedores",
+    icon: ConciergeBellIcon,
     group: "Postventa",
   },
 ];
@@ -328,10 +361,14 @@ export function AdminSidebar({
                 : agentSection?.key === "searches"
                   ? "/agente?channel=searches"
                   : s.href;
-              const active =
-                s.href === "/admin"
-                  ? pathname === "/admin"
-                  : pathname.startsWith(s.href);
+              // "Resumen" de cada módulo (/admin, /admin/consorcios,
+              // /admin/postventa) es prefijo de TODAS sus propias
+              // subpáginas — con startsWith quedaría marcado activo en
+              // cualquier subsección del módulo. Exact match para esos,
+              // startsWith para el resto.
+              const active = MODULE_ROOT_HREFS.has(s.href)
+                ? pathname === s.href
+                : pathname.startsWith(s.href);
               const expanded = expandedHref === s.href;
               const Icon = s.icon;
               return (
@@ -450,7 +487,7 @@ export function AdminSidebar({
             <p className="truncate text-sm font-semibold">{planInfo.name}</p>
             {planInfo.canUpgrade && (
               <a
-                href="/admin/cuenta-yaa"
+                href="/admin/cuenta-urbi"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-1.5 flex items-center justify-center gap-1.5 rounded-md bg-primary py-1 text-xs font-semibold text-primary-foreground transition-opacity hover:opacity-90"
@@ -470,13 +507,13 @@ export function AdminSidebar({
           Ver sitio
         </Link>
         <a
-          href="/admin/cuenta-yaa"
+          href="/admin/cuenta-urbi"
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center gap-2.5 rounded-lg px-3 py-1.5 text-sm font-medium text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
         >
           <ExternalLinkIcon className="size-4 shrink-0" />
-          Panel de UrbIA
+          Panel de Urbi
         </a>
         {canInstall && (
           <button

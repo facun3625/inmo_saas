@@ -99,6 +99,12 @@ export const modules: Record<string, Module> = {
         type: "checkbox",
         hint: "Con esto activado y el DNI cargado, se puede registrar solo en /mi-alquiler/activar con su email y su DNI.",
       },
+      {
+        name: "ownerPortalEnabled",
+        label: "Habilitado para el portal del propietario",
+        type: "checkbox",
+        hint: "Con esto activado y el DNI cargado, el propietario puede registrarse solo en /mi-propiedad/activar para ver sus propiedades y cobros.",
+      },
       { name: "notes", label: "Notas privadas", type: "textarea" },
     ],
   },

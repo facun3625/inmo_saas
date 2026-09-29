@@ -109,6 +109,7 @@ export const contactSchema = z.object({
     .array(z.enum(["OWNER", "PROSPECT", "TENANT", "BUYER", "GUARANTOR"]))
     .min(1, "Seleccioná al menos un rol"),
   portalEnabled: checkbox,
+  ownerPortalEnabled: checkbox,
   notes,
 });
 export const propertySchema = z

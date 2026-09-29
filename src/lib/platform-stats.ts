@@ -69,7 +69,7 @@ export async function getPlatformStats(): Promise<PlatformStats> {
     // Plata que efectivamente entró (BillingPayment, creado por el webhook
     // de Mercado Pago o a mano desde /platform/tiendas) — a diferencia del
     // MRR de abajo, que es una proyección sobre el plan asignado, esto es
-    // lo que YA le pagaron a YAA.
+    // lo que YA le pagaron a Urbi.
     prisma.billingPayment.findMany({
       where: { paidAt: { gte: thirtyDaysAgo }, tenant: REAL_TENANT },
       select: { amount: true },

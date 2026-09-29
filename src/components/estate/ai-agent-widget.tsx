@@ -34,7 +34,7 @@ function renderMessageText(text: string, linkClassName: string) {
 }
 
 // Widget del agente de ventas IA del sitio público de un tenant — a
-// diferencia de SalesChatProvider (bot de la landing de UrbIA, sin datos
+// diferencia de SalesChatProvider (bot de la landing de Urbi, sin datos
 // reales), acá cada mensaje puede terminar en una tool-call sobre la base
 // del propio tenant, así que no hay formulario de contacto aparte: el
 // agente pide los datos en la charla y los manda con crear_consulta /

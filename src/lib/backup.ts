@@ -119,7 +119,7 @@ function runPgDump(outputPath: string, conn: ParsedConnection): Promise<void> {
         "-U", conn.user,
         "-d", conn.database,
         "-Fc", // formato custom: comprime solo, sin agregar ninguna dependencia de npm
-        "--no-owner", // el usuario de la base difiere entre entornos (local "pedidos" vs prod "yaa_user")
+        "--no-owner", // el usuario de la base difiere entre entornos (local "pedidos" vs prod "urbi_user")
         "--no-acl", // mismo motivo — evita GRANT/REVOKE atados a roles que pueden no existir al restaurar
         "-f", outputPath,
       ],

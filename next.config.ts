@@ -8,6 +8,14 @@ const nextConfig: NextConfig = {
   distDir: process.env.NEXT_DIST_DIR || ".next",
   // Configuración compartida por catálogo, servicios y consultas.
   images: {
+    // Logos de tenant (header/footer) se aceptan en SVG y se sanitizan con
+    // DOMPurify antes de subirse (ver saveUploadedFile en lib/storage.ts) —
+    // por eso es seguro habilitar la optimización de SVG acá. attachment +
+    // CSP es la config que recomienda la doc de Next para este caso: si
+    // igual quedara algo raro en el archivo, no se ejecuta al servirlo.
+    dangerouslyAllowSVG: true,
+    contentDispositionType: "attachment",
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     // Foto de perfil de Google (login con Google) — sin esto, next/image
     // rechaza cualquier URL externa que no esté en esta lista.
     remotePatterns: [

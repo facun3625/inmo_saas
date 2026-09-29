@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 #
 # Da de alta en Nginx + Let's Encrypt cada dominio por el que se llega a una
-# tienda: su subdominio (tienda.yaa.com.ar) y, si lo verificó por DNS desde
+# tienda: su subdominio (tienda.urbi.com.ar) y, si lo verificó por DNS desde
 # su panel, también su dominio propio (moulinscocina.com.ar).
 #
 # Todos los certificados que emite usan desafío HTTP, así que se renuevan
-# solos. Eso es lo que lo distingue del certificado wildcard *.yaa.com.ar,
+# solos. Eso es lo que lo distingue del certificado wildcard *.urbi.com.ar,
 # que se emitió con desafío DNS manual porque DonWeb no tiene plugin de
 # certbot, y que por lo tanto hay que renovar a mano cada 90 días.
 #
@@ -19,10 +19,10 @@ set -euo pipefail
 
 # --- Configuración -----------------------------------------------------------
 APP_PORT="${APP_PORT:-3014}"
-ROOT_DOMAIN="${ROOT_DOMAIN:-yaa.com.ar}"
-DB_CONTAINER="${DB_CONTAINER:-yaa-db}"
-DB_USER="${DB_USER:-yaa_user}"
-DB_NAME="${DB_NAME:-yaa_db}"
+ROOT_DOMAIN="${ROOT_DOMAIN:-urbi.com.ar}"
+DB_CONTAINER="${DB_CONTAINER:-urbi-db}"
+DB_USER="${DB_USER:-urbi_user}"
+DB_NAME="${DB_NAME:-urbi_db}"
 CERTBOT_EMAIL="${CERTBOT_EMAIL:-facundoarteagasola@gmail.com}"
 WEBROOT="${WEBROOT:-/var/www/certbot}"
 NGINX_AVAILABLE="${NGINX_AVAILABLE:-/etc/nginx/sites-available}"
@@ -70,7 +70,7 @@ mkdir -p "$WEBROOT"
 
 # --- Dominios a atender ------------------------------------------------------
 # Dos fuentes:
-#   a) el subdominio de cada tienda (tienda.yaa.com.ar)
+#   a) el subdominio de cada tienda (tienda.urbi.com.ar)
 #   b) el dominio propio de las tiendas que ya lo verificaron por DNS
 #
 # Los subdominios los cubre hoy el certificado wildcard, pero ese wildcard se
@@ -121,7 +121,7 @@ while IFS= read -r domain; do
   fi
 
   # www solo tiene sentido en el dominio propio de una tienda, no en su
-  # subdominio: a www.tienda.yaa.com.ar no entra nadie, y como el wildcard
+  # subdominio: a www.tienda.urbi.com.ar no entra nadie, y como el wildcard
   # de DNS igual lo resuelve, terminaría metido en el certificado sin
   # necesidad — y si algún día deja de resolver, hace fallar la renovación
   # del certificado entero.

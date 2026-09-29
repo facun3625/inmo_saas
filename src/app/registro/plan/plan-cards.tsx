@@ -23,7 +23,7 @@ type Plan = {
 
 const PREVIEW_FEATURE_COUNT = 5;
 
-// Mismo patrón (y mismo motivo) que FeaturesList en yaa-plans.tsx: con la
+// Mismo patrón (y mismo motivo) que FeaturesList en urbi-plans.tsx: con la
 // lista completa siempre abierta, el botón de elegir quedaba varias
 // pantallas más abajo — acá se ve un adelanto y se expande a pedido, todos
 // los planes juntos para que sigan alineados entre sí.
@@ -46,7 +46,7 @@ function PlanFeaturesList({
       <ul className="flex flex-col gap-2">
         {visible.map((feature, index) => (
           <li key={`${planId}-${index}`} className="flex items-start gap-2">
-            <CheckIcon className="mt-0.5 size-3.5 shrink-0 text-[#58c7e1]" />
+            <CheckIcon className="mt-0.5 size-3.5 shrink-0 text-[#51c2ec]" />
             {feature}
           </li>
         ))}
@@ -58,7 +58,7 @@ function PlanFeaturesList({
               <ul className="flex flex-col gap-2 pt-2">
                 {rest.map((feature, index) => (
                   <li key={`${planId}-rest-${index}`} className="flex items-start gap-2">
-                    <CheckIcon className="mt-0.5 size-3.5 shrink-0 text-[#58c7e1]" />
+                    <CheckIcon className="mt-0.5 size-3.5 shrink-0 text-[#51c2ec]" />
                     {feature}
                   </li>
                 ))}
@@ -68,7 +68,7 @@ function PlanFeaturesList({
           <button
             type="button"
             onClick={onToggleExpanded}
-            className="mt-1 flex items-center gap-1 self-start text-xs font-bold text-[#58c7e1] hover:underline"
+            className="mt-1 flex items-center gap-1 self-start text-xs font-bold text-[#51c2ec] hover:underline"
           >
             {expanded ? "Ver menos" : `Ver ${rest.length} más`}
             <ChevronDownIcon className={`size-3.5 transition-transform duration-300 ${expanded ? "rotate-180" : ""}`} />
@@ -111,7 +111,7 @@ export function PlanCards({ plans }: { plans: Plan[] }) {
               <span className="pb-1 text-xs text-white/45">/mes</span>
             </div>
             {plan.priceAnnual !== null && (
-              <p className="mt-1 text-sm font-bold text-[#58c7e1]">o {formatPrice(plan.priceAnnual)} por año</p>
+              <p className="mt-1 text-sm font-bold text-[#51c2ec]">o {formatPrice(plan.priceAnnual)} por año</p>
             )}
 
             <PlanFeaturesList
@@ -131,7 +131,7 @@ export function PlanCards({ plans }: { plans: Plan[] }) {
                 type="button"
                 disabled={pending}
                 onClick={() => pickPlan(plan.id, "MONTHLY")}
-                className="yaa-btn yaa-btn-primary w-full justify-center"
+                className="urbi-btn urbi-btn-primary w-full justify-center"
               >
                 Elegir mensual
               </button>
@@ -140,7 +140,7 @@ export function PlanCards({ plans }: { plans: Plan[] }) {
                   type="button"
                   disabled={pending}
                   onClick={() => pickPlan(plan.id, "ANNUAL")}
-                  className="yaa-btn yaa-btn-secondary w-full justify-center"
+                  className="urbi-btn urbi-btn-secondary w-full justify-center"
                 >
                   Elegir anual
                 </button>

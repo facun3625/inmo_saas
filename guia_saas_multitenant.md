@@ -4,7 +4,7 @@ Todo lo que costó resolver para que **yaa** funcione, escrito para poder
 levantar la próxima app sin volver a pelear lo mismo.
 
 El caso concreto: una plataforma que genera tiendas online. Cada tienda vive
-en su propio subdominio (`mitienda.yaa.com.ar`) y, si paga el plan que lo
+en su propio subdominio (`mitienda.urbi.com.ar`) y, si paga el plan que lo
 incluye, también en su dominio propio (`moulinscocina.com.ar`). Una persona
 entra a la plataforma, se registra, paga, y termina siendo administradora de
 su tienda — todo sin intervención manual.
@@ -35,9 +35,9 @@ PostgreSQL · Nginx · Let's Encrypt · PM2.
 
 ```
                     ┌──────────────────────────────┐
-   yaa.com.ar ─────▶│                              │
+   urbi.com.ar ─────▶│                              │
                     │                              │
-mitienda.yaa.com.ar ▶      UNA sola app Next.js    │──▶ PostgreSQL
+mitienda.urbi.com.ar ▶      UNA sola app Next.js    │──▶ PostgreSQL
                     │       (un proceso, un        │    (una sola base,
 otratienda.yaa...  ─▶│        puerto, una base)    │     todo con tenantId)
                     │                              │
@@ -83,8 +83,8 @@ Tres casos posibles:
 
 | Host | Resultado |
 |------|-----------|
-| `yaa.com.ar` | ningún header → es la plataforma, no una tienda |
-| `mitienda.yaa.com.ar` | `x-tenant-subdomain: mitienda` |
+| `urbi.com.ar` | ningún header → es la plataforma, no una tienda |
+| `mitienda.urbi.com.ar` | `x-tenant-subdomain: mitienda` |
 | `moulinscocina.com.ar` | `x-tenant-domain: moulinscocina.com.ar` |
 
 ### Resolver la tienda desde el header
@@ -283,7 +283,7 @@ Si `trustHost: true` está solo en la primera, en local no se nota
 middleware rechaza **todos** los requests:
 
 ```
-[auth][error] UntrustedHost: Host must be trusted. URL was: https://yaa.com.ar/api/auth/session
+[auth][error] UntrustedHost: Host must be trusted. URL was: https://urbi.com.ar/api/auth/session
 ```
 
 Y como el middleware corre en prácticamente todas las páginas, se cae el
@@ -330,7 +330,7 @@ export async function requireOnboardingUser() {
 ### El problema
 
 Google **no acepta wildcards** en los redirect URIs. No podés registrar
-`https://*.yaa.com.ar/api/auth/callback/google`. Y no vas a entrar a la
+`https://*.urbi.com.ar/api/auth/callback/google`. Y no vas a entrar a la
 consola de Google a mano cada vez que alguien crea una tienda.
 
 ### La solución: `redirectProxyUrl`
@@ -339,7 +339,7 @@ Auth.js tiene exactamente esto resuelto. Se registra **un solo** redirect URI
 en Google Cloud Console:
 
 ```
-https://yaa.com.ar/api/auth/callback/google
+https://urbi.com.ar/api/auth/callback/google
 ```
 
 Y en la config:
@@ -353,18 +353,18 @@ redirectProxyUrl: `https://${ROOT_DOMAIN}/api/auth`,
 Vale la pena entenderlo, porque todos los bugs de esta sección vienen de acá.
 
 ```
-1. Cliente en tienda1.yaa.com.ar toca "Continuar con Google"
+1. Cliente en tienda1.urbi.com.ar toca "Continuar con Google"
    └─ tienda1 setea las cookies state/PKCE/nonce EN SU PROPIO DOMINIO
    └─ manda al navegador a Google con:
-        redirect_uri = https://yaa.com.ar/api/auth/callback/google
+        redirect_uri = https://urbi.com.ar/api/auth/callback/google
         state        = JWT FIRMADO que lleva dentro "vengo de tienda1"
 
-2. Google autentica y vuelve a yaa.com.ar (el único URI registrado)
+2. Google autentica y vuelve a urbi.com.ar (el único URI registrado)
 
-3. yaa.com.ar abre el state LEYÉNDOLO DEL QUERY STRING — sin tocar
+3. urbi.com.ar abre el state LEYÉNDOLO DEL QUERY STRING — sin tocar
    ninguna cookie, es pura criptografía con AUTH_SECRET — ve el origen,
    y rebota el navegador a:
-        https://tienda1.yaa.com.ar/api/auth/callback/google?code=...
+        https://tienda1.urbi.com.ar/api/auth/callback/google?code=...
 
 4. tienda1 lee SUS PROPIAS cookies, canjea el code, crea la sesión. Fin.
 ```
@@ -475,9 +475,9 @@ Esta es una trampa del API de URL de JavaScript, y es venenosa porque
 
 ```js
 const url = new URL("http://localhost:3014/api/auth/signout");
-url.host = "mitienda.yaa.com.ar";      // header sin puerto (443 es implícito)
+url.host = "mitienda.urbi.com.ar";      // header sin puerto (443 es implícito)
 url.href
-// → "http://mitienda.yaa.com.ar:3014/api/auth/signout"
+// → "http://mitienda.urbi.com.ar:3014/api/auth/signout"
 //                               ^^^^^ el puerto viejo quedó pegado
 ```
 
@@ -486,7 +486,7 @@ existente se conserva.
 
 **Qué provocaba:**
 
-- **Cerrar sesión** → redirigía a `yaa.com.ar:3014`, un puerto que desde
+- **Cerrar sesión** → redirigía a `urbi.com.ar:3014`, un puerto que desde
   afuera no responde → pantalla de error.
 - **Login colgado** → el `fetch` del cliente seguía ese mismo redirect y se
   quedaba esperando hasta agotar el timeout. La sesión **sí** se creaba del
@@ -523,7 +523,7 @@ panel de su tienda **sin volver a escribir la contraseña**.
         ↓
 /registro/datos    → nombre de la tienda + subdominio
         ↓
-   ¡Tienda creada!  → redirige ya logueado a mitienda.yaa.com.ar/admin
+   ¡Tienda creada!  → redirige ya logueado a mitienda.urbi.com.ar/admin
 ```
 
 ### El paso final, que es el que tiene truco
@@ -560,8 +560,8 @@ const tenant = await prisma.$transaction(async (tx) => {
 
 ### Por qué hace falta un token de un solo uso
 
-La sesión se creó en `yaa.com.ar`. La tienda nueva vive en
-`mitienda.yaa.com.ar`. **Para el navegador son dominios distintos**: el
+La sesión se creó en `urbi.com.ar`. La tienda nueva vive en
+`mitienda.urbi.com.ar`. **Para el navegador son dominios distintos**: el
 cookie de sesión no viaja solo. Sin resolverlo, el usuario aterriza en el
 panel de su tienda recién creada… y le pide login otra vez. Pésima primera
 impresión, y peor todavía si se registró con Google (no tiene contraseña que
@@ -657,11 +657,11 @@ se queda con la tienda de otro.
 
 ```ts
 export function generateDomainToken() {
-  return `yaa-verify-${randomBytes(12).toString("hex")}`;
+  return `urbi-verify-${randomBytes(12).toString("hex")}`;
 }
 
 export function verificationRecordName(domain: string) {
-  return `_yaa-challenge.${domain}`;
+  return `_urbi-challenge.${domain}`;
 }
 
 export async function verifyDomainTxtRecord(domain: string, token: string) {
@@ -679,7 +679,7 @@ qué registro TXT crear → lo crea en su DNS → toca "Verificar" → si el TXT
 coincide, `customDomainVerified = true`.
 
 > **Usá el nombre del producto, no el de tu agencia.** El registro
-> `_yaa-challenge` lo lee y lo tipea el cliente final. Nosotros lo teníamos
+> `_urbi-challenge` lo lee y lo tipea el cliente final. Nosotros lo teníamos
 > como `_kubbo-challenge` (el nombre del estudio) y había que corregirlo.
 
 ### Y del lado del servidor
@@ -713,19 +713,19 @@ docker ps --format "table {{.Names}}\t{{.Ports}}"
 ### Base de datos
 
 ```bash
-YAA_DB_PASS=$(openssl rand -base64 24 | tr -d '/+=')
+Urbi_DB_PASS=$(openssl rand -base64 24 | tr -d '/+=')
 
 docker run -d \
-  --name yaa-db \
+  --name urbi-db \
   -p 127.0.0.1:5443:5432 \
   -e POSTGRES_USER=yaa_user \
-  -e POSTGRES_PASSWORD="$YAA_DB_PASS" \
+  -e POSTGRES_PASSWORD="$Urbi_DB_PASS" \
   -e POSTGRES_DB=yaa_db \
   -v yaa_pgdata:/var/lib/postgresql/data \
   --restart unless-stopped \
   postgres:16-alpine
 
-echo "GUARDÁ ESTO: $YAA_DB_PASS"
+echo "GUARDÁ ESTO: $Urbi_DB_PASS"
 ```
 
 `-p 127.0.0.1:5443:5432` y no `-p 5443:5432`: la base **no** tiene por qué
@@ -735,7 +735,7 @@ estar expuesta a internet, solo la app local le pega.
 
 ```bash
 DATABASE_URL="postgresql://yaa_user:<PASS>@localhost:5443/yaa_db?schema=public"
-ROOT_DOMAIN="yaa.com.ar"
+ROOT_DOMAIN="urbi.com.ar"
 AUTH_SECRET="<openssl rand -base64 33>"
 AUTH_GOOGLE_ID="..."
 AUTH_GOOGLE_SECRET="..."
@@ -767,16 +767,16 @@ pm2 startup                    # y correr el comando que imprime
 ```nginx
 server {
     listen 80;
-    server_name yaa.com.ar www.yaa.com.ar *.yaa.com.ar;
+    server_name urbi.com.ar www.urbi.com.ar *.urbi.com.ar;
     return 301 https://$host$request_uri;
 }
 
 server {
     listen 443 ssl http2;
-    server_name yaa.com.ar www.yaa.com.ar *.yaa.com.ar;
+    server_name urbi.com.ar www.urbi.com.ar *.urbi.com.ar;
 
-    ssl_certificate     /etc/letsencrypt/live/yaa.com.ar/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/yaa.com.ar/privkey.pem;
+    ssl_certificate     /etc/letsencrypt/live/urbi.com.ar/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/urbi.com.ar/privkey.pem;
 
     location / {
         proxy_pass http://localhost:3014;
@@ -797,7 +797,7 @@ server {
 
 Dos líneas que no son opcionales:
 
-- **`server_name ... *.yaa.com.ar`** — sin el wildcard, ningún subdominio de
+- **`server_name ... *.urbi.com.ar`** — sin el wildcard, ningún subdominio de
   tienda matchea este bloque.
 - **`proxy_set_header X-Forwarded-Host $host`** — de acá saca la app el host
   real (bug 1 de la sección 6). Sin esto, el login con Google y el cerrar
@@ -826,21 +826,21 @@ registros, y es fácil de olvidar: si no está hecho, el dominio no resuelve
 Se verifica así:
 
 ```bash
-dig yaa.com.ar NS +short        # ¿vacío? → falta delegar en el registrador
+dig urbi.com.ar NS +short        # ¿vacío? → falta delegar en el registrador
 ```
 
 Después, en el panel de DNS del hosting:
 
 | Tipo | Nombre | Contenido |
 |------|--------|-----------|
-| A | `yaa.com.ar` | IP del VPS |
-| A | `www.yaa.com.ar` | IP del VPS |
-| A | `*.yaa.com.ar` | IP del VPS |
+| A | `urbi.com.ar` | IP del VPS |
+| A | `www.urbi.com.ar` | IP del VPS |
+| A | `*.urbi.com.ar` | IP del VPS |
 
 El `*` es el que hace que cualquier tienda nueva resuelva sin tocar nada.
 
 ```bash
-dig +short cualquiercosa.yaa.com.ar    # tiene que devolver la IP del VPS
+dig +short cualquiercosa.urbi.com.ar    # tiene que devolver la IP del VPS
 ```
 
 ---
@@ -851,12 +851,12 @@ Acá hay una decisión real, con una trampa escondida.
 
 ### El wildcard y su problema
 
-Un certificado `*.yaa.com.ar` cubre infinitas tiendas. Suena ideal, pero
+Un certificado `*.urbi.com.ar` cubre infinitas tiendas. Suena ideal, pero
 Let's Encrypt **solo emite wildcards por desafío DNS**, nunca por HTTP:
 
 ```bash
 certbot certonly --manual --preferred-challenges dns \
-  -d yaa.com.ar -d "*.yaa.com.ar" --agree-tos -m tu@email.com
+  -d urbi.com.ar -d "*.urbi.com.ar" --agree-tos -m tu@email.com
 ```
 
 Y ahí está la trampa, que certbot avisa al terminar:
@@ -922,14 +922,14 @@ Lo que hace bien, y conviene copiar:
 - **Valida con `nginx -t` antes de recargar.** Si la config está rota, no
   recarga y no se lleva puesto el resto del servidor.
 - **`www` solo donde corresponde.** En `moulinscocina.com.ar` tiene sentido;
-  en `tienda.yaa.com.ar` no entra nadie a `www.`, y como el wildcard de DNS
+  en `tienda.urbi.com.ar` no entra nadie a `www.`, y como el wildcard de DNS
   igual lo resuelve, se colaba en el certificado. Si algún día ese nombre
   deja de resolver, **falla la renovación del certificado entero**.
 
 Y en cron, para que una tienda nueva tenga HTTPS sin intervención:
 
 ```bash
-(crontab -l 2>/dev/null; echo "*/10 * * * * /root/yaa/yaa/scripts/provision-domains.sh >> /var/log/yaa-domains.log 2>&1") | crontab -
+(crontab -l 2>/dev/null; echo "*/10 * * * * /root/yaa/yaa/scripts/provision-domains.sh >> /var/log/urbi-domains.log 2>&1") | crontab -
 ```
 
 ### Cómo saber si un certificado se renueva solo

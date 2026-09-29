@@ -26,7 +26,7 @@ export function handleAnchorNavClick(
   pathname: string | null,
   id: string,
 ) {
-  if (pathname !== "/") return; // navegación normal a "/#id", se corrige al llegar (ver el useEffect en YaaPublicNav)
+  if (pathname !== "/") return; // navegación normal a "/#id", se corrige al llegar (ver el useEffect en UrbiPublicNav)
   event.preventDefault();
   scrollToAnchor(id);
   window.history.pushState(null, "", `/#${id}`);

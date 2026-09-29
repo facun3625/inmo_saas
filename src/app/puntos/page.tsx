@@ -49,7 +49,7 @@ export default async function PuntosPage() {
   );
 
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="public-inner-page public-account-page flex flex-1 flex-col">
       <StoreHero />
       <main className="mx-auto flex w-full max-w-[1440px] flex-1 flex-col gap-6 bg-background px-4 py-6 lg:px-8">
         <div className="flex flex-col gap-6 lg:grid lg:grid-cols-[240px_1fr] lg:items-start lg:gap-12">

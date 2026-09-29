@@ -113,7 +113,7 @@ export default async function DatosPage() {
               </div>
             )}
 
-            <button type="submit" className="yaa-btn yaa-btn-primary mt-2 w-full justify-center md:col-span-2">
+            <button type="submit" className="urbi-btn urbi-btn-primary mt-2 w-full justify-center md:col-span-2">
               Crear mi inmobiliaria
             </button>
           </ActionForm>

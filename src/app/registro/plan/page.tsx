@@ -22,8 +22,8 @@ export default async function ChoosePlanPage() {
         </div>
 
         {hasTrial && (
-          <div className="mx-auto flex max-w-xl items-start gap-2.5 rounded-xl border border-[#58c7e1]/25 bg-[#58c7e1]/10 px-4 py-3 text-sm text-white/80">
-            <ShieldCheckIcon className="mt-0.5 size-4 shrink-0 text-[#58c7e1]" />
+          <div className="mx-auto flex max-w-xl items-start gap-2.5 rounded-xl border border-[#51c2ec]/25 bg-[#51c2ec]/10 px-4 py-3 text-sm text-white/80">
+            <ShieldCheckIcon className="mt-0.5 size-4 shrink-0 text-[#51c2ec]" />
             <span>
               Empezás a probar sin pagar nada — la suscripción se cobra recién cuando termine tu período de prueba,
               no antes.

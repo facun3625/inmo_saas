@@ -6,7 +6,7 @@ import { prisma } from "@/lib/prisma";
 
 const ROOT_DOMAIN = process.env.ROOT_DOMAIN ?? "localhost:3010";
 
-// La sesión de yaa.com.ar nunca se comparte directamente con la inmobiliaria.
+// La sesión de urbi.com.ar nunca se comparte directamente con la inmobiliaria.
 // Este endpoint crea un pase corto, de un solo uso, únicamente después de
 // que el dueño toca "Ir al panel de mi inmobiliaria" desde su cuenta central.
 export default async function OpenStoreAdminPage() {

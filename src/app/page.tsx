@@ -2,7 +2,7 @@ import { BRAND } from "@/lib/brand";
 import { EstateCatalog } from "@/components/estate/catalog";
 import { prisma } from "@/lib/prisma";
 import { getCurrentTenant } from "@/lib/tenant";
-import { YaaLanding } from "@/components/marketing/yaa-landing";
+import { UrbiLanding } from "@/components/marketing/urbi-landing";
 import { canTenantReceiveOrders } from "@/lib/billing-status";
 import { getResellerSettings, getCommissionTiers } from "@/lib/reseller-commission";
 import { getSetupServiceSettings } from "@/lib/platform-billing";
@@ -18,7 +18,7 @@ export default async function Home() {
       getCommissionTiers(),
       getSetupServiceSettings(),
     ]);
-    // Organization schema: lo que le permite a Google entender que "UrbIA" es
+    // Organization schema: lo que le permite a Google entender que "Urbi" es
     // una marca (no una palabra suelta) — habilita el logo en el panel de
     // conocimiento y el buscador interno en los resultados. Sin sameAs a
     // propósito: no hay redes sociales reales todavía, e inventar links
@@ -26,7 +26,7 @@ export default async function Home() {
     const organizationJsonLd = {
       "@context": "https://schema.org",
       "@type": "Organization",
-      name: "UrbIA",
+      name: "Urbi",
       url: `${process.env.ROOT_DOMAIN?.startsWith("localhost") ? "http" : "https"}://${process.env.ROOT_DOMAIN ?? "localhost:3010"}`,
       logo: BRAND.icon,
       description: BRAND.description,
@@ -37,7 +37,7 @@ export default async function Home() {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
         />
-        <YaaLanding
+        <UrbiLanding
           plans={publicPlans.map((plan) => ({
             id: plan.id,
             name: plan.name,
@@ -49,6 +49,7 @@ export default async function Home() {
             maxProducts: plan.maxProducts,
             maxOrdersPerMonth: plan.maxOrdersPerMonth,
             allowCustomDomain: plan.allowCustomDomain,
+            allowAiAgent: plan.allowAiAgent,
             featured: plan.featured,
           }))}
           resellerSettings={{

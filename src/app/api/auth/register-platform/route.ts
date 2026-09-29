@@ -11,7 +11,7 @@ const registerSchema = z.object({
   password: z.string().min(6, "La contraseña debe tener al menos 6 caracteres"),
 });
 
-// Registro público en yaa.com.ar, sin tienda todavía — el primer paso de
+// Registro público en urbi.com.ar, sin tienda todavía — el primer paso de
 // /registro. A diferencia de /api/auth/register (que crea un cliente DENTRO
 // de una tienda ya existente), esto crea un User con tenantId null que
 // recién se convierte en ADMIN de una tienda al terminar el onboarding
@@ -51,7 +51,7 @@ export async function POST(request: Request) {
   });
   if (existing) {
     return NextResponse.json(
-      { error: existing.tenantId ? "Ese email ya tiene una tienda en YAA" : "Ya existe una cuenta con ese email" },
+      { error: existing.tenantId ? "Ese email ya tiene una tienda en Urbi" : "Ya existe una cuenta con ese email" },
       { status: 409 },
     );
   }

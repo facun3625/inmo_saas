@@ -21,7 +21,7 @@ function startOfMonth() {
 }
 
 // Ruta pública del sitio de un tenant (sin sesión) — a diferencia de
-// /api/sales-bot (que es de la landing de UrbIA, sin datos por tenant), acá
+// /api/sales-bot (que es de la landing de Urbi, sin datos por tenant), acá
 // el tenantId se resuelve server-side vía getCurrentTenant() y es lo único
 // que las tools usan — nunca confiar en un tenantId que venga del body.
 export async function POST(req: NextRequest) {

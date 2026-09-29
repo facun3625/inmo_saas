@@ -44,6 +44,161 @@ export async function EstateCatalog({ tenantId }: { tenantId: string }) {
   ]);
   const favoritedSet = new Set(favoriteIds.map((f) => f.propertyId));
   const hasContactInfo = Boolean(settings.address || settings.phone);
+  const searchValues = {
+    q: "",
+    operation: "",
+    propertyType: "",
+    city: "",
+    neighborhood: "",
+    bedrooms: "",
+    bathrooms: "",
+    garages: "",
+    orientation: "",
+    petsPolicy: "",
+    creditEligible: "",
+  };
+  const searchForm = (
+    <PropertySearchForm
+      action="/propiedades"
+      enabledKeys={enabledFilters}
+      labels={filterLabels}
+      values={searchValues}
+      propertyTypes={filterOptions.propertyTypes}
+      cities={filterOptions.cities}
+      neighborhoods={filterOptions.neighborhoods}
+    />
+  );
+  const propertyCards = properties.map((p) => (
+    <PropertyCard
+      key={p.id}
+      property={p}
+      favorited={favoritedSet.has(p.id)}
+      badgeColor={settings.badgeColor}
+    />
+  ));
+
+  if (settings.template === "moderno") {
+    return (
+      <div className="flex flex-1 flex-col bg-[#f3f1ec]">
+        <StoreHero />
+        <section className="relative isolate min-h-[640px] overflow-hidden bg-neutral-900 text-white lg:min-h-[700px]">
+          {settings.coverUrl ? (
+            <Image src={settings.coverUrl} alt="" fill priority sizes="100vw" className="-z-20 object-cover" />
+          ) : (
+            <div className="absolute inset-0 -z-20 bg-[radial-gradient(circle_at_75%_30%,rgba(255,255,255,.18),transparent_34%),linear-gradient(135deg,var(--primary),#111827)]" />
+          )}
+          <div className="absolute inset-0 -z-10 bg-gradient-to-r from-black/85 via-black/55 to-black/15" />
+          <div className="mx-auto flex min-h-[640px] w-full max-w-[1440px] flex-col justify-end px-4 pb-10 pt-20 sm:px-6 lg:min-h-[700px] lg:px-8 lg:pb-14">
+            <div className="public-enter max-w-4xl">
+              <p className="text-xs font-semibold uppercase tracking-[.28em] text-white/70">Propiedades para tu próxima etapa</p>
+              <h1 className="mt-5 max-w-3xl text-[clamp(3rem,7vw,6.8rem)] font-bold leading-[.88] tracking-[-.055em]">
+                Encontrá tu lugar.
+              </h1>
+              <p className="mt-6 max-w-xl text-base leading-relaxed text-white/75 sm:text-lg">
+                Venta, alquiler y oportunidades elegidas para acompañar la forma en la que querés vivir.
+              </p>
+            </div>
+            <div className="public-enter public-enter-delay-1 mt-10 max-w-6xl rounded-[1.75rem] bg-white/95 p-2 text-neutral-950 shadow-2xl backdrop-blur-md">
+              {searchForm}
+            </div>
+            {hasContactInfo && (
+              <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/75">
+                {settings.address && <span className="flex items-center gap-2"><MapPin className="size-4" />{settings.address}</span>}
+                {settings.phone && <span className="flex items-center gap-2"><Phone className="size-4" />{settings.phone}</span>}
+              </div>
+            )}
+          </div>
+        </section>
+
+        <main className="mx-auto w-full max-w-[1440px] flex-1 px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+          <div className="mb-10 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[.24em] text-primary">Selección destacada</p>
+              <h2 className="mt-3 text-[clamp(2.1rem,5vw,4.5rem)] font-bold leading-none tracking-[-.04em]">Espacios que inspiran</h2>
+              <p className="mt-4 text-muted-foreground">{properties.length ? `${properties.length} propiedades disponibles` : "Explorá nuestra selección actualizada"}</p>
+            </div>
+            <Link href="/propiedades" className="group inline-flex items-center gap-2 font-semibold text-primary">
+              Ver todas <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+            </Link>
+          </div>
+          <div className="grid gap-7 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">{propertyCards}</div>
+          {!properties.length && <EmptyProperties />}
+          {settings.hasDevelopments && (
+            <Link
+              href="/emprendimientos"
+              className="group mt-16 grid overflow-hidden rounded-[2rem] px-7 py-10 shadow-xl sm:px-10 lg:grid-cols-[1fr_auto] lg:items-end lg:px-14 lg:py-14"
+              style={{ backgroundColor: settings.buttonColor, color: contrastText(settings.buttonColor) }}
+            >
+              <div className="max-w-3xl">
+                <p className="text-xs font-semibold uppercase tracking-[.25em] opacity-65">Nuevas oportunidades</p>
+                <h2 className="mt-4 text-3xl font-bold tracking-tight sm:text-5xl">Proyectos para mirar hacia adelante.</h2>
+                <p className="mt-4 max-w-xl opacity-75">Avances de obra, ubicaciones y opciones de financiación.</p>
+              </div>
+              <span className="mt-8 inline-flex items-center gap-2 border-b border-current pb-1 font-semibold lg:mt-0">Explorar emprendimientos <ArrowRight className="size-4" /></span>
+            </Link>
+          )}
+        </main>
+        <StoreFooter />
+      </div>
+    );
+  }
+
+  if (settings.template === "minimal") {
+    return (
+      <div className="flex flex-1 flex-col bg-white text-neutral-900">
+        <StoreHero />
+        <main className="flex-1">
+          <section className="mx-auto w-full max-w-[1440px] px-4 pb-16 pt-16 sm:px-6 lg:px-8 lg:pb-24 lg:pt-24">
+            <div className="grid items-end gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(340px,4fr)]">
+              <div className="public-enter max-w-4xl">
+                <p className="text-xs font-medium uppercase tracking-[.3em] text-neutral-500">Inmuebles seleccionados</p>
+                <h1 className="mt-7 text-[clamp(3rem,7vw,7rem)] font-medium leading-[.94] tracking-[-.065em]">Tu próximo espacio empieza acá.</h1>
+              </div>
+              <div className="public-enter public-enter-delay-1 pb-2 text-base leading-7 text-neutral-500">
+                <p>Descubrí propiedades en venta y alquiler, elegidas para que encuentres con claridad el lugar que estás buscando.</p>
+                {hasContactInfo && (
+                  <div className="mt-6 flex flex-col gap-2 text-sm text-neutral-700">
+                    {settings.address && <span>{settings.address}</span>}
+                    {settings.phone && <span>{settings.phone}</span>}
+                  </div>
+                )}
+              </div>
+            </div>
+            {settings.coverUrl && (
+              <div className="public-enter-side-right relative mt-14 aspect-[16/7] min-h-[280px] overflow-hidden bg-neutral-100">
+                <Image src={settings.coverUrl} alt="" fill priority sizes="100vw" className="object-cover" />
+              </div>
+            )}
+            <div className="mt-10 border-y border-neutral-200 py-5">{searchForm}</div>
+          </section>
+
+          <section className="mx-auto w-full max-w-[1440px] px-4 pb-20 sm:px-6 lg:px-8 lg:pb-32">
+            <div className="mb-10 flex items-end justify-between border-b border-neutral-200 pb-5">
+              <div>
+                <p className="text-xs uppercase tracking-[.26em] text-neutral-500">Catálogo</p>
+                <h2 className="mt-3 text-3xl font-medium tracking-tight sm:text-5xl">Propiedades destacadas</h2>
+              </div>
+              <Link href="/propiedades" className="hidden text-sm text-neutral-600 underline underline-offset-8 sm:block">Ver todas</Link>
+            </div>
+            <div className="grid gap-x-7 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">{propertyCards}</div>
+            {!properties.length && <EmptyProperties />}
+            {settings.hasDevelopments && (
+              <Link href="/emprendimientos" className="group mt-20 flex flex-col justify-between gap-8 border-y border-neutral-900 py-10 sm:flex-row sm:items-end">
+                <div>
+                  <p className="text-xs uppercase tracking-[.25em] text-neutral-500">Nuevas oportunidades</p>
+                  <h2 className="mt-3 text-3xl font-medium tracking-tight sm:text-5xl">Nuestros emprendimientos</h2>
+                  <p className="mt-4 text-neutral-500">Proyectos, avances de obra y opciones de financiación.</p>
+                </div>
+                <span className="inline-flex items-center gap-3 text-sm font-medium">Ver proyectos <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" /></span>
+              </Link>
+            )}
+          </section>
+        </main>
+        <StoreFooter />
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-1 flex-col">
       <StoreHero />
@@ -184,6 +339,16 @@ export async function EstateCatalog({ tenantId }: { tenantId: string }) {
         </div>
       </main>
       <StoreFooter />
+    </div>
+  );
+}
+
+function EmptyProperties() {
+  return (
+    <div className="mt-8 border border-dashed px-6 py-16 text-center">
+      <Building2 className="mx-auto size-10 text-muted-foreground" />
+      <h3 className="mt-4 text-lg font-semibold">Todavía no hay propiedades publicadas</h3>
+      <p className="mt-2 text-sm text-muted-foreground">Volvé a visitarnos pronto o consultanos por lo que estás buscando.</p>
     </div>
   );
 }

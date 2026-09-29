@@ -1,7 +1,7 @@
 # Dominio propio
 
 Una tienda puede publicarse en un dominio propio (ej: `pedidos.mimarca.com`)
-además de su subdominio de siempre (`mimarca.yaa.com.ar`) — ambos siguen
+además de su subdominio de siempre (`mimarca.urbi.com.ar`) — ambos siguen
 funcionando en paralelo, no es un reemplazo. Requiere un plan con
 `allowCustomDomain` habilitado.
 
@@ -38,7 +38,7 @@ Implementado en `src/app/admin/configuracion/actions.ts` +
    (`Tenant.customDomain` es único), genera un `customDomainToken` nuevo y
    deja `customDomainVerified: false`.
 2. **Verificar** (`verifyCustomDomain`): resuelve por DNS el TXT en
-   `_yaa-challenge.<dominio>` (`src/lib/custom-domain.ts`,
+   `_urbi-challenge.<dominio>` (`src/lib/custom-domain.ts`,
    `resolveTxt` de `node:dns/promises`) y confirma que contenga el token
    guardado. Si coincide, marca `customDomainVerified: true`. El dueño de
    la tienda tiene que haber cargado ese TXT en su propio proveedor de DNS
@@ -46,7 +46,7 @@ Implementado en `src/app/admin/configuracion/actions.ts` +
    sola en este flujo.
 3. **Quitar** (`removeCustomDomain`): limpia los tres campos.
 
-## Flujo asistido — "que lo haga UrbIA" (`DomainRequest`)
+## Flujo asistido — "que lo haga Urbi" (`DomainRequest`)
 
 Para quien no quiere lidiar con comprar el dominio y cargar el TXT a mano:
 `createDomainRequest` (mismo archivo de actions) guarda nombre/email/

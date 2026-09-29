@@ -6,7 +6,7 @@ import { renderIcon, FALLBACK_ICON } from "@/lib/tenant-icon";
 
 // logoUrl siempre es un path local /uploads/... (todo pasa por
 // saveUploadedFile en lib/storage.ts) — si algún día se permite pegar una
-// URL externa, esto rompe en silencio y cae al ícono de YAA por defecto.
+// URL externa, esto rompe en silencio y cae al ícono de Urbi por defecto.
 //
 // A propósito SIN requireTenantAdmin(): src/proxy.ts deja pasar esta ruta
 // sin sesión (ver isPublicAdminAsset ahí) porque iOS Safari busca el

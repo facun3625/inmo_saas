@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import Image from "next/image";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -59,6 +58,7 @@ function ColorField({
 export function IdentityForm({ settings }: { settings: StoreSettings }) {
   const [pending, startTransition] = useTransition();
   const [logoPreview, setLogoPreview] = useState<string | null>(settings.logoUrl);
+  const [footerLogoPreview, setFooterLogoPreview] = useState<string | null>(settings.footerLogoUrl);
   const [faviconPreview, setFaviconPreview] = useState<string | null>(settings.faviconUrl);
   const [logoHeight, setLogoHeight] = useState(settings.logoHeight);
   const [footerLogoHeight, setFooterLogoHeight] = useState(settings.footerLogoHeight);
@@ -128,25 +128,35 @@ export function IdentityForm({ settings }: { settings: StoreSettings }) {
         </p>
       </div>
 
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-2 border-t pt-5">
+        <ImageField
+          label="Logo del footer"
+          name="footerLogo"
+          shape="logo"
+          preview={footerLogoPreview}
+          onPreviewChange={setFooterLogoPreview}
+          heightPx={footerLogoHeight}
+          onRemove={
+            settings.footerLogoUrl
+              ? async () => {
+                  const actionResult = await removeStoreImage("store_footer_logo_url");
+                  if ("error" in actionResult) {
+                    toast.error(actionResult.error);
+                    return;
+                  }
+                  setFooterLogoPreview(null);
+                  toast.success("Logo del footer eliminado");
+                }
+              : undefined
+          }
+        />
+        <p className="text-xs text-muted-foreground">
+          Opcional. Si no subís uno, el footer usa el mismo logo del header.
+        </p>
+        <div className="mt-2 flex items-center justify-between">
           <Label htmlFor="footerLogoHeight">Tamaño del logo en el footer</Label>
           <span className="text-xs text-muted-foreground">{footerLogoHeight}px de alto</span>
         </div>
-        {logoPreview && (
-          <div
-            className="flex w-auto shrink-0 items-center justify-center overflow-hidden rounded-xl bg-muted p-1.5"
-            style={{ height: footerLogoHeight, maxWidth: footerLogoHeight * 3.5 }}
-          >
-            <Image
-              src={logoPreview}
-              alt="Logo en el footer"
-              width={Math.round(footerLogoHeight * 3.5)}
-              height={footerLogoHeight}
-              className="size-full object-contain"
-            />
-          </div>
-        )}
         <input
           id="footerLogoHeight"
           name="footerLogoHeight"
@@ -158,9 +168,6 @@ export function IdentityForm({ settings }: { settings: StoreSettings }) {
           onChange={(e) => setFooterLogoHeight(Number(e.target.value))}
           className="accent-primary"
         />
-        <p className="text-xs text-muted-foreground">
-          Usa el mismo logo de arriba, con un tamaño propio para el footer.
-        </p>
       </div>
 
       <label className="flex cursor-pointer items-center justify-between gap-3 rounded-xl border p-3 text-sm">

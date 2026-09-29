@@ -6,7 +6,7 @@ const STEPS = ["Cuenta", "Plan", "Tu inmobiliaria"];
 export function OnboardingSteps({ current }: { current: number }) {
   return (
     <div className="flex flex-col items-center gap-5">
-      <Image src="/brand/logo.svg" alt="UrbIA" width={1479} height={554} className="bg-white rounded-lg p-1.5 h-8 w-auto object-contain" priority />
+      <Image src="/logo_blanco.svg" alt="Urbi" width={595} height={180} className="h-8 w-auto object-contain" priority />
       <div className="mx-auto flex w-full max-w-md items-center justify-between">
       {STEPS.map((label, i) => {
         const step = i + 1;
@@ -18,7 +18,7 @@ export function OnboardingSteps({ current }: { current: number }) {
               <span
                 className={cn(
                   "flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-bold transition-colors",
-                  done ? "bg-[#208ab1] text-white" : active ? "bg-[#208ab1]/20 text-[#58c7e1] ring-1 ring-[#208ab1]" : "bg-white/5 text-white/40",
+                  done ? "bg-[#208ab1] text-white" : active ? "bg-[#208ab1]/20 text-[#51c2ec] ring-1 ring-[#208ab1]" : "bg-white/5 text-white/40",
                 )}
               >
                 {step}

@@ -15,7 +15,7 @@ export async function syncPlatformSubscription(accessToken: string, subscription
   ]);
 
   if (pendingUser) {
-    const belongsToUser = subscription.externalReference?.startsWith(`yaa:onboarding:${pendingUser.id}:`);
+    const belongsToUser = subscription.externalReference?.startsWith(`urbi:onboarding:${pendingUser.id}:`);
     if (belongsToUser) {
       await prisma.user.update({
         where: { id: pendingUser.id },

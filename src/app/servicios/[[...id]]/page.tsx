@@ -33,7 +33,7 @@ export default async function ServicesPage({
   if (!current) notFound();
 
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="public-inner-page public-service-page flex flex-1 flex-col">
       <StoreHero />
       <main className="mx-auto w-full max-w-[1440px] flex-1 bg-background">
         <div className="grid gap-7 px-4 py-9 sm:px-6 lg:grid-cols-[220px_minmax(0,1fr)] lg:px-8 lg:py-12">
@@ -42,6 +42,7 @@ export default async function ServicesPage({
               <Link
                 key={service.id}
                 href={`/servicios/${service.id}`}
+                aria-current={service.id === current.id ? "page" : undefined}
                 className={cn(
                   "snap-start whitespace-nowrap rounded-xl px-4 py-3 text-sm font-medium transition-colors duration-200",
                   service.id === current.id

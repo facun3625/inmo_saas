@@ -287,7 +287,7 @@ export default async function RevendedoresPage({
                 </div>
               </div>
 
-              <button type="submit" className="yaa-btn yaa-btn-primary h-[38px] self-start">
+              <button type="submit" className="urbi-btn urbi-btn-primary h-[38px] self-start">
                 Guardar
               </button>
             </ActionForm>
@@ -321,7 +321,7 @@ export default async function RevendedoresPage({
                   <label className="text-xs font-medium text-muted-foreground">Porcentaje</label>
                   <input name="percent" type="number" min="0" max="100" step="0.1" required className="w-28 rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/30" />
                 </div>
-                <button type="submit" className="yaa-btn yaa-btn-secondary h-[38px]">
+                <button type="submit" className="urbi-btn urbi-btn-secondary h-[38px]">
                   Agregar escalón
                 </button>
               </ActionForm>

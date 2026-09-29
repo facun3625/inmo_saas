@@ -1,20 +1,16 @@
-import { getStoreSettings, getOrderEmailMessage, getTelegramSettings, getSeoSettings, getAiAgentSettings } from "@/lib/settings";
+import { getStoreSettings, getSeoSettings, getAiAgentSettings } from "@/lib/settings";
 import { getPopupConfig } from "@/lib/popup";
 import { requireTenantAdminWithPlan } from "@/lib/require-admin";
 import { prisma } from "@/lib/prisma";
 import { verificationRecordName } from "@/lib/custom-domain";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PopupForm } from "./popup-form";
-import { EmailEditor } from "./email-editor";
-import { EmailLogTable } from "./email-log-table";
-import { TelegramSettingsForm } from "./telegram-settings-form";
-import { PushSettingsForm } from "./push-settings-form";
 import { DocumentacionTab } from "./documentacion-tab";
 import { CustomDomainForm } from "./custom-domain-form";
 import { SeoSettingsForm } from "./seo-settings-form";
 import { AiAgentSettingsForm } from "./ai-agent-settings-form";
 
-const VALID_TABS = new Set(["popup", "mail", "telegram", "push", "docs", "dominio", "seo", "ia"]);
+const VALID_TABS = new Set(["popup", "docs", "dominio", "seo", "ia"]);
 
 export default async function ConfiguracionPage({
   searchParams,
@@ -24,11 +20,9 @@ export default async function ConfiguracionPage({
   const { session, tenant, features } = await requireTenantAdminWithPlan();
   const { tab } = await searchParams;
   const initialTab = tab && VALID_TABS.has(tab) ? tab : "popup";
-  const [settings, popupConfig, orderEmailMessage, telegramSettings, tenantDomain, seoSettings, aiAgentSettings] = await Promise.all([
+  const [settings, popupConfig, tenantDomain, seoSettings, aiAgentSettings] = await Promise.all([
     getStoreSettings(tenant.id),
     getPopupConfig(tenant.id),
-    getOrderEmailMessage(tenant.id),
-    getTelegramSettings(tenant.id),
     prisma.tenant.findUnique({
       where: { id: tenant.id },
       select: { customDomain: true, customDomainVerified: true, customDomainToken: true },
@@ -45,17 +39,6 @@ export default async function ConfiguracionPage({
         <TabsList className="w-full">
           <TabsTrigger value="popup" className="flex-1">
             Pop-up
-          </TabsTrigger>
-          <TabsTrigger value="mail" className="flex-1">
-            Mail
-          </TabsTrigger>
-          {features.allowTelegram && (
-            <TabsTrigger value="telegram" className="flex-1">
-              Telegram
-            </TabsTrigger>
-          )}
-          <TabsTrigger value="push" className="flex-1">
-            Notificaciones
           </TabsTrigger>
           <TabsTrigger value="docs" className="flex-1">
             Documentación
@@ -79,37 +62,6 @@ export default async function ConfiguracionPage({
 
         <TabsContent value="popup">
           <PopupForm key={popupConfig.version} config={popupConfig} />
-        </TabsContent>
-
-        <TabsContent value="mail">
-          <Tabs defaultValue="editor">
-            <TabsList>
-              <TabsTrigger value="editor">Editor</TabsTrigger>
-              <TabsTrigger value="enviados">Enviados</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="editor">
-              <EmailEditor
-                key={orderEmailMessage ?? "default"}
-                message={orderEmailMessage}
-                storeSettings={settings}
-              />
-            </TabsContent>
-
-            <TabsContent value="enviados">
-              <EmailLogTable />
-            </TabsContent>
-          </Tabs>
-        </TabsContent>
-
-        {features.allowTelegram && (
-          <TabsContent value="telegram">
-            <TelegramSettingsForm key={JSON.stringify(telegramSettings)} settings={telegramSettings} />
-          </TabsContent>
-        )}
-
-        <TabsContent value="push">
-          <PushSettingsForm />
         </TabsContent>
 
         <TabsContent value="docs">

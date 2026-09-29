@@ -16,8 +16,8 @@ const ROLE_LABELS: Record<string, string> = {
   SUPER_ADMIN: "super admin de la plataforma",
 };
 
-const TITLE = "Creá tu inmobiliaria · UrbIA";
-const DESCRIPTION = "Creá tu cuenta en UrbIA y organizá propiedades, contactos, visitas y contratos. Consultá los planes y sus condiciones de prueba.";
+const TITLE = "Creá tu inmobiliaria · Urbi";
+const DESCRIPTION = "Creá tu cuenta en Urbi y organizá propiedades, contactos, visitas y contratos. Consultá los planes y sus condiciones de prueba.";
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -27,10 +27,10 @@ export const metadata: Metadata = {
     title: TITLE,
     description: DESCRIPTION,
     url: "/registro",
-    siteName: "UrbIA",
+    siteName: "Urbi",
     locale: "es_AR",
     type: "website",
-    images: [{ url: "/brand/social-card.png", width: 1200, height: 630, alt: "UrbIA, tu inmobiliaria online" }],
+    images: [{ url: "/brand/social-card.png", width: 1200, height: 630, alt: "Urbi, tu inmobiliaria online" }],
   },
   twitter: {
     card: "summary_large_image",
@@ -95,9 +95,9 @@ export default async function RegistroPage({
     <main className="min-h-screen bg-[#030712] text-white lg:grid lg:grid-cols-2">
       {/* Panel de marca — solo desktop. En mobile alcanza con el logo del
           card del form, no hace falta duplicar la propuesta de valor. */}
-      <section className="hidden overflow-hidden border-r border-white/10 lg:flex lg:flex-col lg:items-center lg:justify-center lg:px-14 lg:py-12 xl:px-20">
-        <div className="w-full max-w-md">
-          <Image src="/brand/logo.svg" alt="UrbIA" width={1479} height={554} className="bg-white rounded-lg p-1.5 h-7 w-auto object-contain" />
+      <section className="relative hidden overflow-hidden border-r border-white/10 lg:flex lg:flex-col lg:items-center lg:justify-center lg:px-14 lg:py-12 xl:px-20">
+        <div className="relative w-full max-w-md">
+          <Image src="/logo_blanco.svg" alt="Urbi" width={595} height={180} className="h-11 w-auto object-contain" />
 
           <h1 className="mt-6 text-3xl font-extrabold leading-tight tracking-tight xl:text-4xl">
             Tu página inmobiliaria empieza acá.
@@ -107,15 +107,19 @@ export default async function RegistroPage({
           </p>
 
           <ul className="mt-5 flex flex-col gap-2 text-sm text-white/70">
-            <li className="flex items-center gap-2"><Check className="size-4 shrink-0 text-[#58c7e1]" />Tu marca, tus propiedades y tus clientes</li>
-            <li className="flex items-center gap-2"><Check className="size-4 shrink-0 text-[#58c7e1]" />Condiciones claras antes de elegir</li>
+            <li className="flex items-center gap-2"><Check className="size-4 shrink-0 text-[#51c2ec]" />Tu marca, tus propiedades y tus clientes</li>
+            <li className="flex items-center gap-2"><Check className="size-4 shrink-0 text-[#51c2ec]" />Condiciones claras antes de elegir</li>
             {minTrialDays && (
               <li className="flex items-center gap-2">
-                <Check className="size-4 shrink-0 text-[#58c7e1]" />
+                <Check className="size-4 shrink-0 text-[#51c2ec]" />
                 {minTrialDays} días de prueba gratis, sin tarjeta
               </li>
             )}
           </ul>
+
+          <div className="hero-preview-float relative mt-10 aspect-[4/3] w-full max-w-[420px]">
+            <Image src="/imac.png" alt="Vista previa de una página web hecha con Urbi" fill sizes="420px" className="object-contain drop-shadow-[0_35px_60px_rgba(0,0,0,.5)]" />
+          </div>
         </div>
       </section>
 
@@ -123,13 +127,13 @@ export default async function RegistroPage({
       <section className="flex min-h-screen flex-col items-center justify-center px-4 py-12">
         <div className="flex w-full max-w-sm flex-col gap-0 overflow-hidden rounded-2xl bg-[#0b1220] shadow-2xl ring-1 ring-white/10">
           <div className="flex flex-col items-center gap-3 px-6 py-7 text-center">
-            <Image src="/brand/logo.svg" alt="UrbIA" width={1479} height={554} className="bg-white rounded-lg p-1.5 h-8 w-auto object-contain lg:hidden" />
+            <Image src="/logo_blanco.svg" alt="Urbi" width={595} height={180} className="h-8 w-auto object-contain lg:hidden" />
             <div className="flex flex-col items-center gap-0.5">
               <h2 className="text-xl font-semibold">Creá tu inmobiliaria</h2>
               <p className="text-sm text-white/50">Creá tu cuenta, sin instalaciones.</p>
             </div>
             {minTrialDays && (
-              <p className="text-xs font-medium text-[#58c7e1]">
+              <p className="text-xs font-medium text-[#51c2ec]">
                 {minTrialDays} días de prueba gratis — no pedimos tarjeta.
               </p>
             )}

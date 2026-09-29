@@ -14,7 +14,7 @@ export default function CartPage() {
   const { cart, itemCount, subtotal, updateQuantity, removeItem } = useCart();
 
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="public-inner-page public-account-page flex flex-1 flex-col">
       <StoreHero />
       <main className="mx-auto flex w-full max-w-[1440px] flex-1 flex-col gap-6 bg-background px-4 py-4">
         <h1 className="text-xl font-semibold">Tu pedido</h1>

@@ -41,7 +41,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth(async (req) => {
 
   return {
     ...authConfig,
-    // tenantId null es un universo válido (yaa.com.ar sin tienda todavía:
+    // tenantId null es un universo válido (urbi.com.ar sin tienda todavía:
     // super admin, o alguien registrándose en /registro) — nunca "sin
     // adapter", así Google también puede crear/vincular cuentas ahí.
     adapter: tenantAwareAdapter(tenant?.id ?? null),
@@ -155,8 +155,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth(async (req) => {
             ? await prisma.user.findFirst({
                 where: { email, tenantId: null, role: "SUPER_ADMIN" },
               })
-            : scope === "yaa-account"
-              // La cuenta central de yaa.com.ar admite al dueño aunque su
+            : scope === "urbi-account"
+              // La cuenta central de urbi.com.ar admite al dueño aunque su
               // User ya pertenezca a una tienda. Esa sesión queda en el
               // dominio raíz; desde /mi-cuenta se genera el pase efímero al
               // subdominio solo cuando el usuario elige entrar a su tienda.
@@ -175,7 +175,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth(async (req) => {
                   where: { tenantId_email: { tenantId: credentialsTenantId, email } },
                 })
               : scope === "onboarding"
-                // Alguien registrándose en yaa.com.ar todavía sin tienda —
+                // Alguien registrándose en urbi.com.ar todavía sin tienda —
                 // ver /registro y lib/require-onboarding.ts. Un revendedor
                 // sin tienda propia sigue siendo CUSTOMER acá (ser
                 // revendedor es tener un código, no un rol aparte — ver

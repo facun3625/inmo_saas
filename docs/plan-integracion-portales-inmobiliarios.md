@@ -2,16 +2,16 @@
 
 **Estado:** investigación y propuesta. No implementado.  
 **Fecha:** 18 de septiembre de 2026.  
-**Objetivo:** que cada inmobiliaria cargue y mantenga una propiedad una sola vez en UrbIA y pueda publicarla, actualizarla o retirarla de portales externos desde el mismo panel.
+**Objetivo:** que cada inmobiliaria cargue y mantenga una propiedad una sola vez en Urbi y pueda publicarla, actualizarla o retirarla de portales externos desde el mismo panel.
 
 ## 1. Resumen ejecutivo
 
 La integración debe diseñarse como un módulo multi-tenant de distribución de avisos:
 
-- **UrbIA será la fuente principal** de los datos de la propiedad.
+- **Urbi será la fuente principal** de los datos de la propiedad.
 - Cada tenant conectará sus propias cuentas y planes de los portales.
 - Una propiedad podrá enviarse a uno o varios portales, cada uno con configuración y estado independientes.
-- Los cambios en UrbIA generarán una nueva sincronización sin volver a cargar el aviso.
+- Los cambios en Urbi generarán una nueva sincronización sin volver a cargar el aviso.
 - Las consultas y métricas se importarán cuando el portal disponga de API o webhook para ello.
 - La arquitectura usará adaptadores por portal, porque categorías, atributos, autenticación y ciclo de vida no son iguales entre proveedores.
 
@@ -19,7 +19,7 @@ La primera implementación aconsejada es **Mercado Libre Inmuebles**, porque tie
 
 No se recomienda automatizar navegadores ni hacer scraping para publicar. Es frágil, puede romperse sin aviso y puede incumplir las condiciones del portal.
 
-## 2. Qué existe hoy en UrbIA
+## 2. Qué existe hoy en Urbi
 
 El modelo actual ya resuelve una parte importante:
 
@@ -125,7 +125,7 @@ Agregar una pestaña **Publicación en portales**:
 - fecha de última sincronización;
 - historial de intentos y respuesta legible del portal.
 
-Al guardar una propiedad publicada, UrbIA deberá informar que hay cambios pendientes y sincronizarlos en segundo plano. No conviene hacer que el guardado espere la respuesta de varios portales.
+Al guardar una propiedad publicada, Urbi deberá informar que hay cambios pendientes y sincronizarlos en segundo plano. No conviene hacer que el guardado espere la respuesta de varios portales.
 
 ### 4.3 Bandeja operativa
 
@@ -144,7 +144,7 @@ Vista general para la inmobiliaria:
 
 ### Fuente de verdad
 
-UrbIA manda sobre contenido, precio, imágenes y disponibilidad. Los cambios manuales hechos en el portal podrían ser sobrescritos en la siguiente sincronización. Esta regla debe aparecer claramente en la interfaz.
+Urbi manda sobre contenido, precio, imágenes y disponibilidad. Los cambios manuales hechos en el portal podrían ser sobrescritos en la siguiente sincronización. Esta regla debe aparecer claramente en la interfaz.
 
 Los datos propios del portal, como calidad, penalización, consumo de cupo, métricas y estado de moderación, se importan y no se sobrescriben.
 
@@ -168,7 +168,7 @@ Por eso el vínculo externo debe asociarse a una oferta (`EstateListing`) ademá
 
 ### Eliminación y cierre
 
-Eliminar una propiedad local que tenga publicaciones externas debe bloquearse hasta finalizar o desvincular esos avisos. Cuando una operación se cierre, UrbIA propondrá finalizar los avisos activos relacionados, pero conservará su historial.
+Eliminar una propiedad local que tenga publicaciones externas debe bloquearse hasta finalizar o desvincular esos avisos. Cuando una operación se cierre, Urbi propondrá finalizar los avisos activos relacionados, pero conservará su historial.
 
 ## 6. Modelo de datos propuesto
 
@@ -255,7 +255,7 @@ Conviene reutilizar la bandeja comercial existente creando `EstateInquiry` sin d
 
 ### `PortalCatalogMapping`
 
-Mapeo versionado entre UrbIA y cada portal:
+Mapeo versionado entre Urbi y cada portal:
 
 - tipo de propiedad + operación local;
 - categoría externa;
@@ -293,7 +293,7 @@ No conviene agregar todos como texto libre. Los campos que participan en filtros
 ```mermaid
 flowchart LR
     UI[Panel del tenant] --> Core[Servicio de publicaciones]
-    Core --> DB[(Base de datos UrbIA)]
+    Core --> DB[(Base de datos Urbi)]
     Core --> Q[Cola persistente]
     Q --> W[Worker de sincronización]
     W --> A1[Adaptador Mercado Libre]
@@ -317,7 +317,7 @@ Cada adaptador implementará un contrato interno común:
 - normalizar errores;
 - interpretar webhooks, leads y métricas.
 
-Los portales basados en feed implementarán el mismo contrato con otra estrategia: UrbIA genera una URL firmada por tenant, el portal la lee y luego se importan los reportes de procesamiento.
+Los portales basados en feed implementarán el mismo contrato con otra estrategia: Urbi genera una URL firmada por tenant, el portal la lee y luego se importan los reportes de procesamiento.
 
 ## 9. Seguridad, aislamiento y confiabilidad
 
@@ -332,7 +332,7 @@ Los portales basados en feed implementarán el mismo contrato con otra estrategi
 - registro sin tokens ni datos personales innecesarios;
 - auditoría de quién publicó, pausó, finalizó o reconectó una cuenta;
 - monitoreo de errores, latencia, antigüedad de cola y vencimiento de tokens;
-- reconciliación periódica para detectar diferencias entre UrbIA y el portal.
+- reconciliación periódica para detectar diferencias entre Urbi y el portal.
 
 Mercado Libre recomienda responder sus notificaciones inmediatamente y procesarlas mediante colas, dado que reintenta eventos no confirmados. Esto coincide con la arquitectura propuesta.
 
@@ -417,14 +417,14 @@ Dejar para una segunda entrega:
 
 - emprendimientos con variaciones;
 - publicaciones destacadas complejas;
-- respuestas a preguntas desde UrbIA;
+- respuestas a preguntas desde Urbi;
 - sincronización bidireccional de ediciones;
 - publicación masiva sin revisión;
 - más de una cuenta del mismo portal por tenant.
 
 ## 12. Decisiones que deben cerrarse antes de desarrollar
 
-1. Qué plan de UrbIA incluirá integraciones y cuántos portales/conexiones permitirá.
+1. Qué plan de Urbi incluirá integraciones y cuántos portales/conexiones permitirá.
 2. Si cada tenant contrata directamente sus paquetes con cada portal, opción recomendada.
 3. Quién puede publicar: propietario del tenant, administrador y/o agentes autorizados.
 4. Si los cambios se sincronizan automáticamente o requieren aprobación. Recomendación: automático para avisos ya publicados, con indicador de cambios pendientes.
@@ -443,10 +443,10 @@ Dejar para una segunda entrega:
 - pausar o cerrar una operación produce el resultado esperado en el portal;
 - los eventos duplicados no duplican consultas;
 - soporte puede reconstruir qué ocurrió sin acceder a secretos;
-- una caída temporal del portal no bloquea la edición normal de UrbIA.
+- una caída temporal del portal no bloquea la edición normal de Urbi.
 
 ## 14. Recomendación final
 
 Construir primero el núcleo neutral y Mercado Libre, mientras se tramita en paralelo el acceso formal a Zonaprop. La propuesta no depende de que todos los portales ofrezcan la misma tecnología: admite APIs en tiempo real y feeds periódicos dentro del mismo modelo operativo.
 
-El valor comercial puede comunicarse de forma simple: **“Publicá una vez en UrbIA y mantené tus avisos actualizados en todos tus portales desde un solo lugar.”**
+El valor comercial puede comunicarse de forma simple: **“Publicá una vez en Urbi y mantené tus avisos actualizados en todos tus portales desde un solo lugar.”**

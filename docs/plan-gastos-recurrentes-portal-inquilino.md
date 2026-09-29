@@ -11,7 +11,7 @@
 
 ## Alcance
 
-Este documento propone tres features sobre el módulo de **contratos de alquiler** (`EstateContract` / `EstateContact`) de UrbIA:
+Este documento propone tres features sobre el módulo de **contratos de alquiler** (`EstateContract` / `EstateContact`) de Urbi:
 
 1. Una ficha propia de contacto con su legajo completo: todo su historial como inquilino y como garante, tenga o no un contrato activo hoy.
 2. Un mecanismo para que la inmobiliaria le sume al inquilino, junto con el alquiler, conceptos adicionales que varían mes a mes (expensas, ABL, tasas, servicios).
@@ -27,7 +27,7 @@ La propuesta conserva la arquitectura del SaaS, el aislamiento multi-tenant, la 
 
 ## Diagnóstico actual
 
-UrbIA ya dispone de una base de cobranzas de alquiler:
+Urbi ya dispone de una base de cobranzas de alquiler:
 
 - Cron diario (`src/app/api/cron/estate-billing/route.ts`) que genera automáticamente la cuota de **Alquiler** de cada contrato activo como `EstateCharge`, y calcula punitorios si corresponde.
 - `EstateCharge.concept` es texto libre — hoy solo se usa para "Alquiler" y "Punitorios"; un admin podría cargar otro concepto a mano, pero no hay catálogo ni repetición automática.

@@ -3,20 +3,20 @@ import Link from "next/link";
 import { ArrowRight, BadgeDollarSign, Check, Link2, QrCode, TrendingUp, Users } from "lucide-react";
 
 import { prisma } from "@/lib/prisma";
-import { YaaPublicFooter } from "@/components/marketing/yaa-public-footer";
-import { YaaPublicNav } from "@/components/marketing/yaa-public-nav";
-import { YaaReveal } from "@/components/marketing/yaa-reveal";
-import { YaaFaqList } from "@/components/marketing/yaa-faq-list";
+import { UrbiPublicFooter } from "@/components/marketing/urbi-public-footer";
+import { UrbiPublicNav } from "@/components/marketing/urbi-public-nav";
+import { UrbiReveal } from "@/components/marketing/urbi-reveal";
+import { UrbiFaqList } from "@/components/marketing/urbi-faq-list";
 import { trackSiteVisit } from "@/lib/site-visit";
 
 export const metadata: Metadata = {
-  title: "Socios comerciales · UrbIA",
-  description: "Recomendá UrbIA, ayudá a más negocios a vender online y construí un ingreso recurrente.",
+  title: "Socios comerciales · Urbi",
+  description: "Recomendá Urbi, ayudá a más negocios a vender online y construí un ingreso recurrente.",
   alternates: { canonical: "/revendedores" },
 };
 
 const steps = [
-  { icon: Users, number: "01", title: "Sumate como socio", text: "Te registrás en UrbIA — no hace falta que nadie te apruebe, arrancás al toque." },
+  { icon: Users, number: "01", title: "Sumate como socio", text: "Te registrás en Urbi — no hace falta que nadie te apruebe, arrancás al toque." },
   { icon: Link2, number: "02", title: "Compartí tu código", text: "Te llevás un código y un QR propios. Cualquier inmobiliaria que se cree con ellos queda asociada a vos." },
   { icon: QrCode, number: "03", title: "El negocio se crea solo", text: "La persona crea su cuenta, elige un plan y arma su inmobiliaria en minutos, sin instalaciones ni técnicos." },
   { icon: BadgeDollarSign, number: "04", title: "Construí tu ingreso", text: "Cada vez que esa inmobiliaria paga, la comisión te queda pendiente en tu panel. Vos ves todo en tiempo real." },
@@ -45,23 +45,23 @@ export default async function ResellersPage() {
       : "Un único porcentaje fijo por ahora.";
 
   const resellerFaqs: [string, string][] = [
-    ["¿Tengo que instalar o configurar la inmobiliaria?", "No. El alta es online y UrbIA se ocupa de la plataforma, la infraestructura, las actualizaciones y el soporte técnico."],
-    ["¿Cuándo empiezo a cobrar?", `La comisión recurrente se genera sobre cada pago que la inmobiliaria le hace a UrbIA. El bono de activación se libera cuando la inmobiliaria lleva ${bonusDays} días pagando seguido.`],
+    ["¿Tengo que instalar o configurar la inmobiliaria?", "No. El alta es online y Urbi se ocupa de la plataforma, la infraestructura, las actualizaciones y el soporte técnico."],
+    ["¿Cuándo empiezo a cobrar?", `La comisión recurrente se genera sobre cada pago que la inmobiliaria le hace a Urbi. El bono de activación se libera cuando la inmobiliaria lleva ${bonusDays} días pagando seguido.`],
     ["¿Cómo se identifica qué inmobiliaria traje yo?", "Cada inmobiliaria que se crea usando tu código o tu QR queda asociada a vos automáticamente, sin que tengas que avisarle a nadie ni confirmar nada por escrito."],
     ["¿Necesito aprobación para empezar?", "No. Te registrás y tu código está activo al instante."],
-    ["¿Necesito conocimientos técnicos?", "No. Tu tarea es comercial: compartir tu código y acompañar la decisión. Los incidentes técnicos los atiende UrbIA."],
+    ["¿Necesito conocimientos técnicos?", "No. Tu tarea es comercial: compartir tu código y acompañar la decisión. Los incidentes técnicos los atiende Urbi."],
   ];
 
   return (
     <main className="min-h-screen bg-[#f4f8fb] text-[#133453]">
-      <YaaPublicNav />
+      <UrbiPublicNav />
 
       <section className="relative overflow-hidden">
         <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 pb-20 pt-20 md:pb-28 md:pt-28 lg:grid-cols-[1fr_380px]">
           <div>
-            <p className="mb-4 text-xs font-black uppercase tracking-[.2em] text-[#1e658c]">Socios comerciales UrbIA</p>
+            <p className="mb-4 text-xs font-black uppercase tracking-[.2em] text-[#1e658c]">Socios comerciales Urbi</p>
             <h1 className="max-w-3xl text-4xl font-black leading-[1.06] tracking-[-.045em] md:text-6xl">Tu próxima venta puede convertirse en un ingreso recurrente.</h1>
-            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-black/55">Recomendá UrbIA a inmobiliarias y administradores que necesitan organizar su cartera y gestión. Ganás un bono por activación y una comisión cada vez que el cliente paga. UrbIA se ocupa del producto y el soporte técnico.</p>
+            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-black/55">Recomendá Urbi a inmobiliarias y administradores que necesitan organizar su cartera y gestión. Ganás un bono por activación y una comisión cada vez que el cliente paga. Urbi se ocupa del producto y el soporte técnico.</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link href="/registro" className="inline-flex h-12 items-center gap-2 rounded-xl bg-[#208ab1] px-6 font-bold text-white transition hover:-translate-y-0.5 hover:bg-[#1e658c]">Quiero ser socio <ArrowRight className="size-[18px]" /></Link>
               <Link href="/socios" className="inline-flex h-12 items-center rounded-xl border border-black/15 bg-white px-6 font-bold transition hover:border-black/30">Ya soy socio, entrar</Link>
@@ -70,7 +70,7 @@ export default async function ResellersPage() {
           </div>
 
           <div className="rotate-2 rounded-3xl bg-[#133453] p-8 text-white shadow-[0_24px_60px_rgba(13,59,59,.18)] lg:p-10">
-            <p className="text-xs font-bold uppercase tracking-[.18em] text-[#80d5e8]">Tu cartera activa</p>
+            <p className="text-xs font-bold uppercase tracking-[.18em] text-[#51c2ec]">Tu cartera activa</p>
             <p className="mt-5 text-7xl font-black tracking-[-.06em]">{minPercent}%</p>
             <p className="mt-1 font-bold">en cada pago de tus inmobiliarias</p>
             <div className="my-7 h-px bg-white/15" />
@@ -98,9 +98,9 @@ export default async function ResellersPage() {
               <p className="mt-3 text-sm leading-relaxed text-black/55">Cuando una inmobiliaria que trajiste lleva {bonusDays} días pagando seguido, recibís este bono una sola vez.</p>
             </article>
             <article className="rounded-2xl bg-[#133453] p-6 text-white">
-              <p className="text-xs font-black uppercase tracking-wider text-[#80d5e8]">Recurrencia</p>
+              <p className="text-xs font-black uppercase tracking-wider text-[#51c2ec]">Recurrencia</p>
               <h3 className="mt-4 text-3xl font-black">{minPercent}% inicial</h3>
-              <p className="mt-3 text-sm leading-relaxed text-white/60">Cobrás sobre cada pago que UrbIA le registra a esa inmobiliaria.</p>
+              <p className="mt-3 text-sm leading-relaxed text-white/60">Cobrás sobre cada pago que Urbi le registra a esa inmobiliaria.</p>
             </article>
             <article className="rounded-2xl bg-[#dff2f8] p-6 text-[#133453]">
               <p className="text-xs font-black uppercase tracking-wider text-black/50">Crecimiento</p>
@@ -124,13 +124,13 @@ export default async function ResellersPage() {
                 const stores = Math.max(tier.minActiveStores, 1);
                 const monthly = stores * Number(referencePlan.priceMonthly) * (Number(tier.percent) / 100);
                 return (
-                  <YaaReveal key={tier.id} direction="up" delay={index * 90}>
+                  <UrbiReveal key={tier.id} direction="up" delay={index * 90}>
                     <article className="rounded-2xl border border-black/10 bg-white p-6">
                       <p className="text-sm font-bold text-black/45">{stores} activos · {Number(tier.percent)}%</p>
                       <p className="mt-3 text-3xl font-black tracking-tight text-[#1e658c]">${Math.round(monthly).toLocaleString("es-AR")} / mes</p>
                       <p className="mt-2 text-xs text-black/45">Comisión recurrente bruta estimada</p>
                     </article>
-                  </YaaReveal>
+                  </UrbiReveal>
                 );
               })}
             </div>
@@ -160,14 +160,14 @@ export default async function ResellersPage() {
       <section className="bg-[#133453] py-24 text-white">
         <div className="mx-auto grid max-w-6xl gap-12 px-6 lg:grid-cols-[1fr_1fr] lg:items-center">
           <div>
-            <p className="text-xs font-black uppercase tracking-[.18em] text-[#80d5e8]">Una oportunidad real</p>
-            <h2 className="mt-3 text-3xl font-black tracking-tight md:text-4xl">Vos abrís la oportunidad. UrbIA hace funcionar el sistema.</h2>
+            <p className="text-xs font-black uppercase tracking-[.18em] text-[#51c2ec]">Una oportunidad real</p>
+            <h2 className="mt-3 text-3xl font-black tracking-tight md:text-4xl">Vos abrís la oportunidad. Urbi hace funcionar el sistema.</h2>
             <p className="mt-5 leading-relaxed text-white/60">La inmobiliaria crea su cuenta, configura su sitio y empieza a publicar propiedades. Tu rol es encontrar oportunidades, compartir tu código y acompañar la decisión comercial.</p>
           </div>
           <div className="rounded-2xl bg-white p-7 text-[#133453]">
             <h3 className="font-black">Herramientas para vender mejor</h3>
             <ul className="mt-5 grid gap-3 sm:grid-cols-2">
-              {["Código y QR propios", "Panel con tus inmobiliarias y comisiones", "Atribución automática", "Sin aprobación previa", "Comisiones transparentes", "Soporte de UrbIA para tus clientes"].map((item) => (
+              {["Código y QR propios", "Panel con tus inmobiliarias y comisiones", "Atribución automática", "Sin aprobación previa", "Comisiones transparentes", "Soporte de Urbi para tus clientes"].map((item) => (
                 <li key={item} className="flex items-start gap-3 text-sm text-black/60"><Check className="mt-0.5 size-4 shrink-0 text-[#1e658c]" />{item}</li>
               ))}
             </ul>
@@ -181,7 +181,7 @@ export default async function ResellersPage() {
             <p className="text-xs font-black uppercase tracking-[.18em] text-[#1e658c]">Preguntas frecuentes</p>
             <h2 className="mt-3 text-3xl font-black tracking-tight">Un programa claro desde el inicio</h2>
           </div>
-          <YaaFaqList items={resellerFaqs} />
+          <UrbiFaqList items={resellerFaqs} />
         </div>
       </section>
 
@@ -189,7 +189,7 @@ export default async function ResellersPage() {
         <div className="mx-auto max-w-6xl px-6">
           <div className="flex flex-col items-start justify-between gap-8 rounded-3xl border border-black/10 bg-[#dff2f8] p-8 md:flex-row md:items-center md:p-10">
             <div>
-              <div className="flex items-center gap-2 text-black/55"><TrendingUp className="size-5" /><span className="text-xs font-black uppercase tracking-[.16em]">Socios UrbIA</span></div>
+              <div className="flex items-center gap-2 text-black/55"><TrendingUp className="size-5" /><span className="text-xs font-black uppercase tracking-[.16em]">Socios Urbi</span></div>
               <h2 className="mt-4 text-3xl font-black tracking-tight">Empezá a construir tu cartera hoy.</h2>
               <p className="mt-3 max-w-xl text-sm leading-relaxed text-black/55">Te registrás, te llevás tu código, y empezás a compartirlo. Así de simple.</p>
             </div>
@@ -198,7 +198,7 @@ export default async function ResellersPage() {
         </div>
       </section>
 
-      <YaaPublicFooter />
+      <UrbiPublicFooter />
     </main>
   );
 }

@@ -12,7 +12,7 @@ import { prisma } from "@/lib/prisma";
 // tiendas distintas bajo un mismo usuario.
 //
 // tenantId === null es un caso válido, no "sin adapter": es el universo de
-// yaa.com.ar sin tienda todavía — el mismo que ya usa el super admin, y el
+// urbi.com.ar sin tienda todavía — el mismo que ya usa el super admin, y el
 // que ahora también usa alguien registrándose en /registro antes de pagar
 // y crear su tienda. Prisma no permite null en la clave compuesta
 // tenantId_email (aunque la columna sí lo admite), así que ahí usamos

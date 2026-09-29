@@ -6,14 +6,14 @@ import { toast } from "sonner";
 import { useAdminPwa } from "@/components/admin/pwa-provider";
 import { subscribeToPush } from "@/app/admin/actions";
 
-const DISMISSED_KEY = "yaa-admin-push-dismissed";
+const DISMISSED_KEY = "urbi-admin-push-dismissed";
 // Distinto de DISMISSED_KEY a propósito: Notification.permission puede
 // quedar en "granted" aunque el paso de subscribe()/subscribeToPush()
 // falle después — si el banner se guiara por el permiso del navegador, en
 // ese caso desaparecería para siempre sin haber guardado nada, sin forma
 // de reintentar. Este flag solo se marca cuando la suscripción de verdad
 // se guardó en la base.
-const SUBSCRIBED_KEY = "yaa-admin-push-subscribed";
+const SUBSCRIBED_KEY = "urbi-admin-push-subscribed";
 
 function urlBase64ToUint8Array(base64: string) {
   const padding = "=".repeat((4 - (base64.length % 4)) % 4);

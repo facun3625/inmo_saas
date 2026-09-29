@@ -54,7 +54,7 @@ export default async function CheckoutPage() {
     )?.fee ?? 0;
 
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="public-inner-page public-form-page flex flex-1 flex-col">
       <StoreHero />
       <div className="mx-auto flex w-full max-w-[1440px] flex-1 flex-col bg-background">
         <CheckoutForm

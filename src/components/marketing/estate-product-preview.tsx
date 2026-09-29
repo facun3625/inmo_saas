@@ -4,11 +4,11 @@ import { Building2, CalendarDays, ChevronRight, CircleCheck, FileText, LayoutDas
 /** Vista ilustrativa del producto: datos ficticios, sin métricas comerciales inventadas. */
 export function EstateProductPreview({ compact = false }: { compact?: boolean }) {
   return (
-    <div className="urbia-product-preview overflow-hidden rounded-2xl border border-[#d9e6ef] bg-white text-[#133453] shadow-[0_30px_90px_-35px_rgba(19,52,83,.4)]">
+    <div className="urbi-product-preview overflow-hidden rounded-2xl border border-[#d9e6ef] bg-white text-[#133453] shadow-[0_30px_90px_-35px_rgba(19,52,83,.4)]">
       <div className="flex items-center justify-between gap-4 border-b border-[#e6edf3] px-5 py-3">
         <div className="flex gap-1.5" aria-hidden="true">{[0,1,2].map(n=><span key={n} className="size-2 rounded-full bg-[#d9e6ef]" />)}</div>
         <p className="text-[10px] font-medium tracking-wide text-[#617b90]">Tu espacio de trabajo</p>
-        <Image src="/brand/favicon.svg" alt="" width={22} height={22} />
+        <Image src="/favicon2.png" alt="" width={22} height={22} />
       </div>
       <div className="grid grid-cols-[52px_1fr] sm:grid-cols-[120px_1fr]">
         <div className="space-y-5 border-r border-[#e6edf3] bg-[#f7fafc] px-3 py-6">

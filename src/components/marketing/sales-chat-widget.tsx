@@ -7,7 +7,7 @@ type ChatMessage = { role: "user" | "model"; text: string; needsHuman?: boolean 
 
 const GREETING: ChatMessage = {
   role: "model",
-  text: "¡Hola! Soy el asistente de UrbIA 👋 ¿Qué querés saber sobre precios, funciones o cómo organizar tu inmobiliaria?",
+  text: "¡Hola! Soy el asistente de Urbi 👋 ¿Qué querés saber sobre precios, funciones o cómo organizar tu inmobiliaria?",
 };
 
 type SalesChatContextValue = {
@@ -94,10 +94,10 @@ export function SalesChatProvider({ children }: { children: React.ReactNode }) {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        aria-label={open ? "Cerrar chat" : "Abrir chat de UrbIA"}
+        aria-label={open ? "Cerrar chat" : "Abrir chat de Urbi"}
         // Apilado arriba del botón de WhatsApp (que vive en bottom-5/7
         // right-5/7) para no superponerse — los dos quedan del lado derecho.
-        className="fixed right-5 bottom-24 z-[100] flex size-14 items-center justify-center rounded-full bg-[#208ab1] text-white shadow-[0_12px_36px_rgba(255,90,54,0.35)] transition duration-300 hover:-translate-y-1 hover:bg-[#1e658c] sm:right-7 sm:bottom-28"
+        className="fixed right-5 bottom-24 z-[100] flex size-14 items-center justify-center rounded-full bg-[#208ab1] text-white shadow-[0_12px_36px_rgba(32,138,177,0.4)] transition duration-300 hover:-translate-y-1 hover:bg-[#1e658c] sm:right-7 sm:bottom-28"
       >
         {open ? <XIcon className="size-6" /> : <MessageCircleIcon className="size-6" />}
       </button>
@@ -106,7 +106,7 @@ export function SalesChatProvider({ children }: { children: React.ReactNode }) {
         <div className="fixed right-5 bottom-[168px] z-[100] flex h-[70vh] max-h-[520px] w-[calc(100vw-2.5rem)] max-w-sm flex-col overflow-hidden rounded-2xl bg-[#0b1220] shadow-2xl ring-1 ring-white/10 sm:right-7 sm:bottom-[184px]">
           <div className="flex items-center justify-between gap-2 border-b border-white/10 px-4 py-3">
             <div className="flex flex-col">
-              <span className="text-sm font-semibold text-white">Asistente de UrbIA</span>
+              <span className="text-sm font-semibold text-white">Asistente de Urbi</span>
               <span className="text-xs text-white/50">Responde en segundos</span>
             </div>
             <button type="button" onClick={() => setOpen(false)} aria-label="Cerrar" className="text-white/50 hover:text-white">
@@ -144,7 +144,7 @@ export function SalesChatProvider({ children }: { children: React.ReactNode }) {
               onKeyDown={(e) => e.key === "Enter" && handleSend()}
               placeholder="Escribí tu pregunta…"
               disabled={pending}
-              className="h-10 flex-1 rounded-xl border border-white/10 bg-white/5 px-3 text-sm text-white placeholder:text-white/30 outline-none focus:border-[#58c7e1] disabled:opacity-60"
+              className="h-10 flex-1 rounded-xl border border-white/10 bg-white/5 px-3 text-sm text-white placeholder:text-white/30 outline-none focus:border-[#51c2ec] disabled:opacity-60"
             />
             <button
               type="button"
@@ -205,14 +205,14 @@ function ContactForm({ conversationId }: { conversationId: string }) {
         onChange={(e) => setName(e.target.value)}
         placeholder="Tu nombre"
         required
-        className="h-9 rounded-lg border border-white/10 bg-white/5 px-3 text-sm text-white placeholder:text-white/30 outline-none focus:border-[#58c7e1]"
+        className="h-9 rounded-lg border border-white/10 bg-white/5 px-3 text-sm text-white placeholder:text-white/30 outline-none focus:border-[#51c2ec]"
       />
       <input
         value={phone}
         onChange={(e) => setPhone(e.target.value)}
         placeholder="Tu WhatsApp"
         required
-        className="h-9 rounded-lg border border-white/10 bg-white/5 px-3 text-sm text-white placeholder:text-white/30 outline-none focus:border-[#58c7e1]"
+        className="h-9 rounded-lg border border-white/10 bg-white/5 px-3 text-sm text-white placeholder:text-white/30 outline-none focus:border-[#51c2ec]"
       />
       {error && <span className="text-xs text-red-400">{error}</span>}
       <button

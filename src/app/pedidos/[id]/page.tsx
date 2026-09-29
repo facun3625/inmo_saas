@@ -59,7 +59,7 @@ export default async function OrderDetailPage({
   }
 
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="public-inner-page public-account-page flex flex-1 flex-col">
       <StoreHero />
       <div className="mx-auto flex w-full max-w-[1440px] flex-1 flex-col bg-background">
         <main className="mx-auto flex w-full max-w-md flex-1 flex-col gap-5 px-4 py-6 lg:max-w-3xl">

@@ -2,7 +2,7 @@ import path from "node:path";
 import sharp from "sharp";
 
 export const ICON_BG = { r: 255, g: 255, b: 255, alpha: 1 };
-export const FALLBACK_ICON = path.join(process.cwd(), "public", "brand", "favicon.svg");
+export const FALLBACK_ICON = path.join(process.cwd(), "public", "favicon2.png");
 
 // Compartido entre el ícono del panel admin y el del storefront: mismo
 // resize "contain" para el caso normal, y para maskable el logo va al 60%

@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 export type StoreSettings = {
   storeName: string;
   logoUrl: string | null;
+  footerLogoUrl: string | null;
   coverUrl: string | null;
   faviconUrl: string | null;
   address: string | null;
@@ -58,6 +59,7 @@ export const DEFAULT_FOOTER_LOGO_HEIGHT = 56;
 const SETTINGS_KEYS = [
   "store_name",
   "store_logo_url",
+  "store_footer_logo_url",
   "store_cover_url",
   "store_favicon_url",
   "store_address",
@@ -97,6 +99,7 @@ export const getStoreSettings = cache(
     return {
       storeName: map.store_name || DEFAULT_STORE_NAME,
       logoUrl: map.store_logo_url || null,
+      footerLogoUrl: map.store_footer_logo_url || null,
       coverUrl: map.store_cover_url || null,
       faviconUrl: map.store_favicon_url || null,
       address: map.store_address || null,

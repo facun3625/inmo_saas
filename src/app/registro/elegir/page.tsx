@@ -21,7 +21,7 @@ export default async function ElegirPage() {
   return (
     <main className="min-h-screen bg-[#030712] px-4 py-12 text-white">
       <div className="mx-auto flex w-full max-w-md flex-col items-center gap-8">
-        <Image src="/brand/logo.svg" alt="UrbIA" width={1479} height={554} className="bg-white rounded-lg p-1.5 h-8 w-auto object-contain" />
+        <Image src="/logo_blanco.svg" alt="Urbi" width={595} height={180} className="h-8 w-auto object-contain" />
 
         <div className="flex flex-col items-center gap-1 text-center">
           <h1 className="text-xl font-semibold">¿Qué querés hacer?</h1>
@@ -33,7 +33,7 @@ export default async function ElegirPage() {
             href="/registro/plan"
             className="flex items-center gap-4 rounded-2xl border border-white/10 bg-white/[0.03] p-5 transition-colors hover:border-[#208ab1]/50 hover:bg-white/[0.05]"
           >
-            <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-[#208ab1]/15 text-[#58c7e1]">
+            <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-[#208ab1]/15 text-[#51c2ec]">
               <Store className="size-6" />
             </div>
             <div className="flex flex-col gap-0.5 text-left">
@@ -47,7 +47,7 @@ export default async function ElegirPage() {
               href="/socios"
               className="flex items-center gap-4 rounded-2xl border border-white/10 bg-white/[0.03] p-5 transition-colors hover:border-[#208ab1]/50 hover:bg-white/[0.05]"
             >
-              <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-[#208ab1]/15 text-[#58c7e1]">
+              <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-[#208ab1]/15 text-[#51c2ec]">
                 <LayoutDashboard className="size-6" />
               </div>
               <div className="flex flex-col gap-0.5 text-left">
@@ -62,12 +62,12 @@ export default async function ElegirPage() {
                   type="submit"
                   className="flex w-full items-center gap-4 rounded-2xl border border-white/10 bg-white/[0.03] p-5 text-left transition-colors hover:border-[#208ab1]/50 hover:bg-white/[0.05]"
                 >
-                  <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-[#208ab1]/15 text-[#58c7e1]">
+                  <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-[#208ab1]/15 text-[#51c2ec]">
                     <Users className="size-6" />
                   </div>
                   <div className="flex flex-col gap-0.5">
                     <span className="font-semibold">Ser socio comercial</span>
-                    <span className="text-xs text-white/50">Recomendá yaa y ganá una comisión por cada inmobiliaria que traigas.</span>
+                    <span className="text-xs text-white/50">Recomendá Urbi y ganá una comisión por cada inmobiliaria que traigas.</span>
                   </div>
                 </button>
               </form>
@@ -77,7 +77,7 @@ export default async function ElegirPage() {
                   type="submit"
                   className="flex w-full items-center gap-4 rounded-2xl border border-white/10 bg-white/[0.03] p-5 text-left transition-colors hover:border-[#208ab1]/50 hover:bg-white/[0.05]"
                 >
-                  <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-[#208ab1]/15 text-[#58c7e1]">
+                  <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-[#208ab1]/15 text-[#51c2ec]">
                     <Sparkles className="size-6" />
                   </div>
                   <div className="flex flex-col gap-0.5">

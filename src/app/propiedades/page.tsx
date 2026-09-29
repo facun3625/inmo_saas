@@ -81,9 +81,9 @@ export default async function PropiedadesPage({
   }
 
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="public-inner-page flex flex-1 flex-col">
       <StoreHero />
-      <div className="border-b bg-muted/50">
+      <div className="public-page-intro border-b bg-muted/50">
         <div className="mx-auto flex w-full max-w-5xl flex-col items-center gap-5 px-4 py-7 text-center sm:px-6 lg:px-8">
           <div>
             <p className="text-xs font-semibold uppercase tracking-widest text-primary">Catálogo</p>

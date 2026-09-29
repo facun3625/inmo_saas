@@ -53,8 +53,8 @@ async function runStartTenantSubscription(billingCycle: "MONTHLY" | "ANNUAL") {
     : 0;
   const protocol = ROOT_DOMAIN.startsWith("localhost") ? "http" : "https";
   const subscription = await createSubscription(credentials.accessToken, {
-    reason: `YAA · ${freshTenant.plan.name} · ${billingCycle === "ANNUAL" ? "Anual" : "Mensual"}`,
-    externalReference: `yaa:tenant:${tenant.id}:${freshTenant.plan.id}:${billingCycle}:${randomBytes(12).toString("hex")}`,
+    reason: `Urbi · ${freshTenant.plan.name} · ${billingCycle === "ANNUAL" ? "Anual" : "Mensual"}`,
+    externalReference: `urbi:tenant:${tenant.id}:${freshTenant.plan.id}:${billingCycle}:${randomBytes(12).toString("hex")}`,
     payerEmail: session.user.email,
     amount,
     frequency: billingCycle === "ANNUAL" ? 12 : 1,
@@ -143,7 +143,7 @@ async function runChangePlan(planId: string) {
     const credentials = await getPlatformMercadoPagoCredentials();
     if (!credentials.accessToken) throw new ActionError("El cobro online todavía no está habilitado");
     const updated = await updateSubscriptionBilling(credentials.accessToken, freshTenant.providerSubscriptionId, {
-      reason: `YAA · ${plan.name} · ${freshTenant.billingCycle === "ANNUAL" ? "Anual" : "Mensual"}`,
+      reason: `Urbi · ${plan.name} · ${freshTenant.billingCycle === "ANNUAL" ? "Anual" : "Mensual"}`,
       amount,
     });
     if (Math.abs(updated.amount - amount) > 0.01) {

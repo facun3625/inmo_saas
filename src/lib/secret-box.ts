@@ -16,7 +16,7 @@ const ALGORITHM = "aes-256-gcm";
 // Fijo a propósito: derivar la clave tiene que dar lo mismo siempre, si no
 // no podríamos descifrar lo que guardamos antes. Lo que hace impredecible
 // cada texto cifrado es el IV aleatorio, no esto.
-const KEY_SALT = "yaa.secret-box.v1";
+const KEY_SALT = "urbi.secret-box.v1";
 
 function getKey(): Buffer {
   const secret = process.env.AUTH_SECRET;

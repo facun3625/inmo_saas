@@ -87,7 +87,7 @@ async function applyTenantPlan(tenantId: string, planId: string | null, clearReq
     const credentials = await getPlatformMercadoPagoCredentials();
     if (!credentials.accessToken) throw new ActionError("Falta configurar Mercado Pago para actualizar la suscripción");
     const updated = await updateSubscriptionBilling(credentials.accessToken, tenant.providerSubscriptionId, {
-      reason: `YAA · ${plan.name} · ${tenant.billingCycle === "ANNUAL" ? "Anual" : "Mensual"}`,
+      reason: `Urbi · ${plan.name} · ${tenant.billingCycle === "ANNUAL" ? "Anual" : "Mensual"}`,
       amount,
     });
     if (Math.abs(updated.amount - amount) > 0.01) {
@@ -326,7 +326,7 @@ async function runDeleteTenant(tenantId: string) {
 // "Entrar como admin" — deja al super admin logueado como el dueño real de
 // la tienda, para poder ayudarlo sin pedirle la contraseña. Reusa el mismo
 // pase efímero de un solo uso que ya existe para cruzar de dominio (ver
-// admin/cuenta-yaa/page.tsx); auth.ts reconoce el prefijo "impersonate:" y
+// admin/cuenta-urbi/page.tsx); auth.ts reconoce el prefijo "impersonate:" y
 // marca la sesión resultante con impersonatedBy, que es lo que hace
 // aparecer el cartel de "modo soporte" en el panel de la tienda.
 export async function impersonateTenant(tenantId: string) {

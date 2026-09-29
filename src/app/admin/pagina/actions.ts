@@ -55,6 +55,7 @@ async function runUpdateIdentity(formData: FormData) {
     create: { tenantId: tenant.id, key: "store_name", value: parsed.storeName },
   });
   await saveImageSetting(tenant.id, formData.get("logo") as File | null, "store_logo_url");
+  await saveImageSetting(tenant.id, formData.get("footerLogo") as File | null, "store_footer_logo_url");
   await saveFaviconSetting(tenant.id, formData.get("favicon") as File | null, "store_favicon_url");
   await saveTextSetting(tenant.id, formData.get("addToCartLabel") as string | null ?? undefined, "store_add_to_cart_label");
   await saveTextSetting(tenant.id, parsed.headerBgColor, "store_header_bg_color");
@@ -283,7 +284,9 @@ async function runUpdateCatalogFilters(formData: FormData) {
 
 // ---------- Imágenes (remover logo/portada/favicon) ----------
 
-export async function removeStoreImage(key: "store_logo_url" | "store_cover_url" | "store_favicon_url") {
+export async function removeStoreImage(
+  key: "store_logo_url" | "store_footer_logo_url" | "store_cover_url" | "store_favicon_url",
+) {
   try {
     return await runRemoveStoreImage(key);
   } catch (err) {
@@ -291,7 +294,9 @@ export async function removeStoreImage(key: "store_logo_url" | "store_cover_url"
   }
 }
 
-async function runRemoveStoreImage(key: "store_logo_url" | "store_cover_url" | "store_favicon_url") {
+async function runRemoveStoreImage(
+  key: "store_logo_url" | "store_footer_logo_url" | "store_cover_url" | "store_favicon_url",
+) {
   const { tenant } = await requireTenantAdmin();
   await prisma.settings.deleteMany({ where: { tenantId: tenant.id, key } });
   revalidatePath("/", "layout");

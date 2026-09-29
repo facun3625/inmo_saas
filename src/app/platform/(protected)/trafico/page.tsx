@@ -46,7 +46,7 @@ export default async function SiteTrafficPage({
     <div className="flex flex-col gap-6">
       <div>
         <h1 className="text-xl font-semibold">Tráfico del sitio</h1>
-        <p className="text-sm text-muted-foreground">De dónde viene y cómo navega quien visita yaa.com.ar — {range.label.toLowerCase()}.</p>
+        <p className="text-sm text-muted-foreground">De dónde viene y cómo navega quien visita urbi.com.ar — {range.label.toLowerCase()}.</p>
       </div>
 
       <TrafficFilterBar />

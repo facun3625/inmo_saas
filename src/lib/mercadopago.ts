@@ -169,7 +169,7 @@ export async function getAuthorizedPayment(accessToken: string, id: string): Pro
 }
 
 export async function testMercadoPagoConnection(accessToken: string): Promise<{ id: string; nickname: string | null }> {
-  // Probamos el recurso que YAA realmente necesita. Algunas credenciales
+  // Probamos el recurso que Urbi realmente necesita. Algunas credenciales
   // TEST válidas para suscripciones reciben un 403 de PolicyAgent al llamar
   // /users/me, por lo que esa consulta daba falsos negativos.
   try {
@@ -192,7 +192,7 @@ export async function testMercadoPagoConnection(accessToken: string): Promise<{ 
     }
     if (detail.includes("403") || detail.includes("PA_UNAUTHORIZED")) {
       throw new Error(
-        "Mercado Pago rechazó esta credencial para suscripciones. Verificá que sea el Access Token de la aplicación de YAA y no el Public Key ni una credencial de otra cuenta",
+        "Mercado Pago rechazó esta credencial para suscripciones. Verificá que sea el Access Token de la aplicación de Urbi y no el Public Key ni una credencial de otra cuenta",
       );
     }
     if (status) {

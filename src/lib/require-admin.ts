@@ -16,6 +16,22 @@ export async function requireTenantAdmin() {
     throw new Error("No autorizado");
   }
   const pathname = (await headers()).get("x-pathname") ?? "";
+
+  // Un administrador de Posventa (PostSaleManager) es un rol separado del
+  // agente inmobiliario — puede no tener ficha de EstateAgent. Para rutas
+  // de ese módulo alcanza con tener acceso habilitado ahí; no pasa por
+  // AGENT_MENU_SECTIONS, que es específico de Inmobiliaria. El chequeo más
+  // fino (qué desarrollos puede ver) lo hace requirePostSaleStaff() en las
+  // páginas de Posventa — esto solo destraba el layout general de /admin.
+  if (pathname.startsWith("/admin/postventa")) {
+    const manager = await prisma.postSaleManager.findFirst({
+      where: { tenantId: tenant.id, userId: session.user.id, accessEnabled: true },
+      select: { id: true },
+    });
+    if (!manager) throw new Error("No autorizado");
+    return { session, tenant };
+  }
+
   const section = agentSectionForPath(pathname);
   const agent = await prisma.estateAgent.findFirst({
     where: { tenantId: tenant.id, userId: session.user.id, accessEnabled: true },
@@ -93,7 +109,7 @@ export async function getTenantAiAgentAccess(tenantId: string) {
   };
 }
 
-// Para código que corre en el dominio raíz (yaa.com.ar), no en el
+// Para código que corre en el dominio raíz (urbi.com.ar), no en el
 // subdominio de la tienda — ahí `getCurrentTenant()` no sirve porque
 // depende del header de subdominio que pone proxy.ts. Se resuelve por
 // session.user.tenantId (viaja en el JWT) en su lugar.

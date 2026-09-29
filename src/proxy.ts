@@ -10,7 +10,7 @@ const ROOT_DOMAIN = process.env.ROOT_DOMAIN ?? "localhost:3010";
 // Cookie anónima (sin datos personales) para distinguir visitantes. Cada
 // subdominio o dominio propio recibe su propia cookie, por lo que el dato
 // queda naturalmente separado entre inmobiliarias.
-const VISITOR_COOKIE = "yaa_vid";
+const VISITOR_COOKIE = "urbi_vid";
 
 function getSubdomain(host: string, rootDomain: string): string | null {
   const cleanHost = host.split(":")[0];

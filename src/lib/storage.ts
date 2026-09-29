@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import sharp from "sharp";
+import DOMPurify from "isomorphic-dompurify";
 
 import { ActionError } from "@/lib/action-error";
 
@@ -22,7 +23,8 @@ const PUBLIC_URL = process.env.R2_PUBLIC_URL!;
 // se tomaba de file.name, que lo elige quien sube: alcanzaba con llamarlo
 // "comprobante.svg" para que quedara servido como image/svg+xml desde
 // nuestro propio origen, y un SVG puede traer <script> adentro. Un tipo que
-// no esté acá se rechaza en vez de caer a .jpg.
+// no esté acá se rechaza en vez de caer a .jpg. SVG sí se acepta (útil para
+// logos), pero se sanitiza con DOMPurify antes de subirse — ver más abajo.
 const EXTENSION_BY_TYPE: Record<string, string> = {
   "image/jpeg": ".jpg",
   "image/jpg": ".jpg",
@@ -30,6 +32,7 @@ const EXTENSION_BY_TYPE: Record<string, string> = {
   "image/webp": ".webp",
   "image/gif": ".gif",
   "image/avif": ".avif",
+  "image/svg+xml": ".svg",
   "application/pdf": ".pdf",
   "video/mp4": ".mp4",
   "video/webm": ".webm",
@@ -77,6 +80,15 @@ export async function saveUploadedFile(file: File, folder: string): Promise<stri
       "Ese tipo de archivo no está permitido. Usá JPG, PNG, WEBP, GIF, PDF o un video MP4.",
     );
   }
+  if (type === "image/svg+xml") {
+    const raw = await file.text();
+    // USE_PROFILES: {svg: true} deja pasar los tags/atributos propios de
+    // SVG pero igual saca <script>, on*="" y href javascript: — lo que
+    // usábamos como excusa para rechazar el tipo entero.
+    const clean = DOMPurify.sanitize(raw, { USE_PROFILES: { svg: true, svgFilters: true } });
+    return uploadToR2(Buffer.from(clean, "utf-8"), folder, `${randomUUID()}.svg`);
+  }
+
   const buffer = Buffer.from(await file.arrayBuffer());
 
   if (COMPRESSIBLE_TYPES.has(type)) {

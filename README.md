@@ -1,7 +1,7 @@
-# YAA — pedidos online multi-tienda
+# Urbi — pedidos online multi-tienda
 
 Plataforma SaaS donde cada comercio tiene su tienda en un subdominio propio
-(`mitienda.yaa.com.ar`) o en su dominio propio, y YAA cobra una suscripción
+(`mitienda.urbi.com.ar`) o en su dominio propio, y Urbi cobra una suscripción
 por tienda. Next.js (App Router) + Prisma + PostgreSQL.
 
 Hay tres paneles distintos, cada uno con su login:
@@ -9,8 +9,8 @@ Hay tres paneles distintos, cada uno con su login:
 | Panel | Dónde vive | Quién entra |
 |---|---|---|
 | Tienda | `mitienda.<ROOT_DOMAIN>/admin` | Dueño de la tienda (`ADMIN`) |
-| Plataforma | `<ROOT_DOMAIN>/platform` | Equipo de YAA (`SUPER_ADMIN`) |
-| Cuenta YAA | `<ROOT_DOMAIN>/mi-cuenta` | Dueño de tienda, revendedor, cliente |
+| Plataforma | `<ROOT_DOMAIN>/platform` | Equipo de Urbi (`SUPER_ADMIN`) |
+| Cuenta Urbi | `<ROOT_DOMAIN>/mi-cuenta` | Dueño de tienda, revendedor, cliente |
 
 ## Arrancar en local
 
@@ -55,7 +55,7 @@ opcionales:
 
 ```nginx
 server {
-  server_name yaa.com.ar *.yaa.com.ar;
+  server_name urbi.com.ar *.urbi.com.ar;
 
   # El límite por defecto de Nginx es 1 MB y la app acepta hasta 20 MB
   # (fotos de producto, comprobantes de pago). Tiene que coincidir con
@@ -79,7 +79,7 @@ server {
 }
 ```
 
-El certificado tiene que ser wildcard (`*.yaa.com.ar`) para que cada tienda
+El certificado tiene que ser wildcard (`*.urbi.com.ar`) para que cada tienda
 tenga HTTPS. Los dominios propios de clientes se agregan aparte, por dominio.
 
 ### Cron diario (obligatorio)
@@ -90,7 +90,7 @@ los intentos de rate limit viejos. **Nadie lo llama solo** — si no se programa
 las tiendas que dejan de pagar siguen funcionando indefinidamente.
 
 ```cron
-0 3 * * * curl -fsS -H "Authorization: Bearer $CRON_SECRET" https://yaa.com.ar/api/cron/billing
+0 3 * * * curl -fsS -H "Authorization: Bearer $CRON_SECRET" https://urbi.com.ar/api/cron/billing
 ```
 
 Sin `CRON_SECRET` definido el endpoint responde `401` a todo (falla cerrado, a
@@ -115,7 +115,7 @@ apt install postgresql-client-16
 ```
 
 ```cron
-0 4 * * * curl -fsS -H "Authorization: Bearer $CRON_SECRET" https://yaa.com.ar/api/cron/backup
+0 4 * * * curl -fsS -H "Authorization: Bearer $CRON_SECRET" https://urbi.com.ar/api/cron/backup
 ```
 
 Usa el mismo `CRON_SECRET` que `/api/cron/billing`. Corrida a un horario
@@ -131,7 +131,7 @@ Contratos sigue funcionando igual que hoy: todo se carga a mano desde
 Cobranzas, como siempre.
 
 ```cron
-0 5 * * * curl -fsS -H "Authorization: Bearer $CRON_SECRET" https://yaa.com.ar/api/cron/estate-billing
+0 5 * * * curl -fsS -H "Authorization: Bearer $CRON_SECRET" https://urbi.com.ar/api/cron/estate-billing
 ```
 
 Usa el mismo `CRON_SECRET`. Corrida después de `billing` (5 AM). Antes de
@@ -143,8 +143,8 @@ actualizaciones nunca se aplican solas, pero las cuotas y punitorios sí).
 
 Apuntar en el panel de Mercado Pago a:
 
-- `https://yaa.com.ar/api/webhooks/mercadopago` — pagos sueltos
-- `https://yaa.com.ar/api/webhooks/mercadopago/subscriptions` — suscripciones
+- `https://urbi.com.ar/api/webhooks/mercadopago` — pagos sueltos
+- `https://urbi.com.ar/api/webhooks/mercadopago/subscriptions` — suscripciones
 
 Los dos validan la firma `x-signature` contra
 `MERCADOPAGO_PLATFORM_WEBHOOK_SECRET` antes de creerle nada al mensaje, y

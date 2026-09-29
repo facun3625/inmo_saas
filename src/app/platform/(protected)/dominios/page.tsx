@@ -20,7 +20,7 @@ export default async function DomainRequestsPage() {
       <div>
         <h1 className="text-xl font-semibold">Solicitudes de dominio</h1>
         <p className="text-sm text-muted-foreground">
-          Tiendas que pidieron que UrbIA compre y configure su dominio propio en vez de hacerlo ellas mismas.
+          Tiendas que pidieron que Urbi compre y configure su dominio propio en vez de hacerlo ellas mismas.
         </p>
       </div>
 

@@ -10,7 +10,7 @@ export default async function DemoVisitsPage() {
       <div>
         <h1 className="text-xl font-semibold">Visitas a la demo</h1>
         <p className="text-sm text-muted-foreground">
-          Emails de quienes entraron a probar UrbIA por /demo, más recientes primero.
+          Emails de quienes entraron a probar Urbi por /demo, más recientes primero.
         </p>
       </div>
 

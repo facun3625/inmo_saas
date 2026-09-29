@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { useStorePwa } from "@/components/store/store-pwa-provider";
 import { useStorePush } from "@/components/store/use-store-push";
 
-const DISMISSED_KEY = "yaa-store-push-dismissed";
+const DISMISSED_KEY = "urbi-store-push-dismissed";
 
 // Modal centrado a propósito (no un banner de esquina): es lo primero que
 // ve un cliente logueado la primera vez que abre la app ya instalada, y

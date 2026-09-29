@@ -14,11 +14,11 @@ export default async function AlertasPage() {
   const [{ storeName }, options] = await Promise.all([getStoreSettings(tenant.id), getSearchOptions(tenant.id)]);
 
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="public-inner-page public-form-page flex flex-1 flex-col">
       <StoreHero />
       <main className="mx-auto flex w-full max-w-[1440px] flex-1 flex-col bg-background">
         <div className="flex flex-col gap-8 px-4 py-10 sm:px-6 lg:gap-10 lg:px-8 lg:py-14">
-          <div className="mx-auto flex w-full max-w-2xl flex-col gap-4 text-center">
+          <div className="public-page-heading mx-auto flex w-full max-w-2xl flex-col gap-4 text-center">
             <span className="text-xs font-semibold tracking-widest text-primary uppercase">
               Alertas de propiedades
             </span>

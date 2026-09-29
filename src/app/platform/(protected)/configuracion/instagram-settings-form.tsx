@@ -42,9 +42,9 @@ export function InstagramSettingsForm({
           <InstagramIcon className="size-5" />
         </span>
         <div>
-          <h2 className="font-semibold">Instagram de UrbIA</h2>
+          <h2 className="font-semibold">Instagram de Urbi</h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            Se muestra en el header y el pie de la landing y las páginas públicas de UrbIA. No modifica el Instagram propio de las tiendas.
+            Se muestra en el header y el pie de la landing y las páginas públicas de Urbi. No modifica el Instagram propio de las tiendas.
           </p>
         </div>
       </div>
@@ -64,10 +64,10 @@ export function InstagramSettingsForm({
           id="marketing-instagram-username"
           name="username"
           defaultValue={username ?? ""}
-          placeholder="yaavendemas"
+          placeholder="urbivendemas"
           required
         />
-        <p className="text-xs text-muted-foreground">Sin el @, solo el usuario. Ejemplo: yaavendemas.</p>
+        <p className="text-xs text-muted-foreground">Sin el @, solo el usuario. Ejemplo: urbivendemas.</p>
       </div>
 
       <Button type="submit" disabled={pending} className="justify-self-start">

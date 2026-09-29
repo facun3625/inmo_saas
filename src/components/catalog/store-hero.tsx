@@ -12,9 +12,105 @@ import { MobileHamburgerMenu } from "./mobile-hamburger-menu";
 import { FavoritesNavButton } from "./favorites-nav-button";
 import { StoreTopBar } from "./store-top-bar";
 
+function Brand({ compact = false, minimal = false, classic = false, plain = false }: { compact?: boolean; minimal?: boolean; classic?: boolean; plain?: boolean }) {
+  const { storeName, logoUrl, showNameInHeader, logoHeight } = useStoreSettings();
+  const height = compact ? 40 : minimal ? Math.min(logoHeight, 54) : logoHeight;
+
+  return (
+    <Link href="/" className="flex min-w-0 items-center gap-3">
+      {logoUrl ? (
+        <span
+          className={`flex w-auto shrink-0 items-center justify-center overflow-hidden ${minimal || plain ? "rounded-none bg-transparent p-0" : classic && !compact ? "rounded-2xl bg-white p-2" : "rounded-xl bg-white p-1.5"}`}
+          style={{ height, maxWidth: height * 3.8 }}
+        >
+          <Image src={logoUrl} alt={storeName} width={Math.round(height * 3.8)} height={height} className="size-full object-contain" />
+        </span>
+      ) : (
+        <span
+          className={`flex shrink-0 items-center justify-center ${minimal || plain ? "size-9 border border-current" : classic && !compact ? "rounded-2xl bg-white text-primary" : "rounded-xl bg-white text-primary"}`}
+          style={minimal || plain ? undefined : { height, width: height }}
+        >
+          <Building2 className={compact || minimal || plain ? "size-5" : "size-8"} />
+        </span>
+      )}
+      {showNameInHeader && (!compact || !logoUrl) && (
+        <span className={`${minimal ? "text-lg font-medium tracking-[.04em]" : classic && !compact ? "text-2xl font-bold tracking-tight" : "text-xl font-bold tracking-tight"} truncate text-current`}>
+          {storeName}
+        </span>
+      )}
+    </Link>
+  );
+}
+
+function MobileHeader({ minimal = false, wide = false }: { minimal?: boolean; wide?: boolean }) {
+  const { headerBgColor } = useStoreSettings();
+  const style = minimal
+    ? { backgroundColor: "rgba(255,255,255,.96)", color: "#171717" }
+    : { backgroundColor: headerBgColor, color: contrastText(headerBgColor) };
+
+  return (
+    <div
+      className={`sticky top-0 z-50 flex min-h-16 w-full min-w-0 items-center px-4 backdrop-blur-xl ${wide ? "xl:hidden" : "lg:hidden"} ${minimal ? "border-b shadow-none" : "border-b border-current/10 shadow-sm"}`}
+      style={style}
+    >
+      <div className="mx-auto flex w-full min-w-0 max-w-[1440px] items-center justify-between gap-3">
+        <Brand compact minimal={minimal} classic={!wide && !minimal} plain={wide && !minimal} />
+        <div className="flex shrink-0 items-center gap-1">
+          <FavoritesNavButton iconOnly />
+          <AccountMenu overlay iconOnly />
+          <MobileHamburgerMenu />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function StoreHero() {
-  const { storeName, logoUrl, headerBgColor, menuBgColor, showNameInHeader, logoHeight } =
-    useStoreSettings();
+  const { template, headerBgColor, menuBgColor } = useStoreSettings();
+
+  if (template === "moderno") {
+    return (
+      <>
+        <div className="hidden xl:block"><StoreTopBar /></div>
+        <header
+          className="sticky top-0 z-50 hidden border-b border-white/10 px-6 shadow-[0_8px_30px_rgba(0,0,0,.12)] xl:block"
+          style={{ backgroundColor: menuBgColor, color: contrastText(menuBgColor) }}
+        >
+          <div className="mx-auto flex min-h-[76px] w-full max-w-[1440px] items-center gap-8">
+            <Brand plain />
+            <div className="ml-auto flex items-center gap-7">
+              <StoreNav />
+              <div className="flex items-center gap-4 border-l border-current/15 pl-6">
+                <FavoritesNavButton />
+                <AccountMenu overlay />
+              </div>
+            </div>
+          </div>
+        </header>
+        <MobileHeader wide />
+      </>
+    );
+  }
+
+  if (template === "minimal") {
+    return (
+      <>
+        <header className="sticky top-0 z-50 hidden border-b bg-white/95 px-6 text-neutral-900 backdrop-blur-xl xl:block">
+          <div className="mx-auto flex min-h-[86px] w-full max-w-[1440px] items-center gap-10">
+            <Brand minimal />
+            <div className="ml-auto flex items-center gap-8">
+              <StoreNav />
+              <div className="flex items-center gap-5">
+                <FavoritesNavButton />
+                <AccountMenu overlay />
+              </div>
+            </div>
+          </div>
+        </header>
+        <MobileHeader minimal wide />
+      </>
+    );
+  }
 
   return (
     <>
@@ -26,37 +122,7 @@ export function StoreHero() {
         style={{ backgroundColor: headerBgColor, color: contrastText(headerBgColor) }}
       >
         <div className="mx-auto flex min-h-24 w-full max-w-[1440px] items-center justify-center py-3.5">
-          <Link
-            href="/"
-            className="flex min-w-0 items-center justify-center gap-4"
-          >
-            {logoUrl ? (
-              <span
-                className="flex w-auto shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-white p-2"
-                style={{ height: logoHeight, maxWidth: logoHeight * 3.5 }}
-              >
-                <Image
-                  src={logoUrl}
-                  alt={storeName}
-                  width={Math.round(logoHeight * 3.5)}
-                  height={logoHeight}
-                  className="size-full object-contain"
-                />
-              </span>
-            ) : (
-              <span
-                className="flex shrink-0 items-center justify-center rounded-2xl bg-white text-primary"
-                style={{ height: logoHeight, width: logoHeight }}
-              >
-                <Building2 className="size-8" />
-              </span>
-            )}
-            {showNameInHeader && (
-              <span className="truncate text-2xl font-bold tracking-tight text-current">
-                {storeName}
-              </span>
-            )}
-          </Link>
+          <Brand classic />
         </div>
       </div>
       <div
@@ -72,38 +138,7 @@ export function StoreHero() {
           </div>
         </div>
       </div>
-      <div
-        className="sticky top-0 z-50 flex min-h-16 w-full min-w-0 items-center overflow-hidden border-b border-current/10 px-4 shadow-sm backdrop-blur-xl lg:hidden"
-        style={{ backgroundColor: headerBgColor, color: contrastText(headerBgColor) }}
-      >
-        <div className="mx-auto flex w-full min-w-0 max-w-[1440px] items-center justify-between gap-3">
-          <Link href="/" className="flex min-w-0 flex-1 items-center gap-2.5">
-            {logoUrl ? (
-              <span className="flex h-10 max-w-[min(38vw,170px)] items-center overflow-hidden rounded-xl bg-white px-2 py-1.5">
-                <Image
-                  src={logoUrl}
-                  alt={storeName}
-                  width={190}
-                  height={44}
-                  className="h-full w-auto max-w-full object-contain"
-                />
-              </span>
-            ) : (
-              <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-white text-primary">
-                <Building2 className="size-6" />
-              </span>
-            )}
-            {showNameInHeader && !logoUrl && (
-              <span className="truncate text-base font-semibold">{storeName}</span>
-            )}
-          </Link>
-          <div className="flex shrink-0 items-center gap-1">
-            <FavoritesNavButton iconOnly />
-            <AccountMenu overlay iconOnly />
-            <MobileHamburgerMenu />
-          </div>
-        </div>
-      </div>
+      <MobileHeader />
     </>
   );
 }
