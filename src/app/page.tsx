@@ -47,7 +47,6 @@ export default async function Home() {
             description: plan.description,
             maxPublishedProperties: plan.maxPublishedProperties,
             maxProducts: plan.maxProducts,
-            maxOrdersPerMonth: plan.maxOrdersPerMonth,
             allowCustomDomain: plan.allowCustomDomain,
             allowAiAgent: plan.allowAiAgent,
             featured: plan.featured,

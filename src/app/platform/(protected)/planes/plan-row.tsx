@@ -23,7 +23,6 @@ export type PlanRowData = {
   trialDays: number;
   maxPublishedProperties: number | null;
   maxProducts: number | null;
-  maxOrdersPerMonth: number | null;
   maxAiMessagesPerMonth: number | null;
   allowRealEstate: boolean;
   allowConsortium: boolean;
@@ -31,7 +30,6 @@ export type PlanRowData = {
   allowCustomDomain: boolean;
   allowServices: boolean;
   allowStats: boolean;
-  allowTelegram: boolean;
   allowAiAgent: boolean;
   featured: boolean;
   description: string | null;
@@ -42,7 +40,6 @@ export type PlanRowData = {
 const FEATURE_TOGGLES = [
   { name: "allowServices", label: "Servicios y consultas" },
   { name: "allowStats", label: "Estadísticas" },
-  { name: "allowTelegram", label: "Tab Telegram" },
 ] as const;
 
 const MODULE_TOGGLES = [
@@ -68,7 +65,6 @@ export function PlanRow({ plan, isFirst, isLast }: { plan: PlanRowData; isFirst:
   const [features, setFeatures] = useState({
     allowServices: plan.allowServices,
     allowStats: plan.allowStats,
-    allowTelegram: plan.allowTelegram,
   });
   const confirm = useConfirm();
 
@@ -159,10 +155,6 @@ export function PlanRow({ plan, isFirst, isLast }: { plan: PlanRowData; isFirst:
             <Input name="maxPublishedProperties" type="number" min="1" step="1" defaultValue={plan.maxPublishedProperties ?? ""} placeholder="Sin límite" />
           </div>
           <div className="flex flex-col gap-1.5">
-            <Label className="text-xs">Máx. pedidos/mes (opcional)</Label>
-            <Input name="maxOrdersPerMonth" type="number" min="1" step="1" defaultValue={plan.maxOrdersPerMonth ?? ""} placeholder="Sin límite" />
-          </div>
-          <div className="flex flex-col gap-1.5">
             <Label className="text-xs">Máx. mensajes IA/mes (opcional)</Label>
             <Input name="maxAiMessagesPerMonth" type="number" min="1" step="1" defaultValue={plan.maxAiMessagesPerMonth ?? ""} placeholder="Sin límite" />
           </div>
@@ -250,8 +242,6 @@ export function PlanRow({ plan, isFirst, isLast }: { plan: PlanRowData; isFirst:
         {plan.description && <p className="whitespace-pre-line text-sm text-muted-foreground">{plan.description}</p>}
         <p className="text-xs text-muted-foreground">
           {plan.maxPublishedProperties != null ? `Hasta ${plan.maxPublishedProperties} propiedades publicadas` : "Propiedades sin límite"}
-          {" · "}
-          {plan.maxOrdersPerMonth ? `Hasta ${plan.maxOrdersPerMonth} pedidos/mes` : "Pedidos sin límite"}
           {plan.trialDays > 0
             ? ` · ${plan.trialDays} ${plan.trialDays === 1 ? "día" : "días"} de prueba`
             : " · Sin período de prueba"}

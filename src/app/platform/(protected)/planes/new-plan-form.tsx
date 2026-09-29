@@ -14,7 +14,6 @@ import { createPlan } from "./actions";
 const FEATURE_TOGGLES = [
   { name: "allowServices", label: "Servicios y consultas" },
   { name: "allowStats", label: "Estadísticas" },
-  { name: "allowTelegram", label: "Tab Telegram" },
 ] as const;
 
 const MODULE_TOGGLES = [
@@ -32,7 +31,7 @@ export function NewPlanForm() {
     allowConsortium: false,
     allowPostSale: false,
   });
-  const [features, setFeatures] = useState({ allowServices: true, allowStats: true, allowTelegram: true });
+  const [features, setFeatures] = useState({ allowServices: true, allowStats: true });
   const formRef = useRef<HTMLFormElement>(null);
 
   function create(formData: FormData) {
@@ -74,10 +73,6 @@ export function NewPlanForm() {
         <div className="flex flex-col gap-1.5">
           <Label className="text-xs">Máx. propiedades publicadas (opcional)</Label>
           <Input name="maxPublishedProperties" type="number" min="1" step="1" placeholder="Sin límite" />
-        </div>
-        <div className="flex flex-col gap-1.5">
-          <Label className="text-xs">Máx. pedidos/mes (opcional)</Label>
-          <Input name="maxOrdersPerMonth" type="number" min="1" step="1" placeholder="Sin límite" />
         </div>
         <div className="flex flex-col gap-1.5">
           <Label className="text-xs">Máx. mensajes IA/mes (opcional)</Label>

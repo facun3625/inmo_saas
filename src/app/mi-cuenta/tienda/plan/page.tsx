@@ -42,7 +42,6 @@ export default async function MyStorePlanPage() {
           description: plan.description,
           maxPublishedProperties: plan.maxPublishedProperties,
           maxProducts: plan.maxProducts,
-          maxOrdersPerMonth: plan.maxOrdersPerMonth,
           allowCustomDomain: plan.allowCustomDomain,
         }))}
         billingEnabled={platformBilling.enabled && Boolean(credentialSummary.accessTokenMask)}

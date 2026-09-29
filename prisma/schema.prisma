@@ -63,7 +63,6 @@ model Plan {
   // Límites opcionales — null significa "sin límite" en esa dimensión.
   maxPublishedProperties Int?
   maxProducts            Int?
-  maxOrdersPerMonth      Int?
   // Habilita la sección de dominio propio en Configuración para las tiendas
   // en este plan — se puede prender/apagar en cualquier momento sin tocar
   // código, desde /platform/planes.
@@ -74,7 +73,6 @@ model Plan {
   // plan solo si quiere restringirlas.
   allowServices          Boolean  @default(true)
   allowStats             Boolean  @default(true)
-  allowTelegram          Boolean  @default(true)
   // Habilita el agente de ventas IA en el sitio público del tenant — upsell
   // nuevo, arranca en false. maxAiMessagesPerMonth acota el gasto real de
   // la API del modelo (null = sin tope), enforced con un COUNT en vivo

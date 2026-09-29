@@ -14,7 +14,6 @@ export type PublicPlan = {
   description: string | null;
   maxPublishedProperties: number | null;
   maxProducts: number | null;
-  maxOrdersPerMonth: number | null;
   allowCustomDomain: boolean;
   allowAiAgent: boolean;
   featured: boolean;

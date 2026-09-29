@@ -48,7 +48,6 @@ export type PlanFeatures = {
   allowPostSale: boolean;
   allowServices: boolean;
   allowStats: boolean;
-  allowTelegram: boolean;
   allowCustomDomain: boolean;
   allowAiAgent: boolean;
 };
@@ -64,7 +63,6 @@ export async function requireTenantAdminWithPlan() {
       allowPostSale: true,
       allowServices: true,
       allowStats: true,
-      allowTelegram: true,
       allowCustomDomain: true,
       allowAiAgent: true,
     },
@@ -76,7 +74,6 @@ export async function requireTenantAdminWithPlan() {
     allowPostSale: plan?.allowPostSale ?? false,
     allowServices: plan?.allowServices ?? false,
     allowStats: plan?.allowStats ?? false,
-    allowTelegram: plan?.allowTelegram ?? false,
     allowCustomDomain: plan?.allowCustomDomain ?? false,
     allowAiAgent: plan?.allowAiAgent ?? false,
   };

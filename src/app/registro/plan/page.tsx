@@ -46,7 +46,6 @@ export default async function ChoosePlanPage() {
               description: p.description,
               maxPublishedProperties: p.maxPublishedProperties,
               maxProducts: p.maxProducts,
-              maxOrdersPerMonth: p.maxOrdersPerMonth,
               allowCustomDomain: p.allowCustomDomain,
             }))}
           />
