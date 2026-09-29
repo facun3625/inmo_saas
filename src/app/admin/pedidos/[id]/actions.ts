@@ -6,7 +6,6 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { requireTenantAdmin } from "@/lib/require-admin";
 import type { OrderStatus } from "@/generated/prisma/client";
-import { awardPointsForOrder, reversePointsForOrder } from "@/lib/points";
 import { restoreStockForOrder } from "@/lib/stock";
 
 // Los tres estados "activos" del pedido se pueden reasignar libremente
@@ -37,7 +36,6 @@ async function runUpdateOrderStatus(orderId: string, status: OrderStatus) {
   await prisma.$transaction(async (tx) => {
     if (isCancel) {
       await restoreStockForOrder(tx, orderId);
-      await reversePointsForOrder(tx, order);
     }
     await tx.order.update({ where: { id: orderId }, data: { status } });
   });
@@ -64,7 +62,6 @@ async function runApproveOrder(orderId: string) {
   await prisma.$transaction(async (tx) => {
     await tx.order.update({ where: { id: orderId }, data: { status: "CONFIRMED" } });
     await tx.paymentProof.updateMany({ where: { orderId }, data: { status: "APPROVED", reviewedAt: new Date() } });
-    await awardPointsForOrder(tx, order);
   });
 
   revalidatePath(`/admin/pedidos/${orderId}`);

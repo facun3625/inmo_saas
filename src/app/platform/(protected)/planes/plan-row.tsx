@@ -29,9 +29,7 @@ export type PlanRowData = {
   allowConsortium: boolean;
   allowPostSale: boolean;
   allowCustomDomain: boolean;
-  allowPushNotifications: boolean;
   allowServices: boolean;
-  allowLoyalty: boolean;
   allowStats: boolean;
   allowTelegram: boolean;
   allowAiAgent: boolean;
@@ -43,7 +41,6 @@ export type PlanRowData = {
 
 const FEATURE_TOGGLES = [
   { name: "allowServices", label: "Servicios y consultas" },
-  { name: "allowLoyalty", label: "Cupones y puntos" },
   { name: "allowStats", label: "Estadísticas" },
   { name: "allowTelegram", label: "Tab Telegram" },
 ] as const;
@@ -62,7 +59,6 @@ export function PlanRow({ plan, isFirst, isLast }: { plan: PlanRowData; isFirst:
   const [featuredPending, startFeaturedTransition] = useTransition();
   const [movePending, startMoveTransition] = useTransition();
   const [allowCustomDomain, setAllowCustomDomain] = useState(plan.allowCustomDomain);
-  const [allowPushNotifications, setAllowPushNotifications] = useState(plan.allowPushNotifications);
   const [allowAiAgent, setAllowAiAgent] = useState(plan.allowAiAgent);
   const [modules, setModules] = useState({
     allowRealEstate: plan.allowRealEstate,
@@ -71,7 +67,6 @@ export function PlanRow({ plan, isFirst, isLast }: { plan: PlanRowData; isFirst:
   });
   const [features, setFeatures] = useState({
     allowServices: plan.allowServices,
-    allowLoyalty: plan.allowLoyalty,
     allowStats: plan.allowStats,
     allowTelegram: plan.allowTelegram,
   });
@@ -203,16 +198,6 @@ export function PlanRow({ plan, isFirst, isLast }: { plan: PlanRowData; isFirst:
           </div>
         </label>
         <label className="flex items-center gap-2.5 text-sm">
-          <Switch checked={allowPushNotifications} onCheckedChange={setAllowPushNotifications} />
-          <input type="hidden" name="allowPushNotifications" value={String(allowPushNotifications)} />
-          <div className="flex flex-col">
-            <span className="font-medium">Notificaciones push</span>
-            <span className="text-xs text-muted-foreground">
-              Habilita /admin/notificaciones para mandar campañas push a los clientes de este plan.
-            </span>
-          </div>
-        </label>
-        <label className="flex items-center gap-2.5 text-sm">
           <Switch checked={allowAiAgent} onCheckedChange={setAllowAiAgent} />
           <input type="hidden" name="allowAiAgent" value={String(allowAiAgent)} />
           <div className="flex flex-col">
@@ -256,7 +241,6 @@ export function PlanRow({ plan, isFirst, isLast }: { plan: PlanRowData; isFirst:
           {!plan.active && <Badge variant="secondary">Inactivo</Badge>}
           {plan.featured && <Badge className="gap-1"><StarIcon className="size-3 fill-current" />Más elegido</Badge>}
           {plan.allowCustomDomain && <Badge variant="outline">Dominio propio</Badge>}
-          {plan.allowPushNotifications && <Badge variant="outline">Push</Badge>}
           {plan.allowAiAgent && <Badge variant="outline">Agente IA</Badge>}
           {plan.allowRealEstate && <Badge variant="outline">Inmobiliaria</Badge>}
           {plan.allowConsortium && <Badge variant="outline">Consorcios</Badge>}

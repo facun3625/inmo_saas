@@ -3,7 +3,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getTenantMercadoPagoCredentials } from "@/lib/mercadopago-config";
 import { getPayment, verifyWebhookSignature } from "@/lib/mercadopago";
-import { awardPointsForOrder } from "@/lib/points";
 import { restoreStockForOrder } from "@/lib/stock";
 
 // Notificaciones de pago de MercadoPago.
@@ -112,17 +111,10 @@ export async function POST(req: NextRequest) {
   if (payment.status === "approved") {
     // updateMany con el estado esperado en el where es lo que hace esto
     // idempotente: si la notificación llega de nuevo, el pedido ya no está
-    // en PENDING_PAYMENT y el update afecta 0 filas, así que no se otorgan
-    // los puntos por segunda vez.
-    await prisma.$transaction(async (tx) => {
-      const { count } = await tx.order.updateMany({
-        where: { id: order.id, status: "PENDING_PAYMENT" },
-        data: { status: "CONFIRMED", mpPaymentId: payment.id },
-      });
-      if (count === 0) return;
-
-      const fresh = await tx.order.findUniqueOrThrow({ where: { id: order.id } });
-      await awardPointsForOrder(tx, fresh);
+    // en PENDING_PAYMENT y el update afecta 0 filas.
+    await prisma.order.updateMany({
+      where: { id: order.id, status: "PENDING_PAYMENT" },
+      data: { status: "CONFIRMED", mpPaymentId: payment.id },
     });
     return NextResponse.json({ ok: true, status: "approved" });
   }

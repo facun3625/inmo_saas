@@ -82,13 +82,6 @@ async function main() {
     create: { tenantId: tenant.id, type: "PICKUP", enabled: false },
   });
 
-  const existingRule = await prisma.pointsRule.findFirst({
-    where: { tenantId: tenant.id, effectiveTo: null },
-  });
-  if (!existingRule) {
-    await prisma.pointsRule.create({ data: { tenantId: tenant.id, pointsPerAmount: 1 } });
-  }
-
   // Condiciones del programa de revendedores — arrancan con valores
   // razonables, 100% editables después desde /platform/revendedores.
   await prisma.resellerSettings.upsert({

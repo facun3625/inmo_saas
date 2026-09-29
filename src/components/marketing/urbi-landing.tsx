@@ -57,7 +57,6 @@ const differentiators = [
  {icon:Download,color:"#1e658c",title:"Se instala como app",text:"Tu sitio y tu panel se agregan a la pantalla de inicio, sin tiendas de aplicaciones."},
  {icon:ShieldCheck,color:"#0f9d78",title:"IA que no inventa datos",text:"El asistente solo responde con propiedades reales de tu cartera, nunca precios ni datos inventados."},
  {icon:UserCog,color:"#7c5cff",title:"Permisos por agente",text:"Elegís sección por sección qué puede ver y tocar cada persona de tu equipo."},
- {icon:BellRing,color:"#d97706",title:"Notificaciones push",text:"Avisá a quienes instalaron tu sitio cuando quieras contarles algo."},
  {icon:FileText,color:"#e0567a",title:"Ajustes de alquiler sin sorpresas",text:"IPC, ICL o el índice que uses: la actualización queda como sugerencia hasta que vos la apruebes."},
 ];
 

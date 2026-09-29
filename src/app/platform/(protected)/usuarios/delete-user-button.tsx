@@ -25,7 +25,7 @@ export function DeleteUserButton({
 
   async function handleClick() {
     const extra = [
-      hasStore && "su tienda con todo lo que contiene (productos, pedidos, cupones, todo)",
+      hasStore && "su tienda con todo lo que contiene (productos, pedidos, todo)",
       isReseller && "su historial de comisiones como revendedor",
     ].filter(Boolean) as string[];
 

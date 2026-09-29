@@ -46,19 +46,8 @@ export function DocumentacionTab() {
           <b>Entregado</b>. Un pedido en efectivo entra directo como Confirmado.
         </p>
         <p>
-          Cancelar un pedido devuelve el stock descontado y revierte los puntos que hubiera sumado
-          — no hace falta ajustar nada a mano.
+          Cancelar un pedido devuelve el stock descontado — no hace falta ajustar nada a mano.
         </p>
-      </Section>
-
-      <Section title="Puntos y cupones">
-        <p>
-          Los clientes logueados suman puntos automáticamente al confirmarse un pedido (tasa
-          configurable en Puntos). Los canjean por cupones desde &quot;Mis puntos&quot; — un cupón
-          con costo en puntos no se puede usar tipeando el código directo, primero hay que
-          canjearlo.
-        </p>
-        <p>Un cupón sin costo en puntos funciona como descuento normal, con el código en el checkout.</p>
       </Section>
 
       <Section title="Productos a consultar por WhatsApp">

@@ -13,7 +13,6 @@ import { createPlan } from "./actions";
 
 const FEATURE_TOGGLES = [
   { name: "allowServices", label: "Servicios y consultas" },
-  { name: "allowLoyalty", label: "Cupones y puntos" },
   { name: "allowStats", label: "Estadísticas" },
   { name: "allowTelegram", label: "Tab Telegram" },
 ] as const;
@@ -27,14 +26,13 @@ const MODULE_TOGGLES = [
 export function NewPlanForm() {
   const [pending, startTransition] = useTransition();
   const [allowCustomDomain, setAllowCustomDomain] = useState(false);
-  const [allowPushNotifications, setAllowPushNotifications] = useState(false);
   const [allowAiAgent, setAllowAiAgent] = useState(false);
   const [modules, setModules] = useState({
     allowRealEstate: true,
     allowConsortium: false,
     allowPostSale: false,
   });
-  const [features, setFeatures] = useState({ allowServices: true, allowLoyalty: true, allowStats: true, allowTelegram: true });
+  const [features, setFeatures] = useState({ allowServices: true, allowStats: true, allowTelegram: true });
   const formRef = useRef<HTMLFormElement>(null);
 
   function create(formData: FormData) {
@@ -110,11 +108,6 @@ export function NewPlanForm() {
         <Switch checked={allowCustomDomain} onCheckedChange={setAllowCustomDomain} />
         <input type="hidden" name="allowCustomDomain" value={String(allowCustomDomain)} />
         <span className="font-medium">Permite dominio propio</span>
-      </label>
-      <label className="flex items-center gap-2.5 text-sm">
-        <Switch checked={allowPushNotifications} onCheckedChange={setAllowPushNotifications} />
-        <input type="hidden" name="allowPushNotifications" value={String(allowPushNotifications)} />
-        <span className="font-medium">Notificaciones push</span>
       </label>
       <label className="flex items-center gap-2.5 text-sm">
         <Switch checked={allowAiAgent} onCheckedChange={setAllowAiAgent} />

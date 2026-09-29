@@ -265,7 +265,7 @@ async function runSetBillingNotes(tenantId: string, notes: string) {
 }
 
 // Borra la tienda y absolutamente todo lo que le pertenece — catálogo,
-// pedidos, cupones, historial de pagos, comisiones generadas por sus cobros.
+// pedidos, historial de pagos, comisiones generadas por sus cobros.
 // Irreversible. El orden importa: hay que vaciar las tablas que referencian
 // a la tienda (o a sus pedidos/productos) antes de poder borrar las que
 // referencian, y por último la tienda misma.
@@ -281,11 +281,7 @@ async function runDeleteTenant(tenantId: string) {
   await requireSuperAdmin();
 
   await prisma.$transaction(async (tx) => {
-    await tx.pointsLedger.deleteMany({ where: { user: { tenantId } } });
-    await tx.couponRedemption.deleteMany({ where: { coupon: { tenantId } } });
     await tx.order.deleteMany({ where: { tenantId } });
-    await tx.coupon.deleteMany({ where: { tenantId } });
-    await tx.pointsRule.deleteMany({ where: { tenantId } });
     await tx.stockMovement.deleteMany({ where: { tenantId } });
     await tx.pickupSlot.deleteMany({ where: { tenantId } });
     await tx.fulfillmentMethodConfig.deleteMany({ where: { tenantId } });

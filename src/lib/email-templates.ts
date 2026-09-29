@@ -29,9 +29,7 @@ export const SAMPLE_ORDER_EMAIL_DATA: {
   items: { name: string; quantity: number; unitPrice: number }[];
   subtotal: number;
   deliveryFee: number;
-  discount: number;
   total: number;
-  pointsEarned: number;
   fulfillmentLabel: string;
   deliveryDateLabel: string;
   deliveryAddress: string;
@@ -46,9 +44,7 @@ export const SAMPLE_ORDER_EMAIL_DATA: {
   ],
   subtotal: 6200,
   deliveryFee: 500,
-  discount: 0,
   total: 6700,
-  pointsEarned: 6,
   fulfillmentLabel: "Delivery",
   deliveryDateLabel: "Viernes 28 de agosto",
   deliveryAddress: "Av. Siempre Viva 742",
@@ -89,10 +85,7 @@ export function orderConfirmationEmail({
   items,
   subtotal,
   deliveryFee,
-  discount,
-  couponCode,
   total,
-  pointsEarned,
   fulfillmentLabel,
   deliveryDateLabel,
   deliveryAddress,
@@ -116,10 +109,7 @@ export function orderConfirmationEmail({
   items: { name: string; quantity: number; unitPrice: number }[];
   subtotal: number;
   deliveryFee: number;
-  discount: number;
-  couponCode?: string | null;
   total: number;
-  pointsEarned: number;
   fulfillmentLabel: string;
   deliveryDateLabel: string;
   deliveryAddress?: string | null;
@@ -168,13 +158,7 @@ export function orderConfirmationEmail({
     deliveryFee > 0
       ? `<tr><td style="padding:4px 0;font-size:13px;color:${MUTED};">Envío</td><td style="padding:4px 0;font-size:13px;color:${INK};text-align:right;">${formatPrice(deliveryFee)}</td></tr>`
       : "",
-    discount > 0
-      ? `<tr><td style="padding:4px 0;font-size:13px;color:${MUTED};">Descuento${couponCode ? ` (${escapeHtml(couponCode)})` : ""}</td><td style="padding:4px 0;font-size:13px;color:${INK};text-align:right;">-${formatPrice(discount)}</td></tr>`
-      : "",
     `<tr><td style="padding:8px 0 0;font-size:15px;font-weight:700;color:${INK};">Total</td><td style="padding:8px 0 0;font-size:15px;font-weight:700;color:${ORANGE};text-align:right;">${formatPrice(total)}</td></tr>`,
-    pointsEarned > 0
-      ? `<tr><td colspan="2" style="padding:4px 0 0;font-size:12px;color:${MUTED};">+${pointsEarned} puntos sumados a tu cuenta</td></tr>`
-      : "",
   ].join("");
 
   const deliveryRows = [

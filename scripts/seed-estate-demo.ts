@@ -65,11 +65,7 @@ async function resetTenant(subdomain: string) {
 
       // Resto genérico de la tienda — mismo orden que "eliminar tienda"
       // desde la plataforma.
-      await tx.pointsLedger.deleteMany({ where: { user: { tenantId } } });
-      await tx.couponRedemption.deleteMany({ where: { coupon: { tenantId } } });
       await tx.order.deleteMany({ where: { tenantId } });
-      await tx.coupon.deleteMany({ where: { tenantId } });
-      await tx.pointsRule.deleteMany({ where: { tenantId } });
       await tx.stockMovement.deleteMany({ where: { tenantId } });
       await tx.pickupSlot.deleteMany({ where: { tenantId } });
       await tx.fulfillmentMethodConfig.deleteMany({ where: { tenantId } });

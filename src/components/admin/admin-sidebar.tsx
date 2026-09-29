@@ -18,7 +18,6 @@ import {
   ArrowUpCircleIcon,
   ExternalLinkIcon,
   DownloadIcon,
-  BellIcon,
   GlobeIcon,
   SearchIcon,
   BuildingIcon,
@@ -153,13 +152,6 @@ const baseSections: Section[] = [
     label: "Estadísticas",
     icon: ChartNoAxesCombinedIcon,
     feature: "allowStats",
-    group: "Cuenta",
-  },
-  {
-    href: "/admin/notificaciones",
-    label: "Notificaciones",
-    icon: BellIcon,
-    feature: "allowPushNotifications",
     group: "Cuenta",
   },
   {

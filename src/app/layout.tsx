@@ -16,7 +16,6 @@ import { isDemoSubdomain } from "@/lib/demo";
 import { MarketingSocialProvider } from "@/components/marketing/marketing-social-context";
 import { toInstagramLink } from "@/lib/social-links";
 import { StorePwaProvider } from "@/components/store/store-pwa-provider";
-import { StorePushBanner } from "@/components/store/store-push-banner";
 import { PublicAnalyticsTracker } from "@/components/estate/public-analytics-tracker";
 import { AiAgentWidget } from "@/components/estate/ai-agent-widget";
 import { isAiAgentAvailable } from "@/lib/ai-agent/availability";
@@ -212,7 +211,6 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               >
                 <StorePwaProvider>
                   <PublicAnalyticsTracker />
-                  <StorePushBanner />
                   {children}
                 </StorePwaProvider>
               </div>

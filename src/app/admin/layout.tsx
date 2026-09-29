@@ -9,7 +9,6 @@ import { AdminThemeRoot } from "@/components/admin/admin-theme-root";
 import { ConfirmProvider } from "@/components/admin/confirm-provider";
 import { PromptProvider } from "@/components/admin/prompt-provider";
 import { PwaProvider } from "@/components/admin/pwa-provider";
-import { PushPermissionBanner } from "@/components/admin/push-permission-banner";
 import { prisma } from "@/lib/prisma";
 import { requireTenantAdminWithPlan } from "@/lib/require-admin";
 import { isDemoSubdomain, DEMO_LAST_ACTIVE_KEY } from "@/lib/demo";
@@ -129,7 +128,6 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               />
               <main className="flex-1 min-h-0 overflow-y-auto px-4 py-6 lg:px-8 print:p-0">{children}</main>
             </div>
-            <PushPermissionBanner />
           </PromptProvider>
         </ConfirmProvider>
       </PwaProvider>

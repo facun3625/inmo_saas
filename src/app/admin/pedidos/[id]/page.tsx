@@ -27,7 +27,6 @@ export default async function AdminOrderDetailPage({
       user: true,
       deliveryDate: true,
       pickupSlot: true,
-      coupon: true,
       paymentProof: true,
       items: { include: { productVariant: { include: { product: true } } } },
     },
@@ -116,14 +115,6 @@ export default async function AdminOrderDetailPage({
           <div className="flex items-center justify-between border-t pt-2 text-sm">
             <span className="text-muted-foreground">Envío</span>
             <span>{formatPrice(Number(order.deliveryFee))}</span>
-          </div>
-        )}
-        {Number(order.discountFromCoupon) > 0 && (
-          <div className="flex items-center justify-between border-t pt-2 text-sm">
-            <span className="text-muted-foreground">
-              Descuento{order.coupon && ` (${order.coupon.code})`}
-            </span>
-            <span>-{formatPrice(Number(order.discountFromCoupon))}</span>
           </div>
         )}
         <div className="flex items-center justify-between border-t pt-2 text-sm font-semibold">

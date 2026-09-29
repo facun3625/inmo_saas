@@ -2,14 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { UserIcon, ClipboardListIcon, SparklesIcon, StoreIcon } from "lucide-react";
+import { UserIcon, ClipboardListIcon, StoreIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const sections = [
   { href: "/", label: "Volver a la tienda", icon: StoreIcon, exact: true, highlight: true },
   { href: "/perfil", label: "Mi perfil", icon: UserIcon },
   { href: "/pedidos", label: "Mis pedidos", icon: ClipboardListIcon },
-  { href: "/puntos", label: "Mis puntos", icon: SparklesIcon },
 ];
 
 export function CustomerSidebar() {

@@ -11,7 +11,6 @@ import { getPickupSlotsForDate } from "@/lib/pickup-slots";
 import { saveUploadedFile } from "@/lib/storage";
 import { resolveWeeklyAvailability } from "@/lib/availability";
 import { logGroupStockMovement } from "@/lib/stock-movements";
-import { awardPointsForOrder } from "@/lib/points";
 import { getTenantMercadoPagoCredentials } from "@/lib/mercadopago-config";
 import { createPreference } from "@/lib/mercadopago";
 import { canTenantReceiveOrders } from "@/lib/billing-status";
@@ -20,8 +19,6 @@ import { orderConfirmationEmail } from "@/lib/email-templates";
 import { sendMail } from "@/lib/mailer";
 import { toWhatsAppLink, toInstagramLink } from "@/lib/social-links";
 import { FULFILLMENT_TYPE_LABELS, PAYMENT_METHOD_LABELS } from "@/lib/order-status";
-import { sendPushToTenantAdmins } from "@/lib/push";
-import { formatPrice } from "@/lib/format";
 
 const deliveryDateFormatter = new Intl.DateTimeFormat("es-AR", { weekday: "long", day: "2-digit", month: "long" });
 function capitalize(s: string) {
@@ -44,7 +41,6 @@ const placeOrderSchema = z
     phone: z.string().trim().min(1, "Ingresá un teléfono de contacto"),
     address: z.string().trim().optional(),
     pickupSlotId: z.string().optional(),
-    couponCode: z.string().trim().optional(),
     guestName: z.string().trim().optional(),
     guestEmail: z.string().trim().email("Ingresá un email válido").optional().or(z.literal("")),
   })
@@ -64,52 +60,6 @@ export async function getPickupSlotsForCheckout(deliveryDateId: string) {
   if (!deliveryDate) return [];
 
   return getPickupSlotsForDate(tenant.id, deliveryDateId);
-}
-
-function computeCouponDiscount(
-  coupon: { discountType: "PERCENT" | "FIXED"; discountValue: unknown },
-  subtotal: number,
-) {
-  const value = Number(coupon.discountValue);
-  if (coupon.discountType === "PERCENT") return Math.round((subtotal * value) / 100);
-  return Math.min(value, subtotal);
-}
-
-export async function validateCoupon(rawCode: string, subtotal: number) {
-  try {
-    return await resolveCoupon(rawCode, subtotal);
-  } catch (err) {
-    return toUserError(err, "No se pudo aplicar el cupón");
-  }
-}
-
-async function resolveCoupon(rawCode: string, subtotal: number) {
-  const tenant = await getCurrentTenant();
-  if (!tenant) throw new ActionError("Tienda no encontrada");
-  if (!canTenantReceiveOrders(tenant)) throw new ActionError("La tienda no está recibiendo pedidos hasta regularizar su suscripción");
-
-  const code = rawCode.trim().toUpperCase();
-  if (!code) throw new ActionError("Ingresá un código");
-
-  const coupon = await prisma.coupon.findUnique({
-    where: { tenantId_code: { tenantId: tenant.id, code } },
-  });
-  if (!coupon || !coupon.active) throw new ActionError("Ese cupón no existe o no está activo");
-  if (coupon.expiresAt && coupon.expiresAt < new Date()) {
-    throw new ActionError("Ese cupón venció");
-  }
-  if (coupon.usageLimit) {
-    const usedCount = await prisma.couponRedemption.count({ where: { couponId: coupon.id } });
-    if (usedCount >= coupon.usageLimit) {
-      throw new ActionError("Ese cupón ya alcanzó el límite de usos");
-    }
-  }
-
-  return {
-    couponId: coupon.id,
-    code: coupon.code,
-    discountAmount: computeCouponDiscount(coupon, subtotal),
-  };
 }
 
 async function createMercadoPagoPaymentUrl(
@@ -271,7 +221,6 @@ async function createOrder(formData: FormData) {
     phone: formData.get("phone"),
     address: formData.get("address") || undefined,
     pickupSlotId: formData.get("pickupSlotId") || undefined,
-    couponCode: formData.get("couponCode") || undefined,
     guestName: formData.get("guestName") || undefined,
     guestEmail: formData.get("guestEmail") || undefined,
   });
@@ -432,38 +381,7 @@ async function createOrder(formData: FormData) {
       }
     }
 
-    let couponId: string | null = null;
-    let discountFromCoupon = 0;
-    let couponPendingRedemptionId: string | null = null;
-    if (parsed.couponCode) {
-      const code = parsed.couponCode.trim().toUpperCase();
-      const coupon = await tx.coupon.findUnique({
-        where: { tenantId_code: { tenantId: tenant.id, code } },
-      });
-      if (!coupon || !coupon.active) throw new ActionError("Ese cupón no existe o no está activo");
-      if (coupon.expiresAt && coupon.expiresAt < new Date()) {
-        throw new ActionError("Ese cupón venció");
-      }
-      if (coupon.usageLimit) {
-        const usedCount = await tx.couponRedemption.count({ where: { couponId: coupon.id } });
-        if (usedCount >= coupon.usageLimit) {
-          throw new ActionError("Ese cupón ya alcanzó el límite de usos");
-        }
-      }
-      if (coupon.pointsCost > 0) {
-        const pending = session?.user
-          ? await tx.couponRedemption.findFirst({
-              where: { couponId: coupon.id, userId: session.user.id, orderId: null },
-            })
-          : null;
-        if (!pending) throw new ActionError("Este cupón se canjea por puntos desde \"Mis puntos\"");
-        couponPendingRedemptionId = pending.id;
-      }
-      couponId = coupon.id;
-      discountFromCoupon = computeCouponDiscount(coupon, subtotal);
-    }
-
-    const total = Math.max(0, subtotal + deliveryFee - discountFromCoupon);
+    const total = Math.max(0, subtotal + deliveryFee);
 
     const created = await tx.order.create({
       data: {
@@ -480,30 +398,11 @@ async function createOrder(formData: FormData) {
         paymentMethod: parsed.paymentMethod,
         subtotal,
         deliveryFee,
-        couponId,
-        discountFromCoupon,
         total,
         idempotencyKey,
         items: { create: orderItemsData },
       },
     });
-
-    if (couponId) {
-      if (couponPendingRedemptionId) {
-        await tx.couponRedemption.update({
-          where: { id: couponPendingRedemptionId },
-          data: { orderId: created.id },
-        });
-      } else {
-        await tx.couponRedemption.create({
-          data: { couponId, userId: session?.user?.id ?? null, orderId: created.id },
-        });
-      }
-    }
-
-    if (status === "CONFIRMED") {
-      await awardPointsForOrder(tx, created);
-    }
 
     // Guardamos el teléfono/dirección en el perfil para prellenar el próximo pedido
     // — solo aplica a cuentas logueadas, un invitado no tiene perfil.
@@ -560,7 +459,7 @@ async function createOrder(formData: FormData) {
     throw err;
   }
 
-  // El mail y el push salen DESPUÉS de contestarle al comprador. Antes iban
+  // El mail sale DESPUÉS de contestarle al comprador. Antes iba
   // con await antes del return: el checkout quedaba esperando a un SMTP que
   // puede tardar segundos (nodemailer no tiene timeout acá), y dentro del
   // webview de Instagram esa demora alcanza para que mate la respuesta — el
@@ -600,10 +499,7 @@ async function createOrder(formData: FormData) {
             })),
             subtotal: Number(order.subtotal),
             deliveryFee: Number(order.deliveryFee),
-            discount: Number(order.discountFromCoupon),
-            couponCode: parsed.couponCode || null,
             total: Number(order.total),
-            pointsEarned: orderWithItems.pointsEarned,
             fulfillmentLabel: FULFILLMENT_TYPE_LABELS[order.fulfillmentType],
             deliveryDateLabel: capitalize(deliveryDateFormatter.format(deliveryDate.date)),
             deliveryAddress: order.deliveryAddress,
@@ -623,17 +519,6 @@ async function createOrder(formData: FormData) {
       } catch (err) {
         console.error("No se pudo enviar el mail de confirmación de pedido", err);
       }
-    }
-
-    // Push al panel admin instalado como PWA — independiente del mail de arriba.
-    try {
-      await sendPushToTenantAdmins(tenant.id, {
-        title: "Nuevo pedido",
-        body: `${session?.user?.name ?? parsed.guestName ?? "Un cliente"} — ${formatPrice(Number(order.total))}`,
-        url: `/admin/pedidos/${order.id}`,
-      });
-    } catch (err) {
-      console.error("No se pudo enviar la notificación push del pedido", err);
     }
   });
 

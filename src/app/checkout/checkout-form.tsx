@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 import type { FulfillmentType, PaymentMethodType } from "@/generated/prisma/client";
 import type { TransferConfig } from "@/app/admin/pagos/page";
 import { FULFILLMENT_TYPE_LABELS, PAYMENT_METHOD_LABELS } from "@/lib/order-status";
-import { checkDeliveryDate, getPickupSlotsForCheckout, placeOrder, validateCoupon } from "./actions";
+import { checkDeliveryDate, getPickupSlotsForCheckout, placeOrder } from "./actions";
 
 type Profile = {
   name: string | null;
@@ -158,12 +158,6 @@ export function CheckoutForm({
   const [confirmedOrderId, setConfirmedOrderId] = useState<string | null>(null);
   const [dateProblem, setDateProblem] = useState<string | null>(null);
 
-  const [couponCode, setCouponCode] = useState("");
-  const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discountAmount: number } | null>(
-    null,
-  );
-  const [couponPending, startCouponTransition] = useTransition();
-
   useEffect(() => {
     if (fulfillmentType !== "PICKUP" || !cart.deliveryDateId) return;
     let cancelled = false;
@@ -301,30 +295,7 @@ export function CheckoutForm({
   const step2Summary = method ? PAYMENT_METHOD_LABELS[method] ?? method : "";
 
   const appliedDeliveryFee = fulfillmentType === "DELIVERY" ? deliveryFee : 0;
-  const couponDiscount = appliedCoupon?.discountAmount ?? 0;
-  const total = Math.max(0, subtotal + appliedDeliveryFee - couponDiscount);
-
-  function applyCoupon() {
-    if (!couponCode.trim()) return;
-    startCouponTransition(async () => {
-      try {
-        const result = await validateCoupon(couponCode, subtotal);
-        if ("error" in result) {
-          toast.error(result.error);
-          return;
-        }
-        setAppliedCoupon({ code: result.code, discountAmount: result.discountAmount });
-        toast.success(`Cupón ${result.code} aplicado`);
-      } catch {
-        toast.error("No se pudo aplicar el cupón. Revisá tu conexión.");
-      }
-    });
-  }
-
-  function removeCoupon() {
-    setAppliedCoupon(null);
-    setCouponCode("");
-  }
+  const total = Math.max(0, subtotal + appliedDeliveryFee);
 
   function handleSubmit(formData: FormData) {
     if (!method || !fulfillmentType) return;
@@ -333,7 +304,6 @@ export function CheckoutForm({
     formData.set("paymentMethod", method);
     formData.set("fulfillmentType", fulfillmentType);
     if (pickupSlotId) formData.set("pickupSlotId", pickupSlotId);
-    if (appliedCoupon) formData.set("couponCode", appliedCoupon.code);
     formData.set(
       "items",
       JSON.stringify(
@@ -396,46 +366,10 @@ export function CheckoutForm({
               <span>{formatPrice(appliedDeliveryFee)}</span>
             </div>
           )}
-          {appliedCoupon && (
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">Descuento ({appliedCoupon.code})</span>
-              <span>-{formatPrice(couponDiscount)}</span>
-            </div>
-          )}
           <div className="flex items-center justify-between border-t pt-2 text-sm font-semibold">
             <span>Total</span>
             <span>{formatPrice(total)}</span>
           </div>
-        </div>
-
-        <div className="flex flex-col gap-2 rounded-2xl border p-4">
-          <Label htmlFor="couponCode">¿Tenés un cupón?</Label>
-          {appliedCoupon ? (
-            <div className="flex items-center justify-between gap-2 rounded-xl border border-primary bg-muted px-3 py-2 text-sm">
-              <span className="font-medium">{appliedCoupon.code}</span>
-              <button type="button" onClick={removeCoupon} className="text-sm text-primary underline">
-                Quitar
-              </button>
-            </div>
-          ) : (
-            <div className="flex gap-2">
-              <Input
-                id="couponCode"
-                value={couponCode}
-                onChange={(e) => setCouponCode(e.target.value)}
-                placeholder="Código"
-                className="uppercase"
-              />
-              <Button
-                type="button"
-                variant="outline"
-                disabled={couponPending || !couponCode.trim()}
-                onClick={applyCoupon}
-              >
-                Aplicar
-              </Button>
-            </div>
-          )}
         </div>
       </div>
 

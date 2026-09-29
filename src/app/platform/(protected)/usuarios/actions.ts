@@ -55,14 +55,10 @@ async function runDeleteUserAccount(userId: string) {
 
   // Actividad propia como cliente: se borra junto con la cuenta (a
   // diferencia de /admin/usuarios, que la protege — acá el super admin ya
-  // pidió explícitamente borrar todo). Pedidos y canjes de cupón quedan
-  // como "de invitado" (userId null) en vez de borrarse, para no arruinar
-  // el historial de ventas de la tienda a la que pertenecen.
-  await prisma.$transaction([
-    prisma.pointsLedger.deleteMany({ where: { userId } }),
-    prisma.couponRedemption.updateMany({ where: { userId }, data: { userId: null } }),
-    prisma.order.updateMany({ where: { userId }, data: { userId: null } }),
-  ]);
+  // pidió explícitamente borrar todo). Los pedidos quedan como "de
+  // invitado" (userId null) en vez de borrarse, para no arruinar el
+  // historial de ventas de la tienda a la que pertenecen.
+  await prisma.order.updateMany({ where: { userId }, data: { userId: null } });
 
   await prisma.user.delete({ where: { id: userId } });
   revalidatePath("/platform/usuarios");

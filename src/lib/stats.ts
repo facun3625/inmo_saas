@@ -14,7 +14,6 @@ export type OrderStatsRow = {
   fulfillmentType: FulfillmentType;
   userId: string | null;
   deliveryDateId: string;
-  pointsEarned: number;
   items: {
     productId: string;
     productName: string;

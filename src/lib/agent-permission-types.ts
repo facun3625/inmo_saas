@@ -19,7 +19,6 @@ export const AGENT_MENU_SECTIONS = [
   { key: "serviceInquiries", title: "Consultas de servicios", description: "Consultas sobre servicios", href: "/admin/consultas" },
   { key: "website", title: "Página web", description: "Contenido del sitio", href: "/admin/pagina" },
   { key: "statistics", title: "Estadísticas", description: "Métricas de la inmobiliaria", href: "/admin/estadisticas" },
-  { key: "notifications", title: "Notificaciones", description: "Avisos y campañas", href: "/admin/notificaciones" },
   { key: "users", title: "Usuarios", description: "Usuarios de la cuenta", href: "/admin/usuarios" },
   { key: "settings", title: "Configuración", description: "Ajustes de la inmobiliaria", href: "/admin/configuracion" },
 ] as const;
@@ -45,7 +44,6 @@ export const DEFAULT_AGENT_PERMISSIONS: AgentPermissions = {
   serviceInquiries: "NONE",
   website: "NONE",
   statistics: "NONE",
-  notifications: "NONE",
   users: "NONE",
   settings: "NONE",
 };

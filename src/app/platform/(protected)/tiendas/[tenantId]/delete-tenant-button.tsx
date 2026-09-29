@@ -17,7 +17,7 @@ export function DeleteTenantButton({ tenantId, subdomain }: { tenantId: string; 
     const ok = await confirm({
       title: `¿Borrar "${subdomain}" para siempre?`,
       description:
-        "Se elimina la inmobiliaria con absolutamente todo lo que contiene: productos, pedidos, clientes, cupones, historial de pagos y comisiones generadas por sus cobros. No se puede deshacer.",
+        "Se elimina la inmobiliaria con absolutamente todo lo que contiene: productos, pedidos, clientes, historial de pagos y comisiones generadas por sus cobros. No se puede deshacer.",
       confirmLabel: "Sí, borrar todo",
       destructive: true,
     });

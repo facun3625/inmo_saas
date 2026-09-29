@@ -4,7 +4,6 @@ import { ArrowLeftIcon } from "lucide-react";
 
 import { prisma } from "@/lib/prisma";
 import { requireTenantAdmin } from "@/lib/require-admin";
-import { getUserPointsBalance } from "@/lib/points";
 import { formatPrice } from "@/lib/format";
 import { FULFILLMENT_TYPE_LABELS, PAYMENT_METHOD_LABELS } from "@/lib/order-status";
 import { Badge } from "@/components/ui/badge";
@@ -14,10 +13,6 @@ import { UserRoleToggle, UserDeleteButton } from "../user-row-actions";
 
 const dateFormatter = new Intl.DateTimeFormat("es-AR", { dateStyle: "medium" });
 
-function formatDiscount(type: "PERCENT" | "FIXED", value: number) {
-  return type === "PERCENT" ? `${value}%` : formatPrice(value);
-}
-
 export default async function UserDetailPage({
   params,
 }: {
@@ -26,28 +21,16 @@ export default async function UserDetailPage({
   const { id } = await params;
   const { session, tenant } = await requireTenantAdmin();
 
-  const [user, orders, pointsBalance, couponRedemptions] = await Promise.all([
+  const [user, orders] = await Promise.all([
     prisma.user.findUnique({ where: { id, tenantId: tenant.id } }),
     prisma.order.findMany({
       where: { userId: id, tenantId: tenant.id },
       include: { paymentProof: true, deliveryDate: true },
       orderBy: { createdAt: "desc" },
     }),
-    getUserPointsBalance(id),
-    // Un cupón tipeado a mano en el checkout y uno canjeado por puntos dejan
-    // la misma fila acá — es el único registro de "qué cupones usó" sin
-    // importar cómo llegó a tenerlo. orderId null = lo canjeó por puntos
-    // pero todavía no lo usó en ningún pedido.
-    prisma.couponRedemption.findMany({
-      where: { userId: id, coupon: { tenantId: tenant.id } },
-      include: { coupon: true },
-      orderBy: { redeemedAt: "desc" },
-    }),
   ]);
 
   if (!user) notFound();
-
-  const orderById = new Map(orders.map((o) => [o.id, o]));
 
   const isSelf = user.id === session?.user.id;
   const totalSpent = orders
@@ -95,10 +78,6 @@ export default async function UserDetailPage({
           <span className="text-xs text-muted-foreground">Total gastado</span>
           <span className="text-sm font-medium">{formatPrice(totalSpent)}</span>
         </div>
-        <div className="flex flex-col gap-0.5">
-          <span className="text-xs text-muted-foreground">Puntos</span>
-          <span className="text-sm font-medium">{pointsBalance}</span>
-        </div>
       </div>
 
       <div className="flex flex-wrap items-center gap-4 rounded-lg border p-4">
@@ -111,42 +90,6 @@ export default async function UserDetailPage({
           <span className="text-xs text-muted-foreground">
             No podés cambiar tu propio rol ni borrar tu cuenta desde acá.
           </span>
-        )}
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <h2 className="font-medium">Cupones</h2>
-        {couponRedemptions.length === 0 ? (
-          <p className="rounded-md border border-dashed p-4 text-center text-sm text-muted-foreground">
-            Todavía no usó ningún cupón.
-          </p>
-        ) : (
-          <div className="flex flex-col divide-y rounded-lg border">
-            {couponRedemptions.map((r) => {
-              const order = r.orderId ? orderById.get(r.orderId) : null;
-              return (
-                <div key={r.id} className="flex flex-wrap items-center justify-between gap-2 px-4 py-2.5 text-sm">
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium">{r.coupon.code}</span>
-                    <span className="text-muted-foreground">
-                      {formatDiscount(r.coupon.discountType, Number(r.coupon.discountValue))}
-                      {r.coupon.pointsCost > 0 ? ` · canjeado por ${r.coupon.pointsCost} puntos` : ""}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <span>{dateFormatter.format(r.redeemedAt)}</span>
-                    {order ? (
-                      <Link href={`/admin/pedidos/${order.id}`} className="font-medium text-primary underline">
-                        Usado en su pedido de {dateFormatter.format(order.createdAt)}
-                      </Link>
-                    ) : (
-                      <Badge variant="secondary">Todavía no lo usó</Badge>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
         )}
       </div>
 
